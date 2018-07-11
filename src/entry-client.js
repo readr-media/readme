@@ -14,49 +14,50 @@ const debug = require('debug')('CLIENT:entry-client')
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
-  beforeRouteEnter (to, from, next) {    
-    const cookie = getToken()
-    const permission = get(to, [ 'meta', 'permission', ])
-    const preRouteInit = cookie
-      ? !get(store, 'state.profile.role') || !get(store, 'state.isLoggedIn')
-      ? [
-          store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, }, }).then(() => debug('CHECKT LOGGIN STATUS')),
-          store.dispatch('FETCH_PROFILE', { params: { cookie, }, }).then(() => debug('FETCH DATA')),
-        ]
-      : [ new Promise((rslv) => rslv()), ]
-      : [ new Promise((rslv) => rslv()), ]
+  // beforeRouteEnter (to, from, next) {    
+    // const cookie = getToken()
+    // const permission = get(to, [ 'meta', 'permission', ])
+    // const preRouteInit = cookie
+    //   ? !get(store, 'state.profile.role') || !get(store, 'state.isLoggedIn')
+    //   ? [
+    //       store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, }, }).then(() => debug('CHECKT LOGGIN STATUS')),
+    //       store.dispatch('FETCH_PROFILE', { params: { cookie, }, }).then(() => debug('FETCH DATA')),
+    //     ]
+    //   : [ new Promise((rslv) => rslv()), ]
+    //   : [ new Promise((rslv) => rslv()), ]
     
-    debug('router link enter somewhere.', to, from)
-    debug('permission', permission)
-    debug('cookie', cookie)
-    Promise.all([
-      ...preRouteInit,
-    ]).then(() => {
-      debug(get(store, 'state.profile.role'))
-      debug(get(store, 'state.isLoggedIn'))
-      if (permission) {
-        next(vm => { 
-          if (cookie) {
-            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor') 
-            debug('role', role)
-            if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
-              /** User doesn't have the right to go to route "to". So, go back to route "from" */
-              debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
-              next('/')
-            }
-          } else {
-            /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
-            debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
-            next('/login')            
-          }
-        }) 
-      } else {
-        /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
-        debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
-        next()
-      }
-    })
-  },
+    // debug('router link enter somewhere.', to, from)
+    // debug('permission', permission)
+    // debug('cookie', cookie)
+    // Promise.all([
+    //   ...preRouteInit,
+    // ]).then(() => {
+      // debug(get(store, 'state.profile.role'))
+      // debug(get(store, 'state.isLoggedIn'))
+      // if (permission) {
+      //   next(vm => { 
+      //     if (cookie) {
+      //       const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor') 
+      //       debug('role', role)
+      //       if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
+      //         /** User doesn't have the right to go to route "to". So, go back to route "from" */
+      //         debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
+      //         next('/')
+      //       }
+      //     } else {
+      //       /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
+      //       debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
+      //       next('/login')            
+      //     }
+      //   }) 
+      // } else {
+      //   /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
+      //   debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
+      //   next()
+      // }
+  //     next()
+  //   })
+  // },
   beforeRouteUpdate (to, from, next) {
     debug('router link to somewhere.', to.fullPath)
     const { asyncData, } = this.$options
@@ -79,11 +80,11 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
-if (store.state.unauthorized) { 
-  debug('entry-client resolved.') 
-  delete store.state.unauthorized 
-  router.push(store.state.targ_url) 
-} 
+// if (store.state.unauthorized) { 
+//   debug('entry-client resolved.') 
+//   delete store.state.unauthorized 
+//   router.push(store.state.targ_url) 
+// } 
 
 // wait until router has resolved all async before hooks
 // and async components...

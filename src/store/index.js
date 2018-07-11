@@ -9,10 +9,17 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      alertFlag: {
+        message: '',
+        active: false,
+      },
+      asideItems: [],
       projects: [],
       projectsCount: 0,
       memos: [],
       memosCount: 0,
+      list: [],
+      listCurrent: '',
       isLoggedIn: false,
       peopleList: [],
       profile: {},

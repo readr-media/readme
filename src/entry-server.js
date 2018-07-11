@@ -24,34 +24,34 @@ export default context => {
       return reject({ url: fullPath, })
     }
 
-    const preRouteInit = cookie ? [
-      getProfile(cookie),
-    ] : [ new Promise((rslv) => rslv()), ]
-
+    // const preRouteInit = cookie ? [
+    //   getProfile(cookie),
+    // ] : [ new Promise((rslv) => rslv()), ]
+    const preRouteInit = [ new Promise(resolve => resolve()) ]
     Promise.all(preRouteInit).then((res) => {
-      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
-      const permission = get(route, [ 'meta', 'permission', ])
-      const isInitMember = get(route, [ 'path', ]) === '/initmember'
-      debug('role:', role)
-      debug('permission:', permission)
-      debug('url', url)
+    //   const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+    //   const permission = get(route, [ 'meta', 'permission', ])
+    //   const isInitMember = get(route, [ 'path', ]) === '/initmember'
+    //   debug('role:', role)
+    //   debug('permission:', permission)
+    //   debug('url', url)
 
       let targUrl
-      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
-        store.state.unauthorized = true
-        if (!cookie) {
-          router.push('/login')
-          targUrl = '/login'
-          store.state.targ_url = '/login'
-        } else {
-          router.push('/')
-          targUrl = '/'
-          store.state.targ_url = '/'
-        }
-      } else {
+    //   if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
+    //     store.state.unauthorized = true
+    //     if (!cookie) {
+    //       router.push('/login')
+    //       targUrl = '/login'
+    //       store.state.targ_url = '/login'
+    //     } else {
+    //       router.push('/')
+    //       targUrl = '/'
+    //       store.state.targ_url = '/'
+    //     }
+    //   } else {
         router.push(url)
         targUrl = url
-      }
+    //   }
       setting && (store.state.setting = setting)
       error && (store.state.error = error)
 

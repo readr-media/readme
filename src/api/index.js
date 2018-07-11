@@ -4,6 +4,7 @@ import { camelizeKeys, decamelize, decamelizeKeys } from 'humps'
 import { getHost } from 'src/util/comm'
 import { getToken } from '../util/services'
 import { mapValues } from 'lodash'
+import { items } from 'src/configuration/navigationAside'
 
 const debug = require('debug')('CLIENT:api')
 const host = getHost()
@@ -106,6 +107,12 @@ function _doPut (url, params) {
           resolve({ status: res.status, body: camelizeKeys(res.body) })
         }
       })
+  })
+}
+
+export function fetchAsideItems () {
+  return new Promise(resolve => {
+    resolve({ items: items, })
   })
 }
 
