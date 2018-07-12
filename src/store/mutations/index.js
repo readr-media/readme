@@ -1,6 +1,7 @@
 import { get } from 'lodash'
 import * as mutationsMember from 'src/store/mutations/member'
 import * as mutationsList from 'src/store/mutations/list'
+import * as mutationsItem from 'src/store/mutations/item'
 
 const debug = require('debug')('CLIENT:mutations')
 
@@ -47,4 +48,4 @@ export default Object.assign({
   REMOVE_MEMOS: (state, ids) => {
     state['memos'] = state['memos'].filter(memo => !ids.includes(memo.id))
   }
-}, mutationsMember, mutationsList)
+}, mutationsMember, mutationsList, mutationsItem)

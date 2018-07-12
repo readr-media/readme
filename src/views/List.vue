@@ -29,9 +29,10 @@
 <script>
   import ListContainer from 'src/components/list/ListContainer.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
+  import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { get, } from 'lodash'
 
-  const DEFAULT_MAXRESULT = 200
+  const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
@@ -66,8 +67,8 @@
       create () {
         this.isNewItemEditorActive = true
       },
-      refresh () {
-        fetchList(this.$store, {}, this.listName)
+      refresh ({ params = {}, }) {
+        fetchList(this.$store, params, this.listName)
       },
     },
     beforeMount () {

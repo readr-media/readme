@@ -141,6 +141,10 @@ export default {
     'EDIT': '修改',
     'DEL': '刪除',
     'ADD': '新增',
+    'RECORD_COUNT': {
+      'PREFIX': '共',
+      'POSTFIX': '筆',
+    },
   },
   'HEADER': {
     'LOGOUT': '登出',

@@ -6,7 +6,10 @@
         <ListItem :item="item" :structure="itemStructure" :model="model" @editorOn="openEditor" @del="delItem"></ListItem>
       </template>
     </div>
-    <div class="list-container__footer"></div>
+    <div class="list-container__footer">
+      <RecordCount :total="itemsCount"></RecordCount>
+      <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
+    </div>
     <ItemEditor type="update"
       :isActive.sync="isItemEditorActive"
       :structure="itemStructure"
@@ -18,10 +21,14 @@
 <script>
   import ItemEditor from 'src/components/item/ItemEditor.vue'
   import ListItem from 'src/components/list/ListItem.vue'
+  import PaginationNav from 'src/components/list/PaginationNav.vue'
+  import RecordCount from 'src/components/list/RecordCount.vue'
   import moment from 'moment'
+  import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
   import { get, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
+  const fetchItemsCount = (store, params, flag) => store.dispatch('GET_ITEMS_COUNT', { params, flag, })
   const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
   const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
   const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
@@ -30,6 +37,8 @@
     components: {
       ItemEditor,
       ListItem,
+      PaginationNav,
+      RecordCount,
     },
     computed: {
       Editor () {
@@ -45,15 +54,22 @@
       items () {
         return get(this.$store, 'state.list', [])
       },
+      itemsCount () {
+        return get(this.$store, 'state.listItemsCount', 0)
+      },
       itemStructure () {
         return require(`src/model/${this.model}`).model
       },
       model () {
         return get(this.$route, 'params.item', '').toUpperCase()
       },
+      totalPages () {
+        return Math.floor(this.itemsCount / DEFAULT_LIST_MAXRESULT) + 1
+      },
     },
     data () {
       return {
+        curr_page: this.currPage,
         editorItem: {},
         isItemEditorActive: false,
       }
@@ -116,7 +132,9 @@
         })
       },
     },
-    mounted () {},
+    mounted () {
+      fetchItemsCount(this.$store, {}, this.flag)
+    },
     props: {
       flag: {
         type: String,
@@ -125,13 +143,44 @@
         type: Function,
         default: () => {},
       },
+      currPage: {
+        type: Number,
+        default: 1,
+      },
+    },
+    watch: {
+      flag () {
+        fetchItemsCount(this.$store, {}, this.flag)
+      },
+      curr_page () {
+        this.refresh({
+          params: {
+            page: this.curr_page,
+          },
+        })
+      },
     },
   }
 </script>
 <style lang="stylus" scoped>
   .list-container
-    padding 30px
+    padding 30px 30px 70px
     background-color rgba(250,250,250,0.5)
+    position relative
     &:hover
       background-color rgba(250,250,250,0.9)
+    &__footer
+      // margin-top 20px
+      position absolute
+      bottom 0
+      left 0
+      height 50px
+      width 100%
+      padding 10px 10px 10px
+      display flex
+      justify-content space-between
+      align-items center
+      background-color rgba(0,0,0,0.7)
+      &:hover
+        background-color rgba(0,0,0,0.5)
 </style>
