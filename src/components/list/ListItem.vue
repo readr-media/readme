@@ -91,12 +91,14 @@
       padding-bottom 10px
       margin-bottom 15px
       
-    &:not(.header):hover
-      background-color #898989
+    &:not(.header):not(.active):hover
+      background-color rgba(0,0,0,0.5)
       box-shadow 0px 0px 5px rgba(42,42,42,0.6)
+      // background-image linear-gradient(to right, rgba(0,0,0,0.7) 10%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0) 90%)
       color #f1f1f1
     &.active
-      background-color #888
+      background-image linear-gradient(to right, rgba(0,0,0,0.5) 10%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 90%)
+      color #e3e3e3
       .list-item__toolbox
         display block
     &__content

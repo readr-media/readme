@@ -28,7 +28,6 @@
   import { decamelize, decamelizeKeys, } from 'humps'
   import { get, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
-  const fetchItemsCount = (store, params, flag) => store.dispatch('GET_ITEMS_COUNT', { params, flag, })
   const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
   const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
   const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
@@ -132,14 +131,16 @@
         })
       },
     },
-    mounted () {
-      fetchItemsCount(this.$store, {}, this.flag)
-    },
+    mounted () {},
     props: {
       flag: {
         type: String,
       },
       refresh: {
+        type: Function,
+        default: () => {},
+      },
+      refreshItemsCount: {
         type: Function,
         default: () => {},
       },
@@ -149,9 +150,6 @@
       },
     },
     watch: {
-      flag () {
-        fetchItemsCount(this.$store, {}, this.flag)
-      },
       curr_page () {
         this.refresh({
           params: {

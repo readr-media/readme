@@ -6,16 +6,19 @@
         <div class="list__toolbox">
           <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
         </div>
-        <div class="list__search">
+        <div class="list__search" :class="{ focused: isSearchFocused }" tabindex="0" @click="focusSearch" @focusout="focusSearchOut">
           <TextInput
-            backgroundColor="#a3a3a3"
-            backgroundColorFocused="#fff"
+            :backgroundColor="isSearchFocused ? '#fff' : '#a3a3a3'"
             :placeHolder="$t('LIST.SEARCH')"
-            :value.sync="filter"></TextInput>      
+            :value.sync="filter"></TextInput>
+          <div class="btn" @click="search">
+            <span v-text="$t('LIST.SEARCH_APPLIED')" class="applied" v-if="isFilterApplied"></span>
+            <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else></span>
+          </div>
         </div>
       </div>
     </div>
-    <ListContainer class="list__container" :flag="listName" :refresh="refresh">
+    <ListContainer class="list__container" :flag="listName" :refresh="refresh" :refreshItemsCount="refreshItemsCount">
       <template slot="new-item" slot-scope="props">
         <Editor type="create"
           :is="props.Editor"
@@ -37,6 +40,7 @@
   const DEFAULT_SORT = '-updated_at'
 
   const debug = require('debug')('CLIENT:List')
+  const fetchItemsCount = (store, params, flag) => store.dispatch('GET_ITEMS_COUNT', { params, flag, })
   const fetchList = (store, params, flag) => store.dispatch('FETCH_LIST', {
     params: Object.assign({
       maxResult: DEFAULT_MAXRESULT,
@@ -60,23 +64,67 @@
     data () {
       return {
         filter: '',
+        filterSearched: '',
+        isFilterApplied: false,
         isNewItemEditorActive: false,
+        isSearchFocused: false,
+        page: DEFAULT_PAGE,
       }
     },
     methods: {
       create () {
         this.isNewItemEditorActive = true
       },
+      focusSearch () {
+        this.isSearchFocused = true
+      },
+      focusSearchOut () {
+        this.isSearchFocused = false
+      },
+      // isFilterApplied () {
+      //   return this.filterSearched === this.filter && this.filter !== ''
+      // },
       refresh ({ params = {}, }) {
+        // this.page = params.page || this.page
+        this.filterSearched && (params.keyword = this.filterSearched)
         fetchList(this.$store, params, this.listName)
+      },
+      refreshItemsCount ({ params = {}, }) {
+        fetchItemsCount(this.$store, params, this.listName)
+      },
+      search () {
+        this.filterSearched = this.filter
+        this.isFilterApplied = true
+        Promise.all([
+          this.refresh({
+            params: {
+              keyword: this.filterSearched || '',
+            }
+          }),
+          this.refreshItemsCount({
+            params: {
+              keyword: this.filterSearched || '',
+            }
+          })
+        ])
       },
     },
     beforeMount () {
-      fetchList(this.$store, {}, this.listName)
+      Promise.all([
+        fetchList(this.$store, {}, this.listName),
+        fetchItemsCount(this.$store, {}, this.listName)
+      ])
     },
     watch: {
       listName () {
-        fetchList(this.$store, {}, this.listName)
+        Promise.all([
+          fetchList(this.$store, {}, this.listName),
+          fetchItemsCount(this.$store, {}, this.listName)
+        ])
+      },
+      filter () {
+        debug('Mutation detected: filter', this.filter)
+        this.isFilterApplied = this.filterSearched === this.filter
       },
     },
   }
@@ -99,7 +147,7 @@
       height 100%
       font-size 1.375rem
       color rgba(250,250,250,0.9)
-      background-color rgba(150,111,0,0.7)
+      background-color rgba(138,138,138,0.5)
       border-radius 2px
       padding 0 20px
       display flex
@@ -108,6 +156,42 @@
     &__search, &__toolbox
       display flex
       align-items flex-end
+    &__search
+      background-color #a3a3a3
+      height 30px
+      margin-top 10px
+      outline none
+      &.focused
+        background-color #fff
+        .btn
+          span
+            color #fff
+      .btn
+        display flex
+        justify-content center
+        align-items center
+        padding 2px
+        height 100%
+        span
+          cursor pointer
+          box-shadow 0 0 5px rgba(0,0,0,0.5)
+          color #d3d3d3
+          display flex
+          justify-content center
+          align-items center
+          width 100%
+          height 100%
+          padding 0 7px
+          border-radius 3px
+          font-size 0.8125rem
+          &.applied
+            background-color #909090
+          &.apply
+            background-color #d40505
+            &:hover
+              background-color #ff2f2f
+              color #fff
+
     &__toolbox
       .btn
         cursor pointer

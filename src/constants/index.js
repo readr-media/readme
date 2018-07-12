@@ -30,4 +30,4 @@ export const MEMO_PUBLISH_STATUS_MAP = [
   { code: 3, name: 'status_deactive' },
 ]
 
-export const DEFAULT_LIST_MAXRESULT = 15
+export const DEFAULT_LIST_MAXRESULT = 10

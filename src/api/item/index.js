@@ -1,6 +1,6 @@
 import { PROJECT_ACTIVE, } from 'api/config'
 import { apiMap, } from 'src/api/item/map'
-import { del, fetchInStrict, put, post, } from 'src/api/comm'
+import { constructUrlWithQuery, del, fetchInStrict, put, post, } from 'src/api/comm'
 import { filter, get, } from 'lodash'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:item')
@@ -27,6 +27,6 @@ export function delItem ({ params, flag, }) {
 
 export function getItemCount ({ params, flag, }) {
   const targetApi = get(filter(apiMap, { item: flag, method: 'GET', }), '0.target')
-  const url = `${host}/api/${targetApi}/count`
+  const url = constructUrlWithQuery(`${host}/api/${targetApi}/count`, params)
   return targetApi ? fetchInStrict(url, params) : Promise.reject({ status: '400', message: '"targetApi" Not Found.', })
 }

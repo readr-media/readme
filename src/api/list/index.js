@@ -6,6 +6,7 @@ const debug = require('debug')('CLIENT:api:list')
 const host = getHost()
 
 export function fetchList ({ params, flag }) {
+  debug('parmas', params)
   const targetApi = get(filter(apiMap, { item: flag, }), '0.target')
   const url = constructUrlWithQuery(`${host}/api/${targetApi}`, params)
   return fetchInStrict(url, {})

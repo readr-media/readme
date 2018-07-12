@@ -138,6 +138,8 @@ export default {
   },
   'LIST': {
     'SEARCH': '搜尋',
+    'SEARCH_APPLY': '採用',
+    'SEARCH_APPLIED': '已採用',
     'EDIT': '修改',
     'DEL': '刪除',
     'ADD': '新增',
