@@ -5,6 +5,7 @@
       <template v-for="item in items">
         <ListItem :item="item" :structure="itemStructure" :model="model" @editorOn="openEditor" @del="delItem"></ListItem>
       </template>
+      <slot name="spinner"></slot>
     </div>
     <div class="list-container__footer">
       <RecordCount :total="itemsCount"></RecordCount>

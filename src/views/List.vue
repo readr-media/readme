@@ -26,11 +26,13 @@
           :structure="props.structure"
           :add="props.add"></Editor>
       </template>
+      <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
     </ListContainer>
   </div>
 </template>
 <script>
   import ListContainer from 'src/components/list/ListContainer.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { get, } from 'lodash'
@@ -56,6 +58,7 @@
     name: 'List',
     components: {
       ListContainer,
+      Spinner,
       TextInput,
     },
     computed: {
@@ -73,6 +76,7 @@
         isFilterApplied: false,
         isNewItemEditorActive: false,
         isSearchFocused: false,
+        isSpinnerActive: false,
         page: DEFAULT_PAGE,
       }
     },
@@ -87,10 +91,13 @@
         this.isSearchFocused = false
       },
       refresh ({ params = {}, }) {
+        this.isSpinnerActive = true
         this.filterSearched && (params.keyword = this.filterSearched)
         params.maxResult = this.maxResult
         debug('params.maxResult', params.maxResult)
-        fetchList(this.$store, params, this.model)
+        fetchList(this.$store, params, this.model).then(() => {
+          this.isSpinnerActive = false
+        })
       },
       refreshItemsCount ({ params = {}, }) {
         fetchItemsCount(this.$store, params, this.model)
