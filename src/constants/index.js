@@ -1,9 +1,13 @@
+import { ROLE_MAP as ROLE_MAP_CONF, } from 'api/config'
+import { get, } from 'lodash'
+
 export const ROLE_MAP = [
-  { key: 9, value: '管理員', route: 'admin' },
-  { key: 3, value: '編輯', route: 'editor' },
-  { key: 2, value: '總編', route: 'guesteditor' },
-  { key: 1, value: '會員', route: 'member' }
+  { key: get(ROLE_MAP_CONF, 'ADMIN'), name: 'admin', route: 'admin', },
+  { key: get(ROLE_MAP_CONF, 'EDITOR'), name: 'editor', route: 'editor', },
+  { key: get(ROLE_MAP_CONF, 'GUESTEDITOR'), name: 'guestEditor', route: 'guesteditor', },
+  { key: get(ROLE_MAP_CONF, 'MEMBER'), name: 'member', route: 'member', },
 ]
+
 export const PROJECT_STATUS_MAP = [
   { code: 0, name: 'status_canadate' },
   { code: 1, name: 'status_wip' },
@@ -30,4 +34,4 @@ export const MEMO_PUBLISH_STATUS_MAP = [
   { code: 3, name: 'status_deactive' },
 ]
 
-export const DEFAULT_LIST_MAXRESULT = 10
+export const DEFAULT_LIST_MAXRESULT = 15

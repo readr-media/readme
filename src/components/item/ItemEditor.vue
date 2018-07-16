@@ -1,5 +1,6 @@
 <template>
-  <div class="item-editor" v-if="isActive">
+  <ItemEditorLayout v-if="isActive">
+  
     <div class="panel">
       <div class="panel__content">
         <template v-for="obj in structure">
@@ -28,6 +29,13 @@
                     :value="get(opt, 'value')"
                     :currSelected.sync="formData[ obj.name ]"></RadioItem>                
                 </template>
+                <QuillEditor v-else-if="obj.type === 'ContentEditor'"
+                  :content.sync="formData[ obj.name ]" /></QuillEditor>
+                <TextTagItem v-else-if="obj.type === 'TextTagItem'"
+                  :placeholder="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"
+                  :currTagValues.sync="formData[ obj.name ]"
+                  :currInput.sync="currTagInput[ obj.name ]"
+                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>                  
               </template>
               <template v-else>
                 <span v-text="get(item, obj.name)"></span>
@@ -41,12 +49,15 @@
         <div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div>
       </div>
     </div>
-  </div>
+  </ItemEditorLayout>
 </template>
 <script>
+  import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import RadioItem from 'src/components/new-form/RadioItem.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
   import TextareaInput from 'src/components/new-form/TextareaInput.vue'
+  import TextTagItem from 'src/components/new-form/TextTagItem.vue'
+  import QuillEditor from 'src/components/new-form/QuillEditor.vue'
   import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
@@ -58,9 +69,12 @@
     name: 'ItemEditor',
     components: {
       Datetime,
+      ItemEditorLayout,
+      QuillEditor,
       RadioItem,
       TextareaInput,
       TextInput,
+      TextTagItem,
     },
     computed: {
       listFlag () {
@@ -70,6 +84,8 @@
     data () {
       return {
         formData: {},
+        currTagInput: {},
+        autocompleteArr: {},
       }
     },
     methods: {
@@ -82,13 +98,56 @@
         this.formData = {}
         if (this.type === 'update') {
           map(this.structure, item => {
-            this.formData[ item.name ] = get(this.item, item.name)
+            switch (item.type) {
+              case 'TextTagItem':
+                this.formData[ item.name ] = [
+                  ...map(get(this.item, item.name), a => ({
+                    name: get(a, get(item, 'map.name')),
+                    value: get(a, get(item, 'map.value')),
+                  }))
+                ]
+                /**
+                 * - Setup watchers for this item.
+                 */
+                this.$watch(`currTagInput.${item.name}`, (newValue, oldValue) => {
+                  debug(`Mutation detected: currTagInput.${item.name}`)
+                  debug('Data changed from ', oldValue, ' to ', newValue, '!')
+                  if (item.autocomplete && newValue) {
+                    item.autocomplete(this.$store, newValue).then(({ items, }) => {
+                      const obj = {}
+                      obj[ item.name ] = [
+                        ...map(items, a => ({
+                          name: get(a, get(item, 'map.name')),
+                          value: get(a, get(item, 'map.value')),
+                        }))
+                      ]
+                      this.autocompleteArr = Object.assign({}, this.autocompleteArr, obj)
+                    })
+                  }
+                })                 
+                this.$watch(`autocompleteArr.${item.name}`, (newValue, oldValue) => {
+                  debug(`Mutation detected: autocompleteArr.${item.name}`)
+                  debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
+                })                
+                break
+              default:
+                this.formData[ item.name ] = get(this.item, item.name)
+            } 
           })
         } else if (this.type === 'create') {
           map(this.structure, item => {
             if (item.isEditable) {
-              this.formData[ item.name ] = item.type === 'TextInput' || item.type === 'TextareaInput'
-                ? '' : null
+              switch (item.type) {
+                case 'TextInput':
+                case 'TextareaInput':
+                  this.formData[ item.name ] = ''
+                  break
+                case 'TextTagItem':
+                  this.formData[ item.name ] = []
+                  break
+                default:
+                  this.formData[ item.name ] = null
+              }
             }
           })
         }
@@ -112,9 +171,7 @@
         }
       },
     },
-    beforeMount () {
-      this.initValue()
-    },
+    beforeMount () { this.initValue() },
     mounted () {},
     props: {
       add: {
@@ -129,9 +186,7 @@
         type: Boolean,
         default: () => false,
       },
-      structure: {
-        type: Array,
-      },
+      structure: Array,
       item: {
         type: Object,
         default: () => {},
@@ -150,6 +205,36 @@
       },
     },
     watch: {
+      // currTagInput: {
+      //   handler: function (newValue, oldValue) {
+      //     debug('Got something.')
+      //     debug(newValue, oldValue)
+      //     map(newValue, (item, key) => {
+      //       if (item !== oldValue[ key ]) {
+      //         debug(`Mutation detected: currTagInput.${key}`)
+      //         debug('Data changed from ', oldValue[ key ], ' to ', item, '!')
+      //         const fn = get(this.structure, `${key}.autocomplete`)
+      //         if (fn && item) {
+      //           fn(this.$store, item).then(({ items, }) => {
+      //             this.autocompleteArr[ key ] = [
+      //               ...map(items, a => ({
+      //                 name: get(a, get(this.structure, `${key}.map.name`)),
+      //                 value: get(a, get(this.structure, `${key}.map.value`)),
+      //               }))
+      //             ]
+      //           })
+      //         }          
+      //       }
+      //     })
+      //   },
+      //   deep: true,
+      // },
+      // autocompleteArr: {
+      //   handler: function (newValue, oldValue) {
+      //     debug('newValue, oldValue', newValue, oldValue)
+      //   },
+      //   deep: true,
+      // },
       isActive () {
         if (this.isActive) {
           preventScroll.on()
@@ -157,83 +242,8 @@
           preventScroll.off()
         }
       },   
-      item () {
-        this.initValue()
-      }, 
-      structure () {
-        this.initValue()
-      },  
+      item () { this.initValue() }, 
+      structure () { this.initValue() },
     },
   }
 </script>
-<style lang="stylus" scoped>
-  .item-editor
-    position fixed
-    left 0
-    top 0
-    height 100vh
-    width 100vw
-    background-color rgba(0,0,0,0.65)
-    z-index 9998
-    display flex
-    justify-content center
-    align-items center
-    .panel
-      overflow hidden
-      // max-height 90%
-      height 90%
-      width 75%
-      // min-width 400px
-      background-color rgba(250,250,250,0.9)
-      box-shadow 0px 0px 10px rgba(250,250,250,0.8)
-      border-radius 2px
-      padding 30px 50px 70px
-      position relative
-      &__content
-        overflow auto
-        height 100%
-        // display flex
-        // flex-wrap wrap
-        // justify-content space-between
-        padding-bottom 20px
-        border-bottom 1px solid #940606
-        &--item
-          // width 400px
-          display flex
-          align-items center
-          font-size 1.125rem
-          line-height normal
-          // margin-right 40px
-          margin-bottom 20px
-          .title
-            margin-right 20px
-            height 100%
-            width 100px
-          .value
-            flex 1
-      &__actions
-        display flex
-        justify-content flex-end
-        height 30px
-        width 100%
-        position absolute
-        left 0
-        bottom 20px
-        padding 0 50px
-        > div
-          // flex 1
-          width 100px
-          display flex
-          justify-content center
-          align-items center
-          background-color rgba(150,111,0,0.7)
-          box-shadow 0px 0px 5px rgba(100,100,100,0.5)
-          border-radius 2px
-          padding 5px
-          cursor pointer
-          &:not(:last-child)
-            margin-right 10px
-          &:hover
-            background-color rgba(203,175,94,0.7)
-            box-shadow 0px 0px 5px rgba(250,250,250,0.5)       
-</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="list">
     <div class="list__header">
-      <div class="list__title"><span v-text="listName"></span></div>
+      <div class="list__title"><span v-text="model"></span></div>
       <div class="list__wrapper right">
         <div class="list__toolbox">
           <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
@@ -11,14 +11,14 @@
             :backgroundColor="isSearchFocused ? '#fff' : '#a3a3a3'"
             :placeHolder="$t('LIST.SEARCH')"
             :value.sync="filter"></TextInput>
-          <div class="btn" @click="search">
+          <div class="btn">
             <span v-text="$t('LIST.SEARCH_APPLIED')" class="applied" v-if="isFilterApplied"></span>
-            <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else></span>
+            <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else @click="search"></span>
           </div>
         </div>
       </div>
     </div>
-    <ListContainer class="list__container" :flag="listName" :refresh="refresh" :refreshItemsCount="refreshItemsCount">
+    <ListContainer class="list__container" :flag="model" :refresh="refresh" :refreshItemsCount="refreshItemsCount">
       <template slot="new-item" slot-scope="props">
         <Editor type="create"
           :is="props.Editor"
@@ -44,8 +44,10 @@
   const fetchList = (store, params, flag) => store.dispatch('FETCH_LIST', {
     params: Object.assign({
       maxResult: DEFAULT_MAXRESULT,
+      memberId: get(store, 'state.profile.id'),
       page: DEFAULT_PAGE,
       sort: DEFAULT_SORT,
+      fields: [ 'nickname', 'id' ],
     }, params),
     flag,
   })
@@ -57,9 +59,12 @@
       TextInput,
     },
     computed: {
-      listName () {
+      model () {
         return get(this.$route, 'params.item')
       },
+      maxResult () {
+        return require(`src/model/${this.model.toUpperCase()}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+      }
     },
     data () {
       return {
@@ -81,16 +86,14 @@
       focusSearchOut () {
         this.isSearchFocused = false
       },
-      // isFilterApplied () {
-      //   return this.filterSearched === this.filter && this.filter !== ''
-      // },
       refresh ({ params = {}, }) {
-        // this.page = params.page || this.page
         this.filterSearched && (params.keyword = this.filterSearched)
-        fetchList(this.$store, params, this.listName)
+        params.maxResult = this.maxResult
+        debug('params.maxResult', params.maxResult)
+        fetchList(this.$store, params, this.model)
       },
       refreshItemsCount ({ params = {}, }) {
-        fetchItemsCount(this.$store, params, this.listName)
+        fetchItemsCount(this.$store, params, this.model)
       },
       search () {
         this.filterSearched = this.filter
@@ -111,15 +114,15 @@
     },
     beforeMount () {
       Promise.all([
-        fetchList(this.$store, {}, this.listName),
-        fetchItemsCount(this.$store, {}, this.listName)
+        this.refresh({}),
+        this.refreshItemsCount({})
       ])
     },
     watch: {
-      listName () {
+      model () {
         Promise.all([
-          fetchList(this.$store, {}, this.listName),
-          fetchItemsCount(this.$store, {}, this.listName)
+          this.refresh({}),
+          this.refreshItemsCount({})
         ])
       },
       filter () {
@@ -173,7 +176,6 @@
         padding 2px
         height 100%
         span
-          cursor pointer
           box-shadow 0 0 5px rgba(0,0,0,0.5)
           color #d3d3d3
           display flex
@@ -185,11 +187,12 @@
           border-radius 3px
           font-size 0.8125rem
           &.applied
+            cursor pointer
             background-color #909090
           &.apply
-            background-color #d40505
+            background-color #a80606
             &:hover
-              background-color #ff2f2f
+              background-color #d40505
               color #fff
 
     &__toolbox

@@ -3,6 +3,7 @@ const { redisFetching, redisWriting, } = require('../middle/redis')
 const config = require('../config')
 const debug = require('debug')('READR:api:perms')
 const superagent = require('superagent')
+const axios = require('axios')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
@@ -30,21 +31,19 @@ const fetchPermissions = () => {
         resolve(JSON.parse(data))
       } else {
         debug('About to fetch permissions from api')
-        superagent
-        .get(`${apiHost}${url}`)
-        .end((err, res) => {
-          if (!err && res) {
-            const dt = JSON.parse(res.text)
-            debug('Got permissions from api sucessfully.')
-            if (Object.keys(dt).length !== 0) {
-              redisWriting(url, res.text)
-            }
-            resolve(res.body)
-          } else {
-            console.log('Fetch permissions in false...', err)
-            reject(err)
-          }
+        debug(`${apiHost}${url}`)
+
+        axios.get(`${apiHost}${url}`, {
+          timeout: config.API_TIMEOUT,
+        }).then(res => {
+          debug('Got permissions from api sucessfully.')
+          resolve(res.data)
         })
+        .catch(err => {
+          console.log('Fetch permissions in fail...')
+          console.log(err)
+          reject(err)
+        })        
       }
     })
   })

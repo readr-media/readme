@@ -1,6 +1,8 @@
 const _ = require('lodash')
-const { camelizeKeys } = require('humps')
 const { authorize, constructScope, fetchPermissions } = require('./services/perm')
+const { camelizeKeys } = require('humps')
+const { handlerError } = require('./comm')
+const { setupClientCache } = require('./middle/comm')
 // const { verifyToken } = require('./middle/member/comm')
 const CONFIG = require('./config')
 const Cookies = require('cookies')
@@ -45,21 +47,42 @@ const fetchPromise = (url, req) => {
 
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))
+router.use('/memo', require('./middle/memo'))
 router.use('/image-post', require('./middle/image'))
 router.use('/members/nickname', authVerify)
 
-router.get('/profile', [ authVerify ], (req, res) => {
+router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)
   const targetProfile = req.user.id
+  const roleSetInToken = req.user.role
+
+  /**
+   * 'cause there's some logged-user's cookie token constructed with id which is in old type,
+   * we have to redirect them to login again.
+   */
+  if (typeof(targetProfile) === 'string') {
+    res.status(401).json({ message: 'Should Authorized Again.', })
+    return
+  }
+
   const url = `/member/${targetProfile}`
   Promise.all([
     fetchPromise(url, req),
-    fetchPermissions()
+    fetchPermissions(),
   ]).then((response) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
     const scopes = constructScope(perms, profile.role)
+
+    if (roleSetInToken !== profile.role) {
+      /**
+       * This statement means this user's role has been changed. At this moment, we need to force user to login again.
+       */
+      res.status(401).json({ message: 'Should Authorized Again.', })
+      return
+    }
+
     res.json({
       name: profile.name,
       nickname: profile.nickname,
@@ -70,11 +93,11 @@ router.get('/profile', [ authVerify ], (req, res) => {
       role: profile.role,
       scopes,
       profileImage: profile.profileImage,
-      points: profile.points
+      points: profile.points,
     })
   }).catch((err) => {
     res.status(500).send(err)
-    console.error(`error during fetch data from : ${url}`)
+    console.error(`Error occurred when fetching data from : ${url}`)
     console.error(err)
   })
 })
@@ -83,59 +106,32 @@ router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
 })
 
-// Memos api
-router.all('/memos', authVerify, (req, res, next) => {
-  next()
-})
-router.get('/memos/count', authVerify, (req, res, next) => {
-  next()
-})
-router.all('/memo', authVerify, (req, res, next) => {
-  next()
-})
-router.all('/memo/:id', authVerify, (req, res, next) => {
-  next()
-})
-
 router.route('*')
   .get(function (req, res, next) {
     debug('Abt to send req to api.')
     const url = `${apiHost}${req.url}`
-    if (res.redis) {
-      console.log('fetch data from Redis.', req.url)
-      const resData = JSON.parse(res.redis)
-      res.json(resData)
-    } else {
-      superagent
-        .get(url)
-        .timeout(
-          {
-            response: CONFIG.API_TIMEOUT,  // Wait 5 seconds for the server to start sending,
-            deadline: CONFIG.API_DEADLINE ? CONFIG.API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
-          }
-        )
-        .end((e, r) => {
-          if (!e && r) {
-            const dt = JSON.parse(r.text)
-            if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
-              res.dataString = r.text
-              /**
-               * if data not empty, go next to save data to redis
-               * if endpoint is not /members, go next to save data to redis
-               */
-              if (req.url.indexOf('/members') === -1 && req.url.indexOf('/post') === -1 && req.url.indexOf('/posts') === -1 && req.url.indexOf('/tags') === -1 && req.url.indexOf('/following/byuser') === -1) {
-                next()
-              }
-            }
-            const resData = JSON.parse(r.text)
-            res.json(resData)
-          } else {
-            res.json(e)
-            console.error(`error during fetch data from : ${url}`)
-            console.error(e)  
-          }
-        })
-      }
+    superagent
+      .get(url)
+      .timeout(
+        {
+          response: CONFIG.API_TIMEOUT,  // Wait 5 seconds for the server to start sending,
+          deadline: CONFIG.API_DEADLINE ? CONFIG.API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
+        }
+      )
+      .end((e, r) => {
+        if (!e && r) {
+          const resData = JSON.parse(r.text)
+          res.json(resData)
+        } else {
+          const errWrapped = handlerError(e, r)
+          res.status(errWrapped.status).send({
+            status: errWrapped.status,
+            text: errWrapped.text
+          })       
+          console.error(`Error occurred during updating report: ${url}`)
+          console.error(e)     
+        }
+      })
   })
   .post(authVerify, (req, res) => {
     const url = `${apiHost}${req.url}`
@@ -146,9 +142,13 @@ router.route('*')
       if (!err && response) {
         res.status(200).end()
       } else {
-        console.log('error occurred when handling a req: ', req.url)
-        console.log(err)
-        res.status(500).json(err)
+        const errWrapped = handlerError(err, response)
+        res.status(errWrapped.status).send({
+          status: errWrapped.status,
+          text: errWrapped.text
+        })       
+        console.error(`Error occurred during updating report: ${req.url}`)
+        console.error(err)     
       }
     })
   })
@@ -162,7 +162,13 @@ router.route('*')
       if (!err && response) {
         res.status(200).end()
       } else {
-        res.status(500).json(err)
+        const errWrapped = handlerError(err, response)
+        res.status(errWrapped.status).send({
+          status: errWrapped.status,
+          text: errWrapped.text
+        })       
+        console.error(`Error occurred during updating report: ${req.url}`)
+        console.error(err)     
       }
     })
   })
@@ -176,8 +182,13 @@ router.route('*')
       if (!err && response) {
         res.status(200).end()
       } else {
-        console.log('Error occurred when deleting stuff', err)
-        res.status(500).json(err)
+        const errWrapped = handlerError(err, response)
+        res.status(errWrapped.status).send({
+          status: errWrapped.status,
+          text: errWrapped.text
+        })       
+        console.error(`Error occurred during updating report: ${req.url}`)
+        console.error(err)     
       }
     })
   })

@@ -6,6 +6,7 @@
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
+    <SystemInfo></SystemInfo>
   </div>
 </template>
 
@@ -13,12 +14,14 @@
 import Alert from 'src/components/Alert.vue'
 import NewHeader from 'src/components/new-header/NewHeader.vue'
 import NewAside from 'src/components/new-aside/NewAside.vue'
+import SystemInfo from 'src/components/SystemInfo.vue'
 
 export default {
   components: {
     Alert,
     NewHeader,
     NewAside,
+    SystemInfo,
   },  
 }
 </script>

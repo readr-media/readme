@@ -15,6 +15,11 @@ export const items = [
     active: true,
   },
   {
+    name: 'memo',
+    route: 'memo',
+    active: true,
+  },  
+  {
     name: 'RECOMMEND',
     route: '',
     active: false,

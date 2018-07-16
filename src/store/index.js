@@ -20,6 +20,7 @@ export function createStore () {
       isLoggedIn: false,
       peopleList: [],
       profile: {},
+      systemVersion: '1.0.0'
     },
     actions,
     mutations,

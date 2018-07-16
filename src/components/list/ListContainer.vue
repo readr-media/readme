@@ -59,11 +59,17 @@
       itemStructure () {
         return require(`src/model/${this.model}`).model
       },
+      maxResult () {
+        return require(`src/model/${this.model}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+      },
+      me () {
+        return get(this.$store, 'state.profile.id')
+      },
       model () {
         return get(this.$route, 'params.item', '').toUpperCase()
       },
       totalPages () {
-        return Math.floor(this.itemsCount / DEFAULT_LIST_MAXRESULT) + 1
+        return Math.floor(this.itemsCount / this.maxResult) + 1
       },
     },
     data () {
@@ -80,7 +86,7 @@
           /**
            * Go refresh item-list.
            */
-          this.refresh()
+          this.refresh({})
         })
       },
       delItem (item) {
@@ -88,7 +94,7 @@
           /**
            * Go refresh item-list.
            */
-          this.refresh()          
+          this.refresh({})          
         })
       },
       normalizeData (form) {
@@ -98,8 +104,8 @@
          * And remove those data which is not editable(excluding 'ID').
          */
         map(this.itemStructure, item => {
+          debug('item.name', item.name, item.name.toUpperCase())
           if (item.type === 'Datetime') {
-            debug('item.name', item.name)
             debug('preForm[ item.name ]', preForm[ item.name ])
             if (!preForm[ item.name ]) {
               preForm[ item.name ] = null
@@ -113,7 +119,10 @@
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
           }
-
+          if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
+            preForm[ item.name ] = this.me
+          }
+          debug('preForm', preForm)
         })
         return preForm
       },
@@ -127,7 +136,7 @@
           /**
            * Go refresh item-list.
            */
-          this.refresh()
+          this.refresh({})
         })
       },
     },
@@ -165,6 +174,8 @@
     padding 30px 30px 70px
     background-color rgba(250,250,250,0.5)
     position relative
+    // height 750px
+    // height 100%
     &:hover
       background-color rgba(250,250,250,0.9)
     &__footer

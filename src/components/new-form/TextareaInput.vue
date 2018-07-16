@@ -38,6 +38,7 @@
       font-weight 100
       padding 5px 10px
       resize none
+      line-height normal
       &::-webkit-input-placeholder
         color #bdbdbd
         font-weight 100

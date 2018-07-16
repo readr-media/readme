@@ -5,12 +5,18 @@ const debug = require('debug')('CLIENT:store:actions:list')
 const FETCH_LIST = ({ commit, }, { params, flag, }) => {
   return listFunc.fetchList({ params, flag }).then(({ status, body, }) => {
     if (status === 200) {
-      commit('SET_LIST', { items: get(body, 'items') })
+      commit('SET_LIST', { items: get(body, 'items'), })
     }
-    return { status, }
+    return { status, items: get(body, 'items'), }
+  })
+}
+const FETCH_AUTOCOMPLETE_LIST = ({ commit, }, { params, flag, }) => {
+  return listFunc.fetchList({ params, flag }).then(({ status, body, }) => {
+    return { status, items: get(body, 'items'), }
   })
 }
 
 export {
   FETCH_LIST,
+  FETCH_AUTOCOMPLETE_LIST
 }
