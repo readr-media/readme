@@ -6,6 +6,7 @@
         <div class="list__toolbox">
           <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
         </div>
+        <FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup>
         <div class="list__search" :class="{ focused: isSearchFocused }" tabindex="0" @click="focusSearch" @focusout="focusSearchOut">
           <TextInput
             :backgroundColor="isSearchFocused ? '#fff' : '#a3a3a3'"
@@ -31,11 +32,12 @@
   </div>
 </template>
 <script>
+  import FilterGroup from 'src/components/list/FilterGroup.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
-  import { get, } from 'lodash'
+  import { get, map, } from 'lodash'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
@@ -57,22 +59,27 @@
   export default {
     name: 'List',
     components: {
+      FilterGroup,
       ListContainer,
       Spinner,
       TextInput,
     },
     computed: {
+      filterChecks () {
+        return require(`src/model/${this.model.toUpperCase()}`).filter || []
+      },
       model () {
         return get(this.$route, 'params.item')
       },
       maxResult () {
         return require(`src/model/${this.model.toUpperCase()}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
-      }
+      },
     },
     data () {
       return {
         filter: '',
         filterSearched: '',
+        filterChecksCurrent: {},
         isFilterApplied: false,
         isNewItemEditorActive: false,
         isSearchFocused: false,
@@ -99,12 +106,19 @@
           params.page = this.page
         }
         params.maxResult = this.maxResult
+        map(this.filterChecksCurrent, (filter, key) => {
+          if (filter) { params[ key ] = true }
+        })
         debug('params.maxResult', params.maxResult)
         fetchList(this.$store, params, this.model).then(() => {
           this.isSpinnerActive = false
         })
       },
       refreshItemsCount ({ params = {}, }) {
+        this.filterSearched && (params.keyword = this.filterSearched)
+        map(this.filterChecksCurrent, (filter, key) => {
+          if (filter) { params[ key ] = true }
+        })        
         fetchItemsCount(this.$store, params, this.model)
       },
       search () {
@@ -142,6 +156,13 @@
         debug('Mutation detected: filter', this.filter)
         this.isFilterApplied = this.filterSearched === this.filter
       },
+      filterChecksCurrent () {
+        debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
+        Promise.all([
+          this.refresh({}),
+          this.refreshItemsCount({})
+        ])
+      },
     },
   }
 </script>
@@ -169,9 +190,17 @@
       display flex
       justify-content center
       align-items center
-    &__search, &__toolbox
+    &__search, &__toolbox, &__filter
       display flex
       align-items flex-end
+    &__filter
+      background-color #a3a3a3
+      margin-top 10px
+      margin-right 10px
+      border-radius 2px
+      height 30px
+      outline none
+      padding 0 10px
     &__search
       background-color #a3a3a3
       height 30px

@@ -13,4 +13,6 @@ export const model = [
   { name: 'customEditor', type: 'BooleanSwitcher', width: { list: '80', editor: '400' }, isEditable: true, isListable: true, },
 ]
 
+export const filter = [ 'custom_editor' ]
+
 export const LIST_MAXRESULT = 15
