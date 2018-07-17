@@ -240,6 +240,17 @@ export default {
     'UPDATED_BY': '最後等新',
     'CONTENT': '內文',
   },
+  'MEMBER': {
+    'ID': 'ID',
+    'NICKNAME': '暱稱',
+    'ROLE': '身份',
+    'ROLE_ADMIN': '管理員',
+    'ROLE_EDITOR': '編輯',
+    'ROLE_GUESTEDITOR': '總編',    
+    'ROLE_MEMBER': '會員',    
+    'CUSTOM_EDITOR': '當週總編',
+    'MAIL': '信箱',
+  },
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
@@ -247,7 +258,8 @@ export default {
   'NAVIGATION': {
     'INDEX': '選單',
     'PROJECT': '專題管理',
-    'MEMO': '筆記',
+    'MEMO': '筆記管理',
+    'MEMBER': '會員管理',
     'EDM': '電子報管理',
     'RECOMMEND': '推薦文章管理',
     'ANALYTICS': '分析',

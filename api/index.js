@@ -48,6 +48,7 @@ const fetchPromise = (url, req) => {
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))
 router.use('/memo', require('./middle/memo'))
+router.use('/member', require('./middle/member'))
 router.use('/image-post', require('./middle/image'))
 router.use('/members/nickname', authVerify)
 

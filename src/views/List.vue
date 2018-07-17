@@ -91,8 +91,13 @@
         this.isSearchFocused = false
       },
       refresh ({ params = {}, }) {
-        this.isSpinnerActive = true
         this.filterSearched && (params.keyword = this.filterSearched)
+        this.page = params.page || this.page
+        if (params.page) {
+          this.page = params.page
+        } else {
+          params.page = this.page
+        }
         params.maxResult = this.maxResult
         debug('params.maxResult', params.maxResult)
         fetchList(this.$store, params, this.model).then(() => {
@@ -127,6 +132,7 @@
     },
     watch: {
       model () {
+        this.isSpinnerActive = true
         Promise.all([
           this.refresh({}),
           this.refreshItemsCount({})

@@ -1,6 +1,5 @@
 <template>
   <ItemEditorLayout v-if="isActive">
-  
     <div class="panel">
       <div class="panel__content">
         <template v-for="obj in structure">
@@ -35,7 +34,9 @@
                   :placeholder="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"
                   :currTagValues.sync="formData[ obj.name ]"
                   :currInput.sync="currTagInput[ obj.name ]"
-                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>                  
+                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>     
+                <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
+                  :status.sync="formData[ obj.name ]"></BooleanSwitcher>
               </template>
               <template v-else>
                 <span v-text="get(item, obj.name)"></span>
@@ -52,6 +53,7 @@
   </ItemEditorLayout>
 </template>
 <script>
+  import BooleanSwitcher from 'src/components/new-form/BooleanSwitcher.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import RadioItem from 'src/components/new-form/RadioItem.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
@@ -68,6 +70,7 @@
   export default {
     name: 'ItemEditor',
     components: {
+      BooleanSwitcher,
       Datetime,
       ItemEditorLayout,
       QuillEditor,
@@ -89,9 +92,7 @@
       }
     },
     methods: {
-      close () {
-        this.$emit('update:isActive', false)
-      },
+      close () { this.$emit('update:isActive', false) },
       decamelize,
       get,
       initValue () {
@@ -106,29 +107,10 @@
                     value: get(a, get(item, 'map.value')),
                   }))
                 ]
-                /**
-                 * - Setup watchers for this item.
-                 */
-                this.$watch(`currTagInput.${item.name}`, (newValue, oldValue) => {
-                  debug(`Mutation detected: currTagInput.${item.name}`)
-                  debug('Data changed from ', oldValue, ' to ', newValue, '!')
-                  if (item.autocomplete && newValue) {
-                    item.autocomplete(this.$store, newValue).then(({ items, }) => {
-                      const obj = {}
-                      obj[ item.name ] = [
-                        ...map(items, a => ({
-                          name: get(a, get(item, 'map.name')),
-                          value: get(a, get(item, 'map.value')),
-                        }))
-                      ]
-                      this.autocompleteArr = Object.assign({}, this.autocompleteArr, obj)
-                    })
-                  }
-                })                 
-                this.$watch(`autocompleteArr.${item.name}`, (newValue, oldValue) => {
-                  debug(`Mutation detected: autocompleteArr.${item.name}`)
-                  debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
-                })                
+                this.setupTagInputWatcher(item) 
+                break
+              case 'BooleanSwitcher':
+                this.formData[ item.name ] = get(this.item, item.name) || false
                 break
               default:
                 this.formData[ item.name ] = get(this.item, item.name)
@@ -138,6 +120,9 @@
           map(this.structure, item => {
             if (item.isEditable) {
               switch (item.type) {
+                case 'BooleanSwitcher':
+                  this.formData[ item.name ] = false   
+                  break             
                 case 'TextInput':
                 case 'TextareaInput':
                   this.formData[ item.name ] = ''
@@ -152,9 +137,7 @@
           })
         }
       },
-      isShort (str) {
-        return str.length > 2 || false
-      },
+      isShort (str) { return str.length > 2 || false },
       save () {
         if (this.type === 'update') {
           this.update(this.formData).then(() => {
@@ -170,6 +153,31 @@
           })          
         }
       },
+      setupTagInputWatcher (item) {
+        /**
+          * - Setup watchers for this item.
+          */
+        this.$watch(`currTagInput.${item.name}`, (newValue, oldValue) => {
+          debug(`Mutation detected: currTagInput.${item.name}`)
+          debug('Data changed from ', oldValue, ' to ', newValue, '!')
+          if (item.autocomplete && newValue) {
+            item.autocomplete(this.$store, newValue).then(({ items, }) => {
+              const obj = {}
+              obj[ item.name ] = [
+                ...map(items, a => ({
+                  name: get(a, get(item, 'map.name')),
+                  value: get(a, get(item, 'map.value')),
+                }))
+              ]
+              this.autocompleteArr = Object.assign({}, this.autocompleteArr, obj)
+            })
+          }
+        })                 
+        this.$watch(`autocompleteArr.${item.name}`, (newValue, oldValue) => {
+          debug(`Mutation detected: autocompleteArr.${item.name}`)
+          debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
+        })       
+      },     
     },
     beforeMount () { this.initValue() },
     mounted () {},
@@ -205,36 +213,6 @@
       },
     },
     watch: {
-      // currTagInput: {
-      //   handler: function (newValue, oldValue) {
-      //     debug('Got something.')
-      //     debug(newValue, oldValue)
-      //     map(newValue, (item, key) => {
-      //       if (item !== oldValue[ key ]) {
-      //         debug(`Mutation detected: currTagInput.${key}`)
-      //         debug('Data changed from ', oldValue[ key ], ' to ', item, '!')
-      //         const fn = get(this.structure, `${key}.autocomplete`)
-      //         if (fn && item) {
-      //           fn(this.$store, item).then(({ items, }) => {
-      //             this.autocompleteArr[ key ] = [
-      //               ...map(items, a => ({
-      //                 name: get(a, get(this.structure, `${key}.map.name`)),
-      //                 value: get(a, get(this.structure, `${key}.map.value`)),
-      //               }))
-      //             ]
-      //           })
-      //         }          
-      //       }
-      //     })
-      //   },
-      //   deep: true,
-      // },
-      // autocompleteArr: {
-      //   handler: function (newValue, oldValue) {
-      //     debug('newValue, oldValue', newValue, oldValue)
-      //   },
-      //   deep: true,
-      // },
       isActive () {
         if (this.isActive) {
           preventScroll.on()
