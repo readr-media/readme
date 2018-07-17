@@ -249,6 +249,9 @@ export default {
     'ROLE_GUESTEDITOR': '總編',    
     'ROLE_MEMBER': '會員',    
     'CUSTOM_EDITOR': '當週總編',
+    'CUSTOM_EDITOR_TRUE': '是',    
+    'CUSTOM_EDITOR_FALSE': '否',    
+    'CUSTOM_EDITOR_NEVER': '-',    
     'MAIL': '信箱',
   },
   'EDITOR': {

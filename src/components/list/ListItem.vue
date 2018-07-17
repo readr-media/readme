@@ -7,8 +7,9 @@
       <div v-if="obj.isListable"
         :class="`list-item__content ${obj.name}`"
         :style="{ width: `${obj.width.list}px`, }">
-          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime') || type === 'header'"></span>
+          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher') || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
+          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name))" v-else-if="obj.type === 'Datetime'"></span>
         </div>
     </template>
@@ -42,7 +43,7 @@
       },
       get,
       mapValue (name, options, value) {
-        return this.$t(`${this.model.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', '').toUpperCase()}`)
+        return this.$t(`${this.model.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
       },
       normalizeDatetime (datetime) {
         return moment(datetime).format('YYYY-MM-DD hh:mm:ss')
