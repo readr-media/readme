@@ -3,7 +3,7 @@ const { authorize, constructScope, fetchPermissions } = require('./services/perm
 const { camelizeKeys } = require('humps')
 const { handlerError } = require('./comm')
 const { setupClientCache } = require('./middle/comm')
-// const { verifyToken } = require('./middle/member/comm')
+const { verifyToken, } = require('./middle/member/comm')
 const CONFIG = require('./config')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
@@ -45,6 +45,7 @@ const fetchPromise = (url, req) => {
   })
 }
 
+router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))
 router.use('/memo', require('./middle/memo'))

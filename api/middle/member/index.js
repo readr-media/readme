@@ -1,6 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { find, get, mapKeys } = require('lodash')
 const { handlerError } = require('../../comm')
+const { sendActivationMail, } = require('./comm')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member')
 const express = require('express')
@@ -44,26 +45,57 @@ router.use('/list', (req, res) => {
   })
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', (req, res, next) => {
   debug('Got a member creating call.')
   debug(req.body)
-  // res.send('ok')
+
+  const payload = Object.assign({}, req.body)
   const url = `${apiHost}/member`
+  delete payload.id
+  payload.active = 0
+
+  debug('payload:')
+  debug(payload)
+
   superagent
-  .post(url)
-  .send(req.body)
-  .end((error, response) => {
-    if (!error && response) {
-      res.send({ status: 200, text: 'Create a new member successfully.' })
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during create a new member : ${url}`)
-      console.error(error) 
-    }
+    .post(url)
+    .send(payload)
+    .end((err, resp) => {
+      if (!err) {
+        debug('Added member by Admin successfully.')
+        /**
+         * Next to send a verification email to new member.
+         */
+        next()
+      } else {
+        const errWrapped = handlerError(err, resp)
+        res.status(errWrapped.status).send({
+          status: errWrapped.status,
+          text: errWrapped.text
+        })
+        console.error(`Error occurred when creating new member: ${url}`)
+        console.error(err)         
+      }
+    })
+}, (req, res) => {
+  sendActivationMail({
+    id: req.body.mail,
+    email: req.body.mail,
+    role: req.body.role,
+    type: 'init',
+  }).then(outcome => {
+    debug('A member added by Admin')
+    debug('outcome')
+    // debug(outcome)
+    res.status(200).end()    
+  }).catch(outcome => {
+    const errWrapped = handlerError(outcome.err, outcome.res)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred when creating new member: ${url}`)
+    console.error(outcome.err)        
   })
 })
 

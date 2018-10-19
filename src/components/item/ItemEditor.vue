@@ -4,14 +4,14 @@
       <div class="panel__content">
         <template v-for="obj in structure">
           <div class="panel__content--item" v-if="!obj.isHidden">
-            <div class="title" :class="{ short: isShort($t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)) }">
-              <span v-text="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"></span>
+            <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
+              <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
             </div>
             <div class="value">
-              <template v-if="obj.isEditable">
+              <template v-if="obj.isEditable || (obj.isInitiliazible && type === 'create')">
                 <TextInput v-if="obj.type === 'TextInput'"
                   backgroundColor="#fff"
-                  :placeHolder="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"
+                  :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                   :value.sync="formData[ obj.name ]"></TextInput>
                 <Datetime v-else-if="obj.type === 'Datetime'"
                   v-model="formData[ obj.name ]"
@@ -19,11 +19,11 @@
                   input-class="datepicker__input"
                   type="datetime"></Datetime>
                 <TextareaInput v-else-if="obj.type === 'TextareaInput'"
-                  :placeholder="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"
+                  :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                   :value.sync="formData[ obj.name ]"></TextareaInput>
                 <template v-else-if="obj.type === 'RadioItem'">
                   <RadioItem v-for="opt in obj.options" :name="get(obj, 'name')"
-                    :label="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
+                    :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
                     :key="get(opt, 'name')"
                     :value="get(opt, 'value')"
                     :currSelected.sync="formData[ obj.name ]"></RadioItem>                
@@ -31,7 +31,7 @@
                 <QuillEditor v-else-if="obj.type === 'ContentEditor'"
                   :content.sync="formData[ obj.name ]" /></QuillEditor>
                 <TextTagItem v-else-if="obj.type === 'TextTagItem'"
-                  :placeholder="$t(`${listFlag}.${decamelize(obj.name).toUpperCase()}`)"
+                  :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                   :currTagValues.sync="formData[ obj.name ]"
                   :currInput.sync="currTagInput[ obj.name ]"
                   :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>     
@@ -39,7 +39,8 @@
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
               </template>
               <template v-else>
-                <span v-text="get(item, obj.name)"></span>
+                <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
+                <span v-else v-text="get(item, obj.name)"></span>
               </template>
             </div>
           </div>
@@ -63,7 +64,7 @@
   import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
-  import { get, map, } from 'lodash'
+  import { filter, get, map, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
 
@@ -80,7 +81,7 @@
       TextTagItem,
     },
     computed: {
-      listFlag () {
+      model () {
         return get(this.$route, 'params.item', '').toUpperCase()
       },
     },
@@ -118,7 +119,7 @@
           })
         } else if (this.type === 'create') {
           map(this.structure, item => {
-            if (item.isEditable) {
+            if (item.isEditable || item.isInitiliazible) {
               switch (item.type) {
                 case 'BooleanSwitcher':
                   this.formData[ item.name ] = false   
@@ -138,6 +139,9 @@
         }
       },
       isShort (str) { return str.length > 2 || false },
+      mapValue (name, options, value) {
+        return this.$t(`${this.model}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+      },    
       save () {
         if (this.type === 'update') {
           this.update(this.formData).then(() => {

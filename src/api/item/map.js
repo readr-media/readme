@@ -14,4 +14,5 @@ export const apiMap = [
   { item: 'project', target: 'project/create', method: 'POST', },
   { item: 'report', target: 'report/create', method: 'POST' },
   { item: 'memo', target: 'memo/create', method: 'POST' },
+  { item: 'member', target: 'member/create', method: 'POST' },
 ]

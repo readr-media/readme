@@ -9,6 +9,7 @@ Vue.use(ReadrPerm)
 const Index = () => import('src/views/Index.vue')
 const List = () => import('src/views/List.vue')
 const Login = () => import('src/views/Login.vue')
+const SetUp = () => import('src/views/SetUp.vue')
 
 export function createRouter () {
   return new Router({
@@ -16,8 +17,9 @@ export function createRouter () {
     fallback: false,
     scrollBehavior: () => ({ y: 0 }),
     routes: [
-      { path: '/', component: Index },
+      { path: '/', component: Index, },
       { path: '/login', component: Login, },
+      { path: '/setup/:type?', component: SetUp, },
       { path: '/:item/:subItem?', component: List, },
     ]
   })

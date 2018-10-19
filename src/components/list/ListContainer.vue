@@ -102,7 +102,7 @@
         const preForm = form
         /**
          * Have to normalize any datetime type data before send put request.
-         * And remove those data which is not editable(excluding 'ID').
+         * And remove those data which's not editable(excluding 'ID').
          */
         map(this.itemStructure, item => {
           debug('item.name', item.name, item.name.toUpperCase())
@@ -116,7 +116,7 @@
           } else if (item.type === 'TextInput' && item.isNumSentitive) {
             preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
           }
-          if (!item.isEditable && item.name.toUpperCase() !== 'ID') {
+          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
           }
