@@ -25,6 +25,16 @@ export const items = [
     active: true,
   },  
   {
+    name: 'enews',
+    route: 'enews',
+    type: 'wrapper',
+    active: true,
+    sub: [
+      { name: 'campaign', route: '', active: false, },
+      { name: 'enews-group-list', route: 'enews/enews-group-list', active: true, }
+    ]    
+  },
+  {
     name: 'RECOMMEND',
     route: '',
     active: false,

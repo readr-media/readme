@@ -32,8 +32,8 @@
   .header
     height 40px
     width 100%
-    background-image linear-gradient(to right, #2a2a2a 0%, transparent 10%, #2a2a2a 70%, #2a2a2a 100%)
-    box-shadow 1px 1px 5px rgba(42,42,42,0.6)
+    // background-image linear-gradient(to right, #2a2a2a 0%, transparent 10%, #2a2a2a 70%, #2a2a2a 100%)
+    // box-shadow 1px 1px 5px rgba(42,42,42,0.6)
     display flex
     justify-content space-between
     padding 8px

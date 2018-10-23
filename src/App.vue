@@ -35,20 +35,9 @@ button
   &:disabled
     cursor not-allowed
 .view
-  // max-width 800px
   min-height calc(100vh - 60px)
   margin 0 auto
   position relative
-  // background-color #4a4a4a
-  box-shadow 1px 1px 5px rgba(50,50,50,0.5)
-
-// .backstage
-//   min-height 100vh
-//   max-height 100vh
-//   padding-left 20% /* This Padding is for PageAside */
-//   background-color #4a4a4a
-//   main
-//     padding 20px 40px
     
 .datepicker__input
   padding-left 10px
@@ -66,9 +55,9 @@ button
 
 .app
   padding-top 50px
-  padding-left 220px
+  padding-left 300px
   position relative
-  background-color #4a4a4a
+  background-color #fff
   min-height 100vh
 
   &-header

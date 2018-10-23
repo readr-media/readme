@@ -7,6 +7,7 @@
       :placeholder="placeHolder"
       :style="{
         backgroundColor: background_color,
+        width,
       }"
       @focus="focus"
       @focusout="focusout"

@@ -82,7 +82,7 @@
     },
     computed: {
       model () {
-        return get(this.$route, 'params.item', '').toUpperCase()
+        return (get(this.$route, 'params.subItem', '').replace(/-/g, '_') || get(this.$route, 'params.item', '')).toUpperCase()
       },
     },
     data () {

@@ -144,5 +144,13 @@ export default {
     'AD': '廣告管理',
     'PAYMENT': '付款管理',
     'REPORT': '報導管理',
+    'ENEWS': '電子報管理',
+    'ENEWS_GROUP_LIST': '群組列表',
+  },
+  'ENEWS_GROUP_LIST': {
+    'GROUP_NAME': '群組名稱',
+    'COUNT': '人數',
+    'UPDATED_AT': '更新日期',
+    'CREATED_AT': '建立日期',
   },
 }

@@ -45,6 +45,12 @@ const fetchPromise = (url, req) => {
   })
 }
 
+router.use('/enews-group-list/list', (req, res) => {
+  res.json({ _items: [
+    { group_name: '滄海一聲笑', count: 222, updated_at: '2018-10-19T03:37:11Z', created_at: '2018-10-19T03:37:11Z', },
+    { group_name: '智齒大王', count: 32, updated_at: '2018-10-20T03:37:11Z', created_at: '2018-10-20T03:37:11Z', },
+  ]})
+})
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))

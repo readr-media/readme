@@ -58,16 +58,25 @@
         return get(this.$store, 'state.listItemsCount', 0)
       },
       itemStructure () {
-        return require(`src/model/${this.model}`).model
+        return this.modelData ? this.modelData.model : []
       },
       maxResult () {
-        return require(`src/model/${this.model}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
       },
       me () {
         return get(this.$store, 'state.profile.id')
       },
       model () {
-        return get(this.$route, 'params.item', '').toUpperCase()
+        return (get(this.$route, 'params.subItem', '').replace(/-/g, '_') || get(this.$route, 'params.item', '')).toUpperCase()
+      },
+      modelData () {
+        let model
+        try {
+          model = require(`src/model/${this.model}`)
+        } catch (error) {
+          console.log(`There's no model found:`, this.model)
+        }
+        return model
       },
       totalPages () {
         return Math.floor(this.itemsCount / this.maxResult) + 1
@@ -172,13 +181,13 @@
 </script>
 <style lang="stylus" scoped>
   .list-container
-    padding 30px 30px 70px
-    background-color rgba(250,250,250,0.5)
+    padding 30px 0 70px
+    // background-color rgba(250,250,250,0.5)
     position relative
     // height 750px
     // height 100%
-    &:hover
-      background-color rgba(250,250,250,0.9)
+    // &:hover
+    //   background-color rgba(250,250,250,0.9)
     &__footer
       // margin-top 20px
       position absolute
@@ -190,7 +199,7 @@
       display flex
       justify-content space-between
       align-items center
-      background-color rgba(0,0,0,0.7)
-      &:hover
-        background-color rgba(0,0,0,0.5)
+      // background-color rgba(0,0,0,0.7)
+      // &:hover
+      //   background-color rgba(0,0,0,0.5)
 </style>

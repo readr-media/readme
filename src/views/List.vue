@@ -1,15 +1,11 @@
 <template>
   <div class="list">
-    <div class="list__header">
-      <div class="list__title"><span v-text="model"></span></div>
-      <div class="list__wrapper right">
-        <div class="list__toolbox">
-          <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
-        </div>
-        <FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup>
+    <div class="list__header" v-if="type !== 'wrapper'">
+      <div class="list__wrapper left">
         <div class="list__search" :class="{ focused: isSearchFocused }" tabindex="0" @click="focusSearch" @focusout="focusSearchOut">
           <TextInput
-            :backgroundColor="isSearchFocused ? '#fff' : '#a3a3a3'"
+            width="400px"
+            :backgroundColor="isSearchFocused ? '#efefef' : '#eeeeee'"
             :placeHolder="$t('LIST.SEARCH')"
             :value.sync="filter"></TextInput>
           <div class="btn">
@@ -17,9 +13,15 @@
             <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else @click="search"></span>
           </div>
         </div>
+        <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
+      </div>
+      <div class="list__wrapper right">
+        <div class="list__toolbox">
+          <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
+        </div>
       </div>
     </div>
-    <ListContainer class="list__container" :flag="model" :refresh="refresh" :refreshItemsCount="refreshItemsCount">
+    <ListContainer class="list__container" :flag="model" :refresh="refresh" :refreshItemsCount="refreshItemsCount" v-if="type !== 'wrapper'">
       <template slot="new-item" slot-scope="props">
         <Editor type="create"
           :is="props.Editor"
@@ -29,6 +31,7 @@
       </template>
       <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
     </ListContainer>
+    <WrapperContainer v-else :items="sub"></WrapperContainer>
   </div>
 </template>
 <script>
@@ -36,8 +39,10 @@
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
+  import WrapperContainer from 'src/components/wrapper/WrapperContainer.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
-  import { get, map, } from 'lodash'
+  import { find, get, map, } from 'lodash'
+  import { items as NAV_ITEMS, } from 'src/configuration/navigationAside'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
@@ -63,16 +68,38 @@
       ListContainer,
       Spinner,
       TextInput,
+      WrapperContainer,
     },
     computed: {
+      isSubItem () {
+        return get(this.$route, 'params.subItem', '').replace(/-/g, '_')
+      },
       filterChecks () {
-        return require(`src/model/${this.model.toUpperCase()}`).filter || []
+        return this.modelData ? this.modelData.filter || [] : []
       },
       model () {
-        return get(this.$route, 'params.item')
+        return (get(this.$route, 'params.subItem', '') || get(this.$route, 'params.item')).replace(/-/g, '_')
+      },
+      modelRaw () {
+        return get(this.$route, 'params.subItem', '') || get(this.$route, 'params.item')
+      },
+      modelData () {
+        let model
+        try {
+          model = require(`src/model/${this.model.toUpperCase()}`)
+        } catch (error) {
+          console.log(`There's no model found:`, this.model.toUpperCase())
+        }
+        return model
       },
       maxResult () {
-        return require(`src/model/${this.model.toUpperCase()}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+      },
+      sub () {
+        return get(find(NAV_ITEMS, { name: this.modelRaw, }), 'sub', [])
+      },
+      type () {
+        return this.isSubItem ? 'list' : get(find(NAV_ITEMS, { name: this.modelRaw, }), 'type', 'list')
       },
     },
     data () {
@@ -110,7 +137,8 @@
           if (filter) { params[ key ] = true }
         })
         debug('params.maxResult', params.maxResult)
-        fetchList(this.$store, params, this.model).then(() => {
+        debug('this.model', this.modelRaw)
+        fetchList(this.$store, params, this.modelRaw).then(() => {
           this.isSpinnerActive = false
         })
       },
@@ -119,7 +147,7 @@
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
         })        
-        fetchItemsCount(this.$store, params, this.model)
+        fetchItemsCount(this.$store, params, this.modelRaw)
       },
       search () {
         this.filterSearched = this.filter
@@ -168,7 +196,7 @@
 </script>
 <style lang="stylus" scoped>
   .list
-    background-color #404040
+    // background-color #404040
     padding 10px 60px 40px 10px
     // position relative
     &__header
@@ -176,20 +204,6 @@
       margin-bottom 10px
       display flex
       justify-content space-between
-    &__title
-      // position absolute
-      // top 10px
-      // left 10px
-      min-width 300px
-      height 100%
-      font-size 1.375rem
-      color rgba(250,250,250,0.9)
-      background-color rgba(138,138,138,0.5)
-      border-radius 2px
-      padding 0 20px
-      display flex
-      justify-content center
-      align-items center
     &__search, &__toolbox, &__filter
       display flex
       align-items flex-end
@@ -202,12 +216,13 @@
       outline none
       padding 0 10px
     &__search
-      background-color #a3a3a3
+      background-color #eee
       height 30px
       margin-top 10px
       outline none
+      border-radius 2px
       &.focused
-        background-color #fff
+        background-color #efefef
         .btn
           span
             color #fff
@@ -240,21 +255,23 @@
     &__toolbox
       .btn
         cursor pointer
-        padding 5px
         display flex
         justify-content center
         align-items center
         margin 0 10px
-        border-radius 2px
         background-color #d3d3d3
         border 1px solid #d3d3d3
+        
+        font-size 1rem
+        padding 5px 20px
+        border-radius 4px
         &.create
-          background-color green
-          border 1px solid green
-          color #d3d3d3
+          background-color #000
+          border 1px solid #000
+          color #fff
           &:hover
-            background-color #13a213
-            border 1px solid #13a213
+            background-color #505050
+            border 1px solid #505050
             box-shadow 0 0 5px rgba(250,250,250, 0.7)
     &__wrapper
       display flex
