@@ -1,13 +1,33 @@
 <template>
   <label class="container">
-    <input type="checkbox" checked="checked">
+    <input type="checkbox" v-model="checked">
     <span class="checkmark"></span>
-  </label></template>
+  </label>
+</template>
 <script>
   export default {
     name: 'CheckboxItem',
+    data () {
+      return {
+        checked: false,
+      }
+    },
     methods: {},
     mounted () {},
+    props: {
+      value: {
+        type: Boolean,
+      },
+      id: {},
+    },
+    watch: {
+      checked () {
+        this.$emit('update:value', this.checked)
+      },
+      id () {
+        this.checked = false
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

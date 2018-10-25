@@ -12,9 +12,15 @@ export default {
     'EDIT': '修改',
     'DEL': '刪除',
     'ADD': '新增',
+    'BACK': '返回列表',
     'RECORD_COUNT': {
       'PREFIX': '共',
       'POSTFIX': '筆',
+    },
+    'ACTIONS': {
+      'EDIT': '編輯',
+      'DELETE': '刪除',
+      'COPY': '複製',
     },
   },
   'HEADER': {
@@ -152,5 +158,13 @@ export default {
     'COUNT': '人數',
     'UPDATED_AT': '更新日期',
     'CREATED_AT': '建立日期',
+    'ID': 'ID',
+    'NICKNAME': '暱稱',
+    'MAIL': '電子信箱',
+    'ACTIVE': '狀態',
+    'ACTIVE_0': '-',
+    'ACTIVE_1': '正常',
+    'ACTIVE_NEVER': '-',    
+    'NICKNAME': '暱稱',
   },
 }

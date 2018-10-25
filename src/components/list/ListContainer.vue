@@ -1,41 +1,55 @@
 <template>
-  <div class="list-container">
-    <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header"></ListItem></div>
-    <div class="list-container__items">
-      <template v-for="item in items">
-        <ListItem :item="item" :structure="itemStructure" :model="model" @editorOn="openEditor" @del="delItem"></ListItem>
-      </template>
-      <slot name="spinner"></slot>
-    </div>
-    <div class="list-container__footer">
-      <RecordCount :total="itemsCount"></RecordCount>
-      <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
-    </div>
-    <ItemEditor type="update"
-      :isActive.sync="isItemEditorActive"
-      :structure="itemStructure"
-      :item="editorItem"
-      :update="update"></ItemEditor>
-    <slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot>
+  <div class="list-container" :class="{ 'editor-active': isNewItemEditorActive, }">
+    <template v-if="!isNewItemEditorActive">
+      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__items">
+        <template v-for="item in items">
+          <ListItem :item="item" :structure="itemStructure" :model="model" @edit="updateItem" @checkup="checkup"></ListItem>
+        </template>
+        <slot name="spinner"></slot>
+      </div>
+      <div class="list-container__footer">
+        <RecordCount :total="itemsCount"></RecordCount>
+        <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
+      </div>
+    </template>
+    <template v-else>
+      <ItemEditor type="create" slot="editor"
+        :isActive.sync="isNewItemActive"
+        :structure="itemStructure"
+        :add="add"></ItemEditor>        
+      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
+    </template>
+    <ItemEditorLightBox :isActive.sync="isItemEditorActive">
+      <ItemEditor type="update" slot="editor"
+        :isActive.sync="isItemEditorActive"
+        :structure="itemStructure"
+        :item="editorItem"
+        :update="update"></ItemEditor>
+    </ItemEditorLightBox>
   </div>
 </template>
 <script>
   import ItemEditor from 'src/components/item/ItemEditor.vue'
+  import ItemEditorLightBox from 'src/components/item/ItemEditorLightBox.vue'
   import ListItem from 'src/components/list/ListItem.vue'
   import PaginationNav from 'src/components/list/PaginationNav.vue'
   import RecordCount from 'src/components/list/RecordCount.vue'
   import moment from 'moment'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
-  import { get, map, } from 'lodash'
+  import { filter, get, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
   const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
   const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
-  const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
+  // const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
+  const delItems = (store, params, flag) => store.dispatch('DEL_ITEMS', { params, flag, })
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, })
   export default {
     name: 'ListContainer',
     components: {
       ItemEditor,
+      ItemEditorLightBox,
       ListItem,
       PaginationNav,
       RecordCount,
@@ -51,6 +65,9 @@
         })
         return item
       },
+      isSubItem () {
+        return get(this.$route, 'params.subItem') || false
+      },
       items () {
         return get(this.$store, 'state.list', [])
       },
@@ -58,7 +75,7 @@
         return get(this.$store, 'state.listItemsCount', 0)
       },
       itemStructure () {
-        return this.modelData ? this.modelData.model : []
+        return this.modelData ? this.isSubItem ? this.modelData.subModel : this.modelData.model : []
       },
       maxResult () {
         return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
@@ -67,7 +84,7 @@
         return get(this.$store, 'state.profile.id')
       },
       model () {
-        return (get(this.$route, 'params.subItem', '').replace(/-/g, '_') || get(this.$route, 'params.item', '')).toUpperCase()
+        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
       modelData () {
         let model
@@ -85,7 +102,9 @@
     data () {
       return {
         curr_page: this.currPage,
+        checkedItems: {},
         editorItem: {},
+        isNewItemActive: false,
         isItemEditorActive: false,
       }
     },
@@ -99,14 +118,29 @@
           this.refresh({})
         })
       },
-      delItem (item) {
-        return del(this.$store, item, this.flag).then(() => {
-          /**
-           * Go refresh item-list.
-           */
-          this.refresh({})          
-        })
+      checkup ({ id, value }) {
+        this.checkedItems[ id ] = value
       },
+      copy () {},
+      del () {
+        switchAlert(this.$store, true, 'Are you sure about doing this?', () => {
+          // this.$emit('del', this.item)
+          return delItems(this.$store, {
+            ids: filter(map(this.checkedItems, (item, key) => (item && key))),
+          }, this.flag).then(() => {
+            this.checkedItems = {}
+            return this.refresh({})
+          })
+        })        
+      },
+      // delItem (item) {
+      //   return del(this.$store, item, this.flag).then(() => {
+      //     /**
+      //      * Go refresh item-list.
+      //      */
+      //     this.refresh({})          
+      //   })
+      // },
       normalizeData (form) {
         const preForm = form
         /**
@@ -136,7 +170,7 @@
         })
         return preForm
       },
-      openEditor (item) {
+      updateItem (item) {
         this.isItemEditorActive = true
         this.editorItem = item
       },
@@ -150,10 +184,16 @@
         })
       },
     },
-    mounted () {},
+    mounted () {
+      this.isNewItemActive = this.isNewItemEditorActive
+    },
     props: {
       flag: {
         type: String,
+      },
+      isNewItemEditorActive: {
+        type: Boolean,
+        default: false,
       },
       refresh: {
         type: Function,
@@ -176,20 +216,23 @@
           },
         })
       },
+      isNewItemEditorActive () {
+        this.isNewItemEditorActive && (this.isNewItemActive = this.isNewItemEditorActive)
+      },
+      isNewItemActive () {
+        !this.isNewItemActive && this.$emit('update:isNewItemEditorActive', false)
+      },
     },
   }
 </script>
 <style lang="stylus" scoped>
   .list-container
     padding 30px 0 70px
-    // background-color rgba(250,250,250,0.5)
     position relative
-    // height 750px
-    // height 100%
-    // &:hover
-    //   background-color rgba(250,250,250,0.9)
+    &.editor-active
+      // height calc(100vh - 100px)
+      height 100%
     &__footer
-      // margin-top 20px
       position absolute
       bottom 0
       left 0
@@ -199,7 +242,4 @@
       display flex
       justify-content space-between
       align-items center
-      // background-color rgba(0,0,0,0.7)
-      // &:hover
-      //   background-color rgba(0,0,0,0.5)
 </style>

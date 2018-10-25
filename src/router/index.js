@@ -20,7 +20,7 @@ export function createRouter () {
       { path: '/', component: Index, },
       { path: '/login', component: Login, },
       { path: '/setup/:type?', component: SetUp, },
-      { path: '/:item/:subItem?', component: List, },
+      { path: '/:item/:subItem?/:id?', component: List, },
     ]
   })
 }

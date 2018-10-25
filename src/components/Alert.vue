@@ -58,14 +58,14 @@
     height 100vh
     width 100vw
     background-color rgba(0,0,0,0.8)
-    z-index 9999
+    z-index 99999
     display flex
     justify-content center
     align-items center
     .panel
       width 400px
       // height 200px
-      background-color rgba(200,200,200,0.8)
+      background-color rgba(255,255,255,0.8)
       box-shadow 0px 0px 10px rgba(250,250,250,0.8)
       border-radius 2px
       padding 20px 50px 50px

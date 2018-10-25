@@ -27,8 +27,10 @@ export default {
 </script>
 
 <style lang="stylus">
-a
+a, a:hover, a:link, a:visited
   text-decoration none
+  color #000
+  
 
 button
   cursor pointer

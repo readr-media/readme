@@ -1,41 +1,49 @@
 <template>
   <div class="list">
-    <div class="list__header" v-if="type !== 'wrapper'">
-      <div class="list__wrapper left">
-        <div class="list__search" :class="{ focused: isSearchFocused }" tabindex="0" @click="focusSearch" @focusout="focusSearchOut">
-          <TextInput
-            width="400px"
-            :backgroundColor="isSearchFocused ? '#efefef' : '#eeeeee'"
-            :placeHolder="$t('LIST.SEARCH')"
-            :value.sync="filter"></TextInput>
-          <div class="btn">
-            <span v-text="$t('LIST.SEARCH_APPLIED')" class="applied" v-if="isFilterApplied"></span>
-            <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else @click="search"></span>
+    <template v-if="type !== 'wrapper'">
+      <div class="list__header">
+        <template v-if="!isNewItemEditorActive">
+          <div class="list__wrapper left">
+            <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
+            <ListFilter class="list__search" :value.sync="filter"></ListFilter>
           </div>
-        </div>
-        <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
-      </div>
-      <div class="list__wrapper right">
-        <div class="list__toolbox">
-          <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
-        </div>
-      </div>
-    </div>
-    <ListContainer class="list__container" :flag="model" :refresh="refresh" :refreshItemsCount="refreshItemsCount" v-if="type !== 'wrapper'">
-      <template slot="new-item" slot-scope="props">
-        <Editor type="create"
-          :is="props.Editor"
-          :isActive.sync="isNewItemEditorActive"
-          :structure="props.structure"
-          :add="props.add"></Editor>
-      </template>
-      <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
-    </ListContainer>
+          <div class="list__wrapper right">
+            <div class="list__toolbox">
+              <div class="btn back" @click="backToParent" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
+              <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="list__wrapper left"></div>
+          <div class="list__wrapper right">
+            <div class="list__toolbox">
+              <div class="btn back" @click="back"><span v-text="$t('LIST.BACK')"></span></div>
+            </div>
+          </div>
+        </template>
+      </div>      
+      <ListContainer class="list__container"
+        :flag="model"
+        :refresh="refresh"
+        :refreshItemsCount="refreshItemsCount"
+        :isNewItemEditorActive.sync="isNewItemEditorActive">
+        <!--template slot="new-item" slot-scope="props">
+          <Editor type="create"
+            :is="props.Editor"
+            :isActive.sync="isNewItemEditorActive"
+            :structure="props.structure"
+            :add="props.add"></Editor>
+        </template-->
+        <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
+      </ListContainer>
+    </template>
     <WrapperContainer v-else :items="sub"></WrapperContainer>
   </div>
 </template>
 <script>
-  import FilterGroup from 'src/components/list/FilterGroup.vue'
+  // import FilterGroup from 'src/components/list/FilterGroup.vue'
+  import ListFilter from 'src/components/list/ListFilter.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
@@ -64,7 +72,8 @@
   export default {
     name: 'List',
     components: {
-      FilterGroup,
+      // FilterGroup,
+      ListFilter,
       ListContainer,
       Spinner,
       TextInput,
@@ -72,16 +81,16 @@
     },
     computed: {
       isSubItem () {
-        return get(this.$route, 'params.subItem', '').replace(/-/g, '_')
+        return get(this.$route, 'params.subItem', '') || false
       },
       filterChecks () {
         return this.modelData ? this.modelData.filter || [] : []
       },
       model () {
-        return (get(this.$route, 'params.subItem', '') || get(this.$route, 'params.item')).replace(/-/g, '_')
+        return get(this.$route, 'params.item').replace(/-/g, '_')
       },
       modelRaw () {
-        return get(this.$route, 'params.subItem', '') || get(this.$route, 'params.item')
+        return get(this.$route, 'params.item')
       },
       modelData () {
         let model
@@ -107,7 +116,7 @@
         filter: '',
         filterSearched: '',
         filterChecksCurrent: {},
-        isFilterApplied: false,
+        // isFilterApplied: false,
         isNewItemEditorActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
@@ -115,6 +124,12 @@
       }
     },
     methods: {
+      back () {
+        this.isNewItemEditorActive = false
+      },
+      backToParent () {
+        this.$router.push(`/${get(this.$route, 'params.item')}`)
+      },
       create () {
         this.isNewItemEditorActive = true
       },
@@ -133,6 +148,7 @@
           params.page = this.page
         }
         params.maxResult = this.maxResult
+        params.id = this.isSubItem || undefined
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
         })
@@ -151,7 +167,7 @@
       },
       search () {
         this.filterSearched = this.filter
-        this.isFilterApplied = true
+        // this.isFilterApplied = true
         Promise.all([
           this.refresh({
             params: {
@@ -173,6 +189,12 @@
       ])
     },
     watch: {
+      '$route': function () {
+        Promise.all([
+          this.refresh({}),
+          this.refreshItemsCount({})
+        ])        
+      },
       model () {
         this.isSpinnerActive = true
         Promise.all([
@@ -182,7 +204,8 @@
       },
       filter () {
         debug('Mutation detected: filter', this.filter)
-        this.isFilterApplied = this.filterSearched === this.filter
+        this.search()
+        // this.isFilterApplied = this.filterSearched === this.filter
       },
       filterChecksCurrent () {
         debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
@@ -216,42 +239,7 @@
       outline none
       padding 0 10px
     &__search
-      background-color #eee
-      height 30px
-      margin-top 10px
-      outline none
-      border-radius 2px
-      &.focused
-        background-color #efefef
-        .btn
-          span
-            color #fff
-      .btn
-        display flex
-        justify-content center
-        align-items center
-        padding 2px
-        height 100%
-        span
-          box-shadow 0 0 5px rgba(0,0,0,0.5)
-          color #d3d3d3
-          display flex
-          justify-content center
-          align-items center
-          width 100%
-          height 100%
-          padding 0 7px
-          border-radius 3px
-          font-size 0.8125rem
-          &.applied
-            cursor pointer
-            background-color #909090
-          &.apply
-            background-color #a80606
-            &:hover
-              background-color #d40505
-              color #fff
-
+      width 400px
     &__toolbox
       .btn
         cursor pointer
@@ -265,10 +253,12 @@
         font-size 1rem
         padding 5px 20px
         border-radius 4px
+        color #fff
+        &.back
+          background-color #a0a0a0
         &.create
           background-color #000
           border 1px solid #000
-          color #fff
           &:hover
             background-color #505050
             border 1px solid #505050

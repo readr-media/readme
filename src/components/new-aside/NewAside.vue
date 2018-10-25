@@ -2,14 +2,14 @@
   <div class="aside">
     <div class="aside__container">
       <router-link to="/" class="aside--item" v-show="showIndex"><span v-text="$t('NAVIGATION.INDEX')"></span></router-link>
-      <template v-for="item in asideItems">
+      <template v-for="item in asideItems" v-if="!get(item, 'isSubItem', false)">
         <router-link :to="`/${get(item, 'route', '')}`" class="aside--item" v-if="get(item, 'active')">
           <span v-text="$t(`NAVIGATION.${(get(item, 'name', '').replace(/-/g, '_')).toUpperCase()}`)"></span>
         </router-link>
         <template v-for="sub in get(item, 'sub')">
           <router-link class="aside--item sub" v-if="get(sub, 'active')"
             :to="`/${get(sub, 'route', '')}`" 
-            :class="{ active: get(item, 'name') === get($route, 'params.item'), }">
+            :class="{ active: get(item, 'name') === get($route, 'params.item') || get(sub, 'name') === get($route, 'params.item'), }">
             <span v-text="$t(`NAVIGATION.${(get(sub, 'name', '').replace(/-/g, '_')).toUpperCase()}`)"></span>
           </router-link>
         </template>

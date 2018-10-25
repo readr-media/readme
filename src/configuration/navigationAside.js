@@ -31,8 +31,14 @@ export const items = [
     active: true,
     sub: [
       { name: 'campaign', route: '', active: false, },
-      { name: 'enews-group-list', route: 'enews/enews-group-list', active: true, }
+      { name: 'enews-group-list', route: 'enews-group-list', active: true, }
     ]    
+  },
+  {
+    name: 'enews-group-list',
+    route: 'enews-group-list',
+    active: true, 
+    isSubItem: true, 
   },
   {
     name: 'RECOMMEND',

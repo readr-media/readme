@@ -6,7 +6,7 @@ export const apiMap = [
   { item: 'project', target: 'project', method: 'DELETE', },
   { item: 'report', target: 'report', method: 'DELETE' },
   { item: 'memo', target: 'memo', method: 'DELETE' },
-  { item: 'member', target: 'member', method: 'DELETE' },
+  { item: 'member', target: 'members', method: 'DELETE' },
   { item: 'project', target: 'project', method: 'GET', },
   { item: 'report', target: 'report', method: 'GET' },
   { item: 'memo', target: 'memo', method: 'GET' },

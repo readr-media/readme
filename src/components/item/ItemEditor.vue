@@ -48,7 +48,7 @@
       </div>
       <div class="panel__actions">
         <div class="save" @click="save"><span v-text="$t('EDITOR.SAVE')"></span></div>
-        <div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div>
+        <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
   </ItemEditorLayout>
@@ -82,7 +82,7 @@
     },
     computed: {
       model () {
-        return (get(this.$route, 'params.subItem', '').replace(/-/g, '_') || get(this.$route, 'params.item', '')).toUpperCase()
+        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
     },
     data () {

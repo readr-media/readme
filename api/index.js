@@ -9,7 +9,7 @@ const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
-const debug = require('debug')('READR:api')
+const debug = require('debug')('README:api')
 const express = require('express')
 const fs = require('fs')
 const isProd = process.env.NODE_ENV === 'production'
@@ -46,16 +46,27 @@ const fetchPromise = (url, req) => {
 }
 
 router.use('/enews-group-list/list', (req, res) => {
-  res.json({ _items: [
-    { group_name: '滄海一聲笑', count: 222, updated_at: '2018-10-19T03:37:11Z', created_at: '2018-10-19T03:37:11Z', },
-    { group_name: '智齒大王', count: 32, updated_at: '2018-10-20T03:37:11Z', created_at: '2018-10-20T03:37:11Z', },
-  ]})
+  debug('Got id', req.query.id)
+  debug('Got id', req.body.id)
+
+  if (!req.query.id) {
+    res.json({ _items: [
+      { group_name: '滄海一聲笑', count: 222, updated_at: '2018-10-19T03:37:11Z', created_at: '2018-10-19T03:37:11Z', id: 0, },
+      { group_name: '智齒大王', count: 32, updated_at: '2018-10-20T03:37:11Z', created_at: '2018-10-20T03:37:11Z', id: 1, },
+    ]})
+  } else {
+    res.json({ _items: [
+      { nickname: '滄海一聲fasdff笑', id: 222, mail: 'fasdf', active: 1, updated_at: '2018-10-19T03:37:11Z', created_at: '2018-10-19T03:37:11Z', },
+      { nickname: '智asdff齒大王', id: 32, mail: 'fasd22', active: 0, updated_at: '2018-10-20T03:37:11Z', created_at: '2018-10-20T03:37:11Z', },
+    ]})
+  }
 })
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))
 router.use('/memo', require('./middle/memo'))
 router.use('/member', require('./middle/member'))
+router.use('/members', require('./middle/member'))
 router.use('/image-post', require('./middle/image'))
 router.use('/members/nickname', authVerify)
 
