@@ -2,14 +2,14 @@
   <div class="list">
     <template v-if="type !== 'wrapper'">
       <div class="list__header">
-        <template v-if="!isNewItemEditorActive">
+        <template v-if="!isEditorActive">
           <div class="list__wrapper left">
             <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
             <ListFilter class="list__search" :value.sync="filter"></ListFilter>
           </div>
           <div class="list__wrapper right">
             <div class="list__toolbox">
-              <div class="btn back" @click="backToParent" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
+              <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
               <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
             </div>
           </div>
@@ -26,15 +26,7 @@
       <ListContainer class="list__container"
         :flag="model"
         :refresh="refresh"
-        :refreshItemsCount="refreshItemsCount"
-        :isNewItemEditorActive.sync="isNewItemEditorActive">
-        <!--template slot="new-item" slot-scope="props">
-          <Editor type="create"
-            :is="props.Editor"
-            :isActive.sync="isNewItemEditorActive"
-            :structure="props.structure"
-            :add="props.add"></Editor>
-        </template-->
+        :refreshItemsCount="refreshItemsCount">
         <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
       </ListContainer>
     </template>
@@ -80,8 +72,14 @@
       WrapperContainer,
     },
     computed: {
+      isEditorActive () {
+        return get(this.$route, 'params.subItem') === 'new'
+          || get(this.$route, 'params.action') === 'new'
+          || get(this.$route, 'params.subItem') === 'edit'
+          || get(this.$route, 'params.action') === 'edit'
+      },
       isSubItem () {
-        return get(this.$route, 'params.subItem', '') || false
+        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
       },
       filterChecks () {
         return this.modelData ? this.modelData.filter || [] : []
@@ -117,7 +115,6 @@
         filterSearched: '',
         filterChecksCurrent: {},
         // isFilterApplied: false,
-        isNewItemEditorActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
         page: DEFAULT_PAGE,
@@ -125,13 +122,15 @@
     },
     methods: {
       back () {
-        this.isNewItemEditorActive = false
+        this.$router.go(-1)
       },
       backToParent () {
         this.$router.push(`/${get(this.$route, 'params.item')}`)
       },
       create () {
-        this.isNewItemEditorActive = true
+        this.isSubItem
+          ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}/new`)
+          : this.$router.push(`/${get(this.$route, 'params.item')}/new`)
       },
       focusSearch () {
         this.isSearchFocused = true

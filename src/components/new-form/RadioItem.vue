@@ -48,8 +48,9 @@
       display none
       &:checked ~ .radio--mock
         > .radio
-          background-color rgba(150,111,0,0.7)
-          border solid 1px rgba(150,111,0,0.7)
+          background-color #ddcf21
+          border solid 1px #ddcf21
+          box-shadow 0 0 5px rgba(0,0,0,0.1)
     .radio--mock
       position relative
       padding-left 20px

@@ -1,8 +1,8 @@
 <template>
-  <ItemEditorLayout v-if="isActive">
+  <ItemEditorLayout>
     <div class="panel">
       <div class="panel__content">
-        <template v-for="obj in structure">
+        <template v-for="obj in sortedStructure">
           <div class="panel__content--item" v-if="!obj.isHidden">
             <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
               <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
@@ -61,10 +61,10 @@
   import TextareaInput from 'src/components/new-form/TextareaInput.vue'
   import TextTagItem from 'src/components/new-form/TextTagItem.vue'
   import QuillEditor from 'src/components/new-form/QuillEditor.vue'
-  import preventScroll from 'prevent-scroll'
+  // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
-  import { filter, get, map, } from 'lodash'
+  import { filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
 
@@ -84,6 +84,10 @@
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
+      sortedStructure () {
+        debug(`sortBy(this.structure, [ obj => get(obj, 'order.editor') ])`, sortBy(this.structure, [ obj => get(obj, 'order.editor') ]))
+        return sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
+      },
     },
     data () {
       return {
@@ -93,7 +97,9 @@
       }
     },
     methods: {
-      close () { this.$emit('update:isActive', false) },
+      // close () {
+      //   this.$emit('update:isActive', false)
+      // },
       decamelize,
       get,
       initValue () {
@@ -130,6 +136,7 @@
                   break
                 case 'TextTagItem':
                   this.formData[ item.name ] = []
+                  this.setupTagInputWatcher(item) 
                   break
                 default:
                   this.formData[ item.name ] = null
@@ -145,13 +152,15 @@
       save () {
         if (this.type === 'update') {
           this.update(this.formData).then(() => {
-            this.$emit('update:isActive', false)
+            // this.$emit('update:isActive', false)
+            this.$emit('saved')
           }).catch(err => {
             debug('err', err)
           })
         } else if (this.type === 'create') {
           this.add(this.formData).then(() => {
-            this.$emit('update:isActive', false)
+            // this.$emit('update:isActive', false)
+            this.$emit('saved')
           }).catch(err => {
             debug('err', err)
           })          
@@ -194,10 +203,10 @@
           resolve()
         }),
       },
-      isActive: {
-        type: Boolean,
-        default: () => false,
-      },
+      // isActive: {
+      //   type: Boolean,
+      //   default: () => false,
+      // },
       structure: Array,
       item: {
         type: Object,
@@ -217,13 +226,13 @@
       },
     },
     watch: {
-      isActive () {
-        if (this.isActive) {
-          preventScroll.on()
-        } else {
-          preventScroll.off()
-        }
-      },   
+      // isActive () {
+      //   if (this.isActive) {
+      //     preventScroll.on()
+      //   } else {
+      //     preventScroll.off()
+      //   }
+      // },   
       item () { this.initValue() }, 
       structure () { this.initValue() },
     },

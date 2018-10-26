@@ -13,7 +13,7 @@ const config = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 const { filter, get } = require('lodash')
 
-const debug = require('debug')('READR:server')
+const debug = require('debug')('README:server')
 const isProd = process.env.NODE_ENV === 'production'
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
 const serverInfo =

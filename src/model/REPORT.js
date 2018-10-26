@@ -13,8 +13,8 @@ const authorAutoComplete = (store, keyword) => {
   })
 }
 export const model = [
-  { name: 'id', type: 'TextInput', width: { list: '80', editor: '500' }, isEditable: false, isListable: true, },
-  { name: 'title', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, },
+  { name: 'id', type: 'TextInput', width: { list: '80', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, },
+  { name: 'title', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
   { name: 'ogTitle', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: true, },
   { name: 'slug', type: 'TextInput', width: { list: '110', editor: '400' }, isEditable: true, isListable: true, },
   { name: 'projectId', type: 'TextInput', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, isNumSentitive: true, },

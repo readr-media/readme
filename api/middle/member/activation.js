@@ -1,6 +1,6 @@
 const Cookies = require('cookies')
 const config = require('../../config')
-const debug = require('debug')('READR:api:member:activation')
+const debug = require('debug')('README:api:member:activation')
 const express = require('express')
 const jwtService = require('../../services')
 const router = express.Router()

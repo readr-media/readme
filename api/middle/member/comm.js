@@ -5,7 +5,7 @@ const superagent = require('superagent')
 
 const { redisFetching, } = require('../redis')
 
-const debug = require('debug')('READR:api:member:comm')
+const debug = require('debug')('README:api:member:comm')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 const sendEmail = ({ email, content, subject, token, }) => new Promise((resolve, reject) => {

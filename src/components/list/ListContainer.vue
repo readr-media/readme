@@ -1,10 +1,10 @@
 <template>
-  <div class="list-container" :class="{ 'editor-active': isNewItemEditorActive, }">
-    <template v-if="!isNewItemEditorActive">
+  <div class="list-container" :class="{ 'editor-active': activeEditor, }">
+    <template v-if="!activeEditor">
       <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
         <template v-for="item in items">
-          <ListItem :item="item" :structure="itemStructure" :model="model" @edit="updateItem" @checkup="checkup"></ListItem>
+          <ListItem :item="item" :structure="itemStructure" :model="model" @edit="editItem" @checkup="checkup"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -14,24 +14,21 @@
       </div>
     </template>
     <template v-else>
-      <ItemEditor type="create" slot="editor"
-        :isActive.sync="isNewItemActive"
+      <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
+        @saved="itemSaved"
         :structure="itemStructure"
         :add="add"></ItemEditor>        
-      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
-    </template>
-    <ItemEditorLightBox :isActive.sync="isItemEditorActive">
-      <ItemEditor type="update" slot="editor"
-        :isActive.sync="isItemEditorActive"
+      <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
+        @saved="itemSaved"
         :structure="itemStructure"
         :item="editorItem"
         :update="update"></ItemEditor>
-    </ItemEditorLightBox>
+      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
+    </template>
   </div>
 </template>
 <script>
   import ItemEditor from 'src/components/item/ItemEditor.vue'
-  import ItemEditorLightBox from 'src/components/item/ItemEditorLightBox.vue'
   import ListItem from 'src/components/list/ListItem.vue'
   import PaginationNav from 'src/components/list/PaginationNav.vue'
   import RecordCount from 'src/components/list/RecordCount.vue'
@@ -49,7 +46,6 @@
     name: 'ListContainer',
     components: {
       ItemEditor,
-      ItemEditorLightBox,
       ListItem,
       PaginationNav,
       RecordCount,
@@ -58,6 +54,13 @@
       Editor () {
         return ItemEditor
       },      
+      activeEditor () {
+        return get(this.$route, 'params.subItem') === 'new' || get(this.$route, 'params.action') === 'new'
+          ? 'new'
+          : get(this.$route, 'params.subItem') === 'edit' || get(this.$route, 'params.action') === 'edit'
+          ? 'edit'
+          : ''
+      },
       header () {
         const item = {}
         map(this.itemStructure, i => { 
@@ -66,7 +69,7 @@
         return item
       },
       isSubItem () {
-        return get(this.$route, 'params.subItem') || false
+        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
       },
       items () {
         return get(this.$store, 'state.list', [])
@@ -104,8 +107,6 @@
         curr_page: this.currPage,
         checkedItems: {},
         editorItem: {},
-        isNewItemActive: false,
-        isItemEditorActive: false,
       }
     },
     methods: {
@@ -124,7 +125,6 @@
       copy () {},
       del () {
         switchAlert(this.$store, true, 'Are you sure about doing this?', () => {
-          // this.$emit('del', this.item)
           return delItems(this.$store, {
             ids: filter(map(this.checkedItems, (item, key) => (item && key))),
           }, this.flag).then(() => {
@@ -141,6 +141,13 @@
       //     this.refresh({})          
       //   })
       // },
+      editItem (item) {
+        this.editorItem = item
+        this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
+      },
+      itemSaved () {
+        this.$router.go(-1)
+      },
       normalizeData (form) {
         const preForm = form
         /**
@@ -170,10 +177,6 @@
         })
         return preForm
       },
-      updateItem (item) {
-        this.isItemEditorActive = true
-        this.editorItem = item
-      },
       update (form) {
         const normalizedForm = this.normalizeData(form)
         return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
@@ -185,15 +188,10 @@
       },
     },
     mounted () {
-      this.isNewItemActive = this.isNewItemEditorActive
     },
     props: {
       flag: {
         type: String,
-      },
-      isNewItemEditorActive: {
-        type: Boolean,
-        default: false,
       },
       refresh: {
         type: Function,
@@ -215,12 +213,6 @@
             page: this.curr_page,
           },
         })
-      },
-      isNewItemEditorActive () {
-        this.isNewItemEditorActive && (this.isNewItemActive = this.isNewItemEditorActive)
-      },
-      isNewItemActive () {
-        !this.isNewItemActive && this.$emit('update:isNewItemEditorActive', false)
       },
     },
   }

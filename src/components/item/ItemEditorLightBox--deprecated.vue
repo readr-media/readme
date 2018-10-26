@@ -1,7 +1,9 @@
 <template>
   <div class="editor-lightbox" v-if="isActive">
     <div class="panel">
-      <slot name="editor" class="editor"></slot>
+      <div class="editor">
+        <slot name="editor"></slot>
+      </div>
       <div class="close" @click="close" ref="close"><img src="/public/icons/icons8-delete-30.png"></div>
     </div>
   </div>
@@ -39,13 +41,15 @@
     justify-content center
     align-items center
     z-index 9999
-    .panel
+    > .panel
       width 900px
-      padding 20px 30px 10px
+      padding 40px 30px 10px
       background-color #eee
       border-radius 2px
       position relative
       .editor
+        overflow auto
+        max-height calc(99vh - 50px)
         width 100%
       .close
         cursor pointer
@@ -53,9 +57,13 @@
         top 10px
         right 10px
         height 36px
-        width 35px
+        width calc(100% - 10px)
+        text-align right
+        background-color #eee
+        z-index 998
         img
-          width 100%
+          // width 100%
+          height 100%
           object-fit contain
           object-position center
 </style>
