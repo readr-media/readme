@@ -57,7 +57,7 @@ export default {
     'MEMO_POINTS': '所需點數',
     'PROGRESS': '進度',
     'UPDATED_BY': '最後更新',
-    'KEYWORD': '關鍵字',
+    'TAGS': '關鍵字',
   },
   'REPORT': {
     'AUTHORS': '作者',

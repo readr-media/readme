@@ -1,5 +1,5 @@
 const { camelizeKeys } = require('humps')
-const { find, get, mapKeys } = require('lodash')
+const { find, get, map, mapKeys } = require('lodash')
 const { handlerError } = require('../../comm')
 const config = require('../../config')
 const debug = require('debug')('README:api:project')
@@ -62,8 +62,9 @@ router.post('/create', (req, res) => {
 
 router.put('/update', (req, res) => {
   debug('Got a project updating call.')
-  debug(req.body)
   const url = `${apiHost}/project`
+  req.body.tags = get(req, 'body.tags') && map(get(req, 'body.tags', []), tag => tag.value)
+  debug(req.body)
   superagent
   .put(url)
   .send(req.body)
