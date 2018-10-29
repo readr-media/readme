@@ -35,7 +35,7 @@
         &--item
           // width 400px
           display flex
-          align-items center
+          align-items flex-start
           font-size 1.25rem
           line-height normal
           // margin-right 40px

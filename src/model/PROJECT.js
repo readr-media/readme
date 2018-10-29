@@ -34,8 +34,8 @@ export const model = [
   { name: 'publishedAt', type: 'Datetime', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 4 }, },
   { name: 'description', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, order: { editor: 2 }, },
   { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 2.5 }, },
-  { name: 'heroImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, order: { editor: 3 }, },
-  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, order: { editor: 3 }, },
+  { name: 'heroImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 4 }, },
+  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 4 }, },
   { name: 'updatedBy', type: 'TextInput', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, order: { editor: 5 }, },
   { name: 'tags', type: 'TextTagItem', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id',  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
 ]

@@ -37,6 +37,8 @@
                   :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>     
                 <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
+                <ImageUploader v-else-if="obj.type === 'Image'"
+                  :imageUrl.sync="formData.heroImage"></ImageUploader>
               </template>
               <template v-else>
                 <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
@@ -55,6 +57,7 @@
 </template>
 <script>
   import BooleanSwitcher from 'src/components/new-form/BooleanSwitcher.vue'
+  import ImageUploader from 'src/components/new-form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import RadioItem from 'src/components/new-form/RadioItem.vue'
   import TextInput from 'src/components/new-form/TextInput.vue'
@@ -73,6 +76,7 @@
     components: {
       BooleanSwitcher,
       Datetime,
+      ImageUploader,
       ItemEditorLayout,
       QuillEditor,
       RadioItem,

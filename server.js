@@ -74,7 +74,7 @@ const serve = (path, cache) => express.static(resolve(path), {
 })
 
 app.use(compression({ threshold: 0 }))
-app.use(favicon('./public/favicon-48x48.png'))
+app.use(favicon('./public/favicon-50x50.png'))
 app.use('/dist', serve(path.join(__dirname, './dist'), true))
 app.use('/public', serve(path.join(__dirname, './public'), true))
 app.use('/manifest.json', serve(path.join(__dirname, './manifest.json'), true))
@@ -132,10 +132,10 @@ function render (req, res, next) {
   }
 
   let context = {
-    title: 'Readr Admin',
+    title: 'ReadMe',
     ogTitle: 'Readr',
     description: 'Readr',
-    metaUrl: 'dev.readr.tw',
+    metaUrl: 'cms.readr.tw',
     metaImage: '/public/og.png',
     url: req.url,
     cookie: cookies.get('csrf'),
