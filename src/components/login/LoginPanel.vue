@@ -23,7 +23,7 @@
   </div>
 </template>
 <script>
-  import TextInput from 'src/components/new-form/TextInput.vue'
+  import TextInput from 'src/components/form/TextInput.vue'
   const debug = require('debug')('CLIENT:LoginPanel')
   const login = (store, params) => store.dispatch('LOGIN', { params, })
 

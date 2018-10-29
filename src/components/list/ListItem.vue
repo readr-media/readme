@@ -26,7 +26,7 @@
 </template>
 <script>
   import ActionBox from 'src/components/list/ActionBox.vue'
-  import CheckboxItem from 'src/components/new-form/CheckboxItem.vue'
+  import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import moment from 'moment'
   import { decamelize, } from 'humps'
   import { filter, get, } from 'lodash'

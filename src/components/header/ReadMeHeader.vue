@@ -7,9 +7,9 @@
   </div>
 </template>
 <script>
-  const debug = require('debug')('CLIENT:NewHeader')
+  const debug = require('debug')('CLIENT:ReadMeHeader')
   export default {
-    name: 'NewHeader',
+    name: 'ReadMeHeader',
     computed: {
       showLogout () {
         return !this.$route.path.match(/\/login([A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*)?$/)

@@ -39,11 +39,10 @@
   import ListFilter from 'src/components/list/ListFilter.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
-  import TextInput from 'src/components/new-form/TextInput.vue'
+  import TextInput from 'src/components/form/TextInput.vue'
   import WrapperContainer from 'src/components/wrapper/WrapperContainer.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { find, get, map, } from 'lodash'
-  import { items as NAV_ITEMS, } from 'src/configuration/navigationAside'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
@@ -73,6 +72,9 @@
       WrapperContainer,
     },
     computed: {
+      asideItems () {
+        return get(this.$store, 'state.asideItems', [])
+      },
       isEditorActive () {
         return get(this.$route, 'params.subItem') === 'new'
           || get(this.$route, 'params.action') === 'new'
@@ -104,10 +106,10 @@
         return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
       },
       sub () {
-        return get(find(NAV_ITEMS, { name: this.modelRaw, }), 'sub', [])
+        return get(find(this.asideItems, { name: this.modelRaw, }), 'sub', [])
       },
       type () {
-        return this.isSubItem ? 'list' : get(find(NAV_ITEMS, { name: this.modelRaw, }), 'type', 'list')
+        return this.isSubItem ? 'list' : get(find(this.asideItems, { name: this.modelRaw, }), 'type', 'list')
       },
     },
     data () {

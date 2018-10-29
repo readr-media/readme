@@ -60,15 +60,15 @@
   </ItemEditorLayout>
 </template>
 <script>
-  import BooleanSwitcher from 'src/components/new-form/BooleanSwitcher.vue'
-  import Dropdownlist from 'src/components/new-form/Dropdownlist.vue'
-  import ImageUploader from 'src/components/new-form/ImageUploader.vue'
+  import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
+  import Dropdownlist from 'src/components/form/Dropdownlist.vue'
+  import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
-  import RadioItem from 'src/components/new-form/RadioItem.vue'
-  import TextInput from 'src/components/new-form/TextInput.vue'
-  import TextareaInput from 'src/components/new-form/TextareaInput.vue'
-  import TextTagItem from 'src/components/new-form/TextTagItem.vue'
-  import QuillEditor from 'src/components/new-form/QuillEditor.vue'
+  import RadioItem from 'src/components/form/RadioItem.vue'
+  import TextInput from 'src/components/form/TextInput.vue'
+  import TextareaInput from 'src/components/form/TextareaInput.vue'
+  import TextTagItem from 'src/components/form/TextTagItem.vue'
+  import QuillEditor from 'src/components/form/QuillEditor.vue'
   // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'

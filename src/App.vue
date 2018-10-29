@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app">
-    <NewHeader class="app-header"></NewHeader>
-    <NewAside class="app-aside"></NewAside>
+    <ReadMeHeader class="app-header"></ReadMeHeader>
+    <ReadMeAside class="app-aside"></ReadMeAside>
     <Alert></Alert>
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
@@ -12,15 +12,15 @@
 
 <script>
 import Alert from 'src/components/Alert.vue'
-import NewHeader from 'src/components/new-header/NewHeader.vue'
-import NewAside from 'src/components/new-aside/NewAside.vue'
+import ReadMeHeader from 'src/components/header/ReadMeHeader.vue'
+import ReadMeAside from 'src/components/aside/ReadMeAside.vue'
 import SystemInfo from 'src/components/SystemInfo.vue'
 
 export default {
   components: {
     Alert,
-    NewHeader,
-    NewAside,
+    ReadMeHeader,
+    ReadMeAside,
     SystemInfo,
   },  
 }

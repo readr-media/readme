@@ -20,9 +20,9 @@
 <script>
   import { find, get, } from 'lodash'
   const fetchAsideItems = (store) => store.dispatch('FETCH_ASIDE_ITEMS', { params: {}, })
-  const debug = require('debug')('CLIENT:NewAside')
+  const debug = require('debug')('CLIENT:ReadMeAside')
   export default {
-    name: 'NewAside',
+    name: 'ReadMeAside',
     computed: {
       asideItems () {
         return get(this.$store, 'state.asideItems', [])
