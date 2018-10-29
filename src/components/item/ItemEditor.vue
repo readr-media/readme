@@ -39,6 +39,10 @@
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
                 <ImageUploader v-else-if="obj.type === 'Image'"
                   :imageUrl.sync="formData.heroImage"></ImageUploader>
+                <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
+                  :name="obj.name"
+                  :fetchSource="obj.fetchSource"
+                  :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
               </template>
               <template v-else>
                 <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
@@ -57,6 +61,7 @@
 </template>
 <script>
   import BooleanSwitcher from 'src/components/new-form/BooleanSwitcher.vue'
+  import Dropdownlist from 'src/components/new-form/Dropdownlist.vue'
   import ImageUploader from 'src/components/new-form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import RadioItem from 'src/components/new-form/RadioItem.vue'
@@ -75,6 +80,7 @@
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
+      Dropdownlist,
       Datetime,
       ImageUploader,
       ItemEditorLayout,

@@ -174,4 +174,7 @@ export default {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',
     'OVER_SIZE': '圖檔過大',
   },
+  'DROPDOWN_LIST': {
+    'HINT': '請選擇',
+  },
 }

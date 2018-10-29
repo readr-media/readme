@@ -36,15 +36,16 @@
           // width 400px
           display flex
           align-items flex-start
-          font-size 1.25rem
           line-height normal
           // margin-right 40px
           margin-bottom 20px
           .title
+            font-size 1.25rem
             margin-right 58px
             height 100%
             width 100px
           .value
+            font-size 1rem
             flex 1
       &__actions
         display flex
