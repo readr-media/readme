@@ -25,6 +25,7 @@
       </div>      
       <ListContainer class="list__container"
         :flag="model"
+        :backToParent="backToParent"
         :refresh="refresh"
         :refreshItemsCount="refreshItemsCount">
         <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
@@ -125,7 +126,7 @@
         this.$router.go(-1)
       },
       backToParent () {
-        this.$router.push(`/${get(this.$route, 'params.item')}`)
+        this.isSubItem ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}`) : this.$router.push(`/${get(this.$route, 'params.item')}`)
       },
       create () {
         this.isSubItem

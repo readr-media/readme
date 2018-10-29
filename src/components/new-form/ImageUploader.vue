@@ -8,7 +8,7 @@
     </div>
     <div class="upload-image__container" @click="uploadImage">
       <img class="upload-image__thumbnail" alt="thumbnail" ref="thumbnail"
-        v-if="!isImgEmpty"
+        v-if="(!isImgEmpty || preImgByte) && !isUploading"
         :src="preImgByte"
         :class="{ notEmpty: !isImgEmpty }">
       <div class="upload-image__upload" v-else-if="!isUploading"></div>
@@ -113,7 +113,12 @@
     props: {
       title: {},
       imageUrl: {},
-    }
+    },
+    watch: {
+      imageUrl () {
+        debug('Mutation detatected: imageUrl', this.imageUrl)
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>
@@ -128,6 +133,7 @@
     margin auto
   .upload-image
     display flex
+    position relative
     // align-items center
     &__container
       flex 1
@@ -177,4 +183,12 @@
         font-size 0.75rem
       // .filename
       //   color
+    &__spinner
+      position absolute
+      width 50px
+      height 50px
+      left 50%
+      top 50%
+      margin-left -25px
+      margin-top -25px
 </style>

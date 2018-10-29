@@ -35,7 +35,7 @@
   import moment from 'moment'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
-  import { filter, get, map, } from 'lodash'
+  import { filter, get, isEmpty, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
   const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
   const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
@@ -188,8 +188,13 @@
       },
     },
     mounted () {
+      this.activeEditor === 'edit' && isEmpty(this.editorItem) && this.backToParent()
     },
     props: {
+      backToParent: {
+        type: Function,
+        default: () => {},
+      },
       flag: {
         type: String,
       },

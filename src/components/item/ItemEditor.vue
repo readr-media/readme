@@ -38,7 +38,7 @@
                 <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
                 <ImageUploader v-else-if="obj.type === 'Image'"
-                  :imageUrl.sync="formData.heroImage"></ImageUploader>
+                  :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
                 <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
                   :name="obj.name"
                   :fetchSource="obj.fetchSource"
