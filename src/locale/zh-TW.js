@@ -155,6 +155,8 @@ export default {
     'REPORT': '報導管理',
     'ENEWS': '電子報管理',
     'ENEWS_GROUP_LIST': '群組列表',
+    'MANAGEMENT': '管理',
+    'PLUG_IN': '應用程式 Plug-in'
   },
   'ENEWS_GROUP_LIST': {
     'GROUP_NAME': '群組名稱',
@@ -176,5 +178,8 @@ export default {
   },
   'DROPDOWN_LIST': {
     'HINT': '請選擇',
+  },
+  'MANAGEMENT': {
+
   },
 }

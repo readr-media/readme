@@ -1,4 +1,4 @@
-# READR
+# READR BETA
 This CMS's framework is based on [Vue-hacknews-2.0](https://github.com/vuejs/vue-hackernews-2.0).
 
 ## Build Setup

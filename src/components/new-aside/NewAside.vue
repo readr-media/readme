@@ -9,7 +9,7 @@
         <template v-for="sub in get(item, 'sub')">
           <router-link class="aside--item sub" v-if="get(sub, 'active')"
             :to="`/${get(sub, 'route', '')}`" 
-            :class="{ active: get(item, 'name') === get($route, 'params.item') || get(sub, 'name') === get($route, 'params.item'), }">
+            :class="{ active: get(item, 'name') === get($route, 'params.item') || get(sub, 'name') === get($route, 'params.item') || isParentActive(item), }">
             <span v-text="$t(`NAVIGATION.${(get(sub, 'name', '').replace(/-/g, '_')).toUpperCase()}`)"></span>
           </router-link>
         </template>
@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
+  import { find, get, } from 'lodash'
   const fetchAsideItems = (store) => store.dispatch('FETCH_ASIDE_ITEMS', { params: {}, })
   const debug = require('debug')('CLIENT:NewAside')
   export default {
@@ -33,6 +33,9 @@
     },
     methods: {
       get,
+      isParentActive (itemParent) {
+        return find(get(itemParent, 'sub'), { name: get(this.$route, 'params.item') })
+      },
     },
     mounted () {
       fetchAsideItems(this.$store)
@@ -57,7 +60,7 @@
       width 100%
       padding 5px 20px
       display flex
-      justify-content center
+      justify-content flex-start
       align-items center
       // background-color #232323
       // color #a1a1a1
@@ -77,6 +80,7 @@
         width 90%
         margin-left 10%
         text-align center
+        justify-content center
         display none
         &.active
           display block
