@@ -2,27 +2,27 @@ import * as itemFunc from 'src/api/item'
 import { get, } from 'lodash'
 const debug = require('debug')('CLIENT:store:actions:item')
 
-const UPDATE_ITEM = ({ commit, }, { params, flag, }) => {
-  return itemFunc.updateItem({ params, flag, }).then(({ status, body, }) => {
-    debug('{ params, flag }', { params, flag })
+const UPDATE_ITEM = ({ commit, }, { params, endpoint, }) => {
+  return itemFunc.updateItem({ params, endpoint, }).then(({ status, body, }) => {
+    debug('{ params, endpoint }', { params, endpoint })
     return { status, }
   }).catch(err => {
     debug('Error ocurred!', err)
     return Promise.reject(err)
   })
 }
-const POST_ITEM = ({ commit, }, { params, flag, }) => {
-  return itemFunc.postItem({ params, flag, }).then(({ status, body, }) => {
-    debug('{ params, flag }', { params, flag })
+const POST_ITEM = ({ commit, }, { params, endpoint, }) => {
+  return itemFunc.postItem({ params, endpoint, }).then(({ status, body, }) => {
+    debug('{ params, endpoint }', { params, endpoint })
     return { status, }
   }).catch(err => {
     debug('Error ocurred!', err)
     return Promise.reject(err)
   })
 }
-// const DEL_ITEM = ({ commit, }, { params, flag, }) => {
-//   return itemFunc.delItem({ params, flag, }).then(({ status, body, }) => {
-//     debug('{ params, flag }', { params, flag })
+// const DEL_ITEM = ({ commit, }, { params, endpoint, }) => {
+//   return itemFunc.delItem({ params, endpoint, }).then(({ status, body, }) => {
+//     debug('{ params, endpoint }', { params, endpoint })
 //     return { status, }
 //   }).catch(err => {
 //     debug('Error ocurred!', err)
@@ -30,9 +30,9 @@ const POST_ITEM = ({ commit, }, { params, flag, }) => {
 //   })
 // }
 
-const DEL_ITEMS = ({ commit, }, { params, flag, }) => {
-  return itemFunc.delItems({ params, flag, }).then(({ status, body, }) => {
-    debug('{ params, flag }', { params, flag })
+const DEL_ITEMS = ({ commit, }, { params, endpoint, }) => {
+  return itemFunc.delItems({ params, endpoint, }).then(({ status, body, }) => {
+    debug('{ params, endpoint }', { params, endpoint })
     return { status, }
   }).catch(err => {
     debug('Error ocurred!', err)
@@ -40,9 +40,9 @@ const DEL_ITEMS = ({ commit, }, { params, flag, }) => {
   })
 }
 
-const GET_ITEMS_COUNT = ({ commit, }, { params, flag, }) => {
-  return itemFunc.getItemCount({ params, flag, }).then(({ status, body, }) => {
-    debug('{ params, flag }', { params, flag })
+const GET_ITEMS_COUNT = ({ commit, }, { params, endpoint, }) => {
+  return itemFunc.getItemCount({ params, endpoint, }).then(({ status, body, }) => {
+    debug('{ params, endpoint }', { params, endpoint })
     if (status === 200) {
       commit('SET_LIST_ITEMS_COUNT', { count: get(body, 'meta.total') })
     }    

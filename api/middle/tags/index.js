@@ -8,7 +8,7 @@ const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
-router.get('/', (req, res) => {
+router.use('/list', (req, res) => {
   const url = `${apiHost}/tags${req.url.slice(1)}`
   debug('Got a /tags call:')
   debug(req.url)

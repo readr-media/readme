@@ -37,10 +37,10 @@
   import { decamelize, decamelizeKeys, } from 'humps'
   import { filter, get, isEmpty, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
-  const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
-  const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
-  // const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
-  const delItems = (store, params, flag) => store.dispatch('DEL_ITEMS', { params, flag, })
+  const update = (store, params, endpoint) => store.dispatch('UPDATE_ITEM', { params, endpoint, })
+  const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })
+  // const del = (store, params, endpoint) => store.dispatch('DEL_ITEM', { params, endpoint, })
+  const delItems = (store, params, endpoint) => store.dispatch('DEL_ITEMS', { params, endpoint, })
   const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, })
   export default {
     name: 'ListContainer',

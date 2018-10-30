@@ -15,7 +15,7 @@ const tagsAutoComplete = (store, keyword) => {
       keyword,
       sort: '-updated_at',
     },
-    flag: 'tags-name',
+    endpoint: 'tags',
   })
 }
 
