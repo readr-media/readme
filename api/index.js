@@ -121,7 +121,7 @@ router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   })
 })
 
-router.get('/status', authVerify, function(req, res) {
+router.get('/status', [ authVerify, setupClientCache, ], function(req, res) {
   res.status(200).send(true)
 })
 

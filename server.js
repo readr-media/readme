@@ -117,17 +117,18 @@ function render (req, res, next) {
   }
 
   const handleError = err => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
     if (err.url) {
-      res.redirect(err.url)
+      return res.redirect(err.url)
     } else if(err.code === 404) {
-      res.status(404).send('404 | Page Not Found')
+      return res.status(404).send('404 | Page Not Found')
     } else if (err.code === 403) {
-      res.status(403).send('Please login through readr-site.')
+      return res.status(403).send('Please login through readr-site or you dont have any permission at this moment.')
     } else {
       // Render Error Page or Redirect
-      res.status(500).send('500 | Internal Server Error')
       console.error(`error during render : ${req.url}`)
       console.error(err.stack)
+      return res.status(500).send('500 | Internal Server Error')
     }
   }
 

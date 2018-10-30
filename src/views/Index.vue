@@ -4,7 +4,7 @@
       <template v-for="item in asideItems">
         <router-link :to="`/${get(item, 'route', '')}`" :key="get(item, 'name')" v-if="get(item, 'active')">
           <div class="index--item">
-            <div :to="`/${get(item, 'route', '')}`" class="index--item__title"><span v-text="$t(`NAVIGATION.${get(item, 'name', '').toUpperCase()}`)"></span></div>
+            <div :to="`/${get(item, 'route', '')}`" class="index--item__title"><span v-text="$t(`NAVIGATION.${get(item, 'name', '').replace(/-/g, '_').toUpperCase()}`)"></span></div>
           </div>
         </router-link>
       </template>
@@ -29,7 +29,7 @@
 </script>
 <style lang="stylus" scoped>
   .index
-    background-color #404040
+    background-color #fff
     padding 40px 60px
     &--items
       display flex

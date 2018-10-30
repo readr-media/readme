@@ -3,14 +3,27 @@ import 'es6-promise/auto'
 import { ROLE_MAP, } from './constants'
 import { createApp, } from './app'
 import { filter, get, } from 'lodash'
-import { getToken, } from './util/services'
+import { getToken, removeToken, } from './util/services'
 import ProgressBar from './components/ProgressBar.vue'
+// import(/* webpackChunkName: "trace-worker" */ './trace-worker.js')
 
 // global progress bar
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
+const { UserAgent, } = require('express-useragent')
+const { app, i18n, router, store, } = createApp()
+
+
+// prime the store with server-initialized state.
+// the state is determined during SSR and inlined in the page markup.
+if (window.__INITIAL_STATE__) {
+  store.replaceState(window.__INITIAL_STATE__)
+}
+
+// import Comments from 'readr-comment'
+// Vue.use(Comments)
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
@@ -55,7 +68,10 @@ Vue.mixin({
         debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
         next()
       }
-      next()
+    }).catch(errInfo => {
+      debug('errInfo', errInfo)
+      const domain = get(store, 'state.setting.DOMAIN')
+      removeToken(domain).then(() => location.replace('/login?t=FADR42345FADS3'))
     })
   },
   beforeRouteUpdate (to, from, next) {
@@ -72,19 +88,14 @@ Vue.mixin({
   },
 })
 
-const { app, i18n, router, store, } = createApp()
-
-// prime the store with server-initialized state.
-// the state is determined during SSR and inlined in the page markup.
-if (window.__INITIAL_STATE__) {
-  store.replaceState(window.__INITIAL_STATE__)
+if (store.state.unauthorized) { 
+  debug('entry-client resolved.') 
+  delete store.state.unauthorized 
+  store.state.targ_url && router.push(store.state.targ_url) 
 }
 
-// if (store.state.unauthorized) { 
-//   debug('entry-client resolved.') 
-//   delete store.state.unauthorized 
-//   router.push(store.state.targ_url) 
-// } 
+const useragent = new UserAgent().parse(navigator.userAgent)
+store.state.useragent = useragent
 
 // wait until router has resolved all async before hooks
 // and async components...
@@ -120,5 +131,8 @@ router.onReady(() => {
 
 // service worker
 if ('https:' === location.protocol && navigator.serviceWorker) {
+// if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/service-worker.js')
+  navigator.serviceWorker.ready.then(() => debug('Ready!', navigator.serviceWorker))
+  navigator.serviceWorker.addEventListener('message', event => debug('Got Msg from dervice-worker!' + event.data))
 }

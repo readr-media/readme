@@ -163,7 +163,7 @@
             } else {
               item.isDatetimeSentitive && (moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
-          } else if (item.type === 'TextInput' && item.isNumSentitive) {
+          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
             preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
           }
           if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
