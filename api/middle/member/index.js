@@ -164,7 +164,7 @@ router.delete('/', (req, res) => {
       resolve()
     })
   }).catch(error => {
-    console.error('Error occurred during deleting member', id)
+    console.error('Error occurred during deleting member', ids)
     console.error(error)    
   }))).then(() => {
     res.send({ status: 200, text: 'Done.' })
@@ -174,14 +174,12 @@ router.delete('/', (req, res) => {
       status: errWrapped.status,
       text: errWrapped.text
     })
-    console.error(`Error occurred during deleting member: ${url}`)
+    console.error(`Error occurred during deleting member: ${ids}`)
     console.error(err)     
   })
 })
 
-router.get('/count', (req, res) => {
-  const url = `${apiHost}/members${req.url}`
-  debug(req.url)
+const _fetch = (url, { res, }) => {
   superagent
   .get(url)
   .end((error, response) => {
@@ -198,7 +196,19 @@ router.get('/count', (req, res) => {
       console.error(`Error occurred during fetching data from : ${url}`)
       console.error(error) 
     }
-  })  
+  })
+}
+
+router.use('/nickname/list', (req, res) => {
+  debug('Go get nickname list', req.url)
+  const url = `${apiHost}/members/nickname${req.url}`
+  _fetch(url, { res, })
+})
+
+router.get('/count', (req, res) => {
+  const url = `${apiHost}/members${req.url}`
+  debug(req.url)
+  _fetch(url, { res, })
 })
 
 module.exports = router

@@ -49,8 +49,8 @@
   const DEFAULT_SORT = '-updated_at'
 
   const debug = require('debug')('CLIENT:List')
-  const fetchItemsCount = (store, params, flag) => store.dispatch('GET_ITEMS_COUNT', { params, flag, })
-  const fetchList = (store, params, flag) => store.dispatch('FETCH_LIST', {
+  const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
+  const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
     params: Object.assign({
       maxResult: DEFAULT_MAXRESULT,
       memberId: get(store, 'state.profile.id'),
@@ -58,7 +58,7 @@
       sort: DEFAULT_SORT,
       fields: [ 'nickname', 'id' ],
     }, params),
-    flag,
+    endpoint,
   })
 
   export default {

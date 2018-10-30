@@ -61,15 +61,26 @@ router.use('/enews-group-list/list', (req, res) => {
     ]})
   }
 })
+
+
+
+
 router.use('/activate', verifyToken, require('./middle/member/activation'))
+
 router.use('/project', require('./middle/project'))
 router.use('/report', require('./middle/report'))
 router.use('/memo', require('./middle/memo'))
 router.use('/member', require('./middle/member'))
 router.use('/members', require('./middle/member'))
+
 router.use('/image-post', require('./middle/image'))
-router.use('/members/nickname', authVerify)
 router.use('/tags', require('./middle/tags'))
+
+
+
+
+
+
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)

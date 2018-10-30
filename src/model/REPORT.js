@@ -9,7 +9,7 @@ const authorAutoComplete = (store, keyword) => {
       maxResult: 500,
       keyword,
     },
-    flag: 'members-nickname',
+    endpoint: 'members/nickname',
   })
 }
 
@@ -19,7 +19,7 @@ const fetchSource = store => {
       maxResult: 500,
       sort: '-updated_at',
     },
-    flag: 'project',
+    endpoint: 'project',
   }).then(res => {
     return map(get(res, 'items', []), item => ({ id: item.id, text: item.title, }))
   })

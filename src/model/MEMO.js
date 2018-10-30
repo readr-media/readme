@@ -9,7 +9,7 @@ const fetchSource = store => {
       maxResult: 500,
       sort: '-updated_at',
     },
-    flag: 'project',
+    endpoint: 'project',
   }).then(res => {
     return map(get(res, 'items', []), item => ({ id: item.id, text: item.title, }))
   })
@@ -28,4 +28,4 @@ export const model = [
   { name: 'author', type: 'TextInput', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
 ]
 
-export const LIST_MAXRESULT = 6
+export const LIST_MAXRESULT = 10

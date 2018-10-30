@@ -1,5 +1,5 @@
 const { camelizeKeys } = require('humps')
-const { find, get, mapKeys } = require('lodash')
+const { find, get, map, mapKeys } = require('lodash')
 const { handlerError } = require('../../comm')
 const config = require('../../config')
 const debug = require('debug')('README:api:memo')
@@ -134,25 +134,39 @@ router.put('/update', (req, res) => {
 })
 
 router.delete('/', (req, res) => {
-  debug('Got a proj del call.')
+  debug('Got a memo del call.')
   debug(req.body)
-  const id = get(req, 'body.id')
-  const url = `${apiHost}/memo/${id}`
-  debug(url)
-  superagent
-  .delete(url)
-  .end((error, response) => {
-    if (!error && response) {
-      res.send({ status: 200, text: 'Updating a new memo successfully.' })
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during update memo: ${url}`)
-      console.error(error) 
-    }
+  // const id = get(req, 'body.id')
+  // const url = `${apiHost}/memo/${id}`
+  // debug(url)
+  const ids = get(req, 'body.ids', [])
+
+  Promise.all(map(ids, id => new Promise(resolve => {
+    const url = `${apiHost}/memo/${id}`
+    debug('MEMBER### DELETING MEMO:', id)
+    
+    superagent
+    .delete(url)
+    .end((error, response) => {
+      if (error) {
+        console.error('Error occurred during deleting memo', id)
+        console.error(error)     
+      }
+      resolve()
+    })
+  }).catch(error => {
+    console.error('Error occurred during deleting memo', id)
+    console.error(error)    
+  }))).then(() => {
+    res.send({ status: 200, text: 'Done.' })
+  }).catch(err => {
+    const errWrapped = handlerError(err)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during deleting memo: ${ids}`)
+    console.error(err)     
   })
 })
 

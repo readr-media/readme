@@ -123,25 +123,38 @@ router.put('/update', (req, res, next) => {
 }, updateAuthors)
 
 router.delete('/', (req, res) => {
-  debug('Got a proj del call.')
+  debug('Got a report del call.')
   debug(req.body)
-  const id = get(req, 'body.id')
-  const url = `${apiHost}/report/${id}`
-  debug(url)
-  superagent
-  .delete(url)
-  .end((error, response) => {
-    if (!error && response) {
-      res.send({ status: 200, text: 'Updating a new report successfully.' })
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during update report: ${url}`)
-      console.error(error) 
-    }
+
+
+  const ids = get(req, 'body.ids', [])
+
+  Promise.all(map(ids, id => new Promise(resolve => {
+    const url = `${apiHost}/report/${id}`
+    debug('MEMBER### DELETING REJECT:', id)
+    
+    superagent
+    .delete(url)
+    .end((error, response) => {
+      if (error) {
+        console.error('Error occurred during deleting report', id)
+        console.error(error)     
+      }
+      resolve()
+    })
+  }).catch(error => {
+    console.error('Error occurred during deleting report', id)
+    console.error(error)    
+  }))).then(() => {
+    res.send({ status: 200, text: 'Done.' })
+  }).catch(err => {
+    const errWrapped = handlerError(err)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during deleting report: ${ids}`)
+    console.error(err)     
   })
 })
 
