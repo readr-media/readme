@@ -1,11 +1,14 @@
+#for push
 workspace:
   base: /vue
-  path: src/github.com/readr-media/readr-admin
+  path: src/github.com/FalseChord/readme
 pipeline:
   clone:
     image: plugins/git
     when:
       event: [push]
+      branch: [dev]
+
   start_slack:
     image: plugins/slack
     channel: jenkins
@@ -17,29 +20,30 @@ pipeline:
       Someone gave *{{build.branch}}* a little push.
     when:
       event: [push]
+      branch: [dev]
   
   get_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
     - gcloud source repos clone default default
-    - cp default/k8s-deploy/vue-dev/readr-admin/config.js api/
+    - cp default/readr-site/config.js api/
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
-      branch: [master, dev]
+      branch: [dev]
   
   builds:
     image: node:9.2.0-alpine
     commands:
     - apk update
-    - apk add vips-dev fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
+    - apk add vips-dev fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ --repository https://dl-3.alpinelinux.org/alpine/edge/main
     - apk add --no-cache python build-base make
     - yarn install
     - yarn run build
     when:
       event: [push]
-      branch: [master, dev]
+      branch: [dev]
 
   publish:
     image: plugins/gcr
@@ -50,7 +54,7 @@ pipeline:
     secrets: [google_credentials]
     when:
       event: [push]
-      branch: [master, dev]
+      branch: [dev]
   
   deploy_dev:
     image: nytimes/drone-gke:develop
@@ -69,7 +73,7 @@ pipeline:
       tier: frontend
     when:
       event: [push]
-      branch: dev
+      branch: [dev]
 
   finish_slack:
     image: plugins/slack
@@ -80,10 +84,11 @@ pipeline:
     when:
       status: [success, failure]
       event: [push]
+      branch: [dev]
     template: >
       {{#success build.status}}
         *success* ${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER} was well served.
-        Check out our new <https://dev.readr.tw|readr>.
+        Check out our new <http://cms-dev.readr.tw|readme>.
       {{else}}
         Houston, we have a problem. Build <${DRONE_BUILD_LINK}|#{{build.number}}> failed.
       {{/success}}
