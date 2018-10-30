@@ -1,22 +1,30 @@
 <template>
-  <div class="list-container">
-    <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header"></ListItem></div>
-    <div class="list-container__items">
-      <template v-for="item in items">
-        <ListItem :item="item" :structure="itemStructure" :model="model" @editorOn="openEditor" @del="delItem"></ListItem>
-      </template>
-      <slot name="spinner"></slot>
-    </div>
-    <div class="list-container__footer">
-      <RecordCount :total="itemsCount"></RecordCount>
-      <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
-    </div>
-    <ItemEditor type="update"
-      :isActive.sync="isItemEditorActive"
-      :structure="itemStructure"
-      :item="editorItem"
-      :update="update"></ItemEditor>
-    <slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot>
+  <div class="list-container" :class="{ 'editor-active': activeEditor, }">
+    <template v-if="!activeEditor">
+      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__items">
+        <template v-for="item in items">
+          <ListItem :item="item" :structure="itemStructure" :model="model" @edit="editItem" @checkup="checkup"></ListItem>
+        </template>
+        <slot name="spinner"></slot>
+      </div>
+      <div class="list-container__footer">
+        <RecordCount :total="itemsCount"></RecordCount>
+        <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
+      </div>
+    </template>
+    <template v-else>
+      <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
+        @saved="itemSaved"
+        :structure="itemStructure"
+        :add="add"></ItemEditor>        
+      <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
+        @saved="itemSaved"
+        :structure="itemStructure"
+        :item="editorItem"
+        :update="update"></ItemEditor>
+      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
+    </template>
   </div>
 </template>
 <script>
@@ -27,11 +35,13 @@
   import moment from 'moment'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
-  import { get, map, } from 'lodash'
+  import { filter, get, isEmpty, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
   const update = (store, params, flag) => store.dispatch('UPDATE_ITEM', { params, flag, })
   const post = (store, params, flag) => store.dispatch('POST_ITEM', { params, flag, })
-  const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
+  // const del = (store, params, flag) => store.dispatch('DEL_ITEM', { params, flag, })
+  const delItems = (store, params, flag) => store.dispatch('DEL_ITEMS', { params, flag, })
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, })
   export default {
     name: 'ListContainer',
     components: {
@@ -44,12 +54,22 @@
       Editor () {
         return ItemEditor
       },      
+      activeEditor () {
+        return get(this.$route, 'params.subItem') === 'new' || get(this.$route, 'params.action') === 'new'
+          ? 'new'
+          : get(this.$route, 'params.subItem') === 'edit' || get(this.$route, 'params.action') === 'edit'
+          ? 'edit'
+          : ''
+      },
       header () {
         const item = {}
         map(this.itemStructure, i => { 
           item[ i.name ] = this.$t(`${this.model}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
+      },
+      isSubItem () {
+        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
       },
       items () {
         return get(this.$store, 'state.list', [])
@@ -58,16 +78,25 @@
         return get(this.$store, 'state.listItemsCount', 0)
       },
       itemStructure () {
-        return require(`src/model/${this.model}`).model
+        return this.modelData ? this.isSubItem ? this.modelData.subModel : this.modelData.model : []
       },
       maxResult () {
-        return require(`src/model/${this.model}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
       },
       me () {
         return get(this.$store, 'state.profile.id')
       },
       model () {
-        return get(this.$route, 'params.item', '').toUpperCase()
+        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
+      },
+      modelData () {
+        let model
+        try {
+          model = require(`src/model/${this.model}`)
+        } catch (error) {
+          console.log(`There's no model found:`, this.model)
+        }
+        return model
       },
       totalPages () {
         return Math.floor(this.itemsCount / this.maxResult) + 1
@@ -76,8 +105,8 @@
     data () {
       return {
         curr_page: this.currPage,
+        checkedItems: {},
         editorItem: {},
-        isItemEditorActive: false,
       }
     },
     methods: {
@@ -90,13 +119,34 @@
           this.refresh({})
         })
       },
-      delItem (item) {
-        return del(this.$store, item, this.flag).then(() => {
-          /**
-           * Go refresh item-list.
-           */
-          this.refresh({})          
-        })
+      checkup ({ id, value }) {
+        this.checkedItems[ id ] = value
+      },
+      copy () {},
+      del () {
+        switchAlert(this.$store, true, 'Are you sure about doing this?', () => {
+          return delItems(this.$store, {
+            ids: filter(map(this.checkedItems, (item, key) => (item && key))),
+          }, this.flag).then(() => {
+            this.checkedItems = {}
+            return this.refresh({})
+          })
+        })        
+      },
+      // delItem (item) {
+      //   return del(this.$store, item, this.flag).then(() => {
+      //     /**
+      //      * Go refresh item-list.
+      //      */
+      //     this.refresh({})          
+      //   })
+      // },
+      editItem (item) {
+        this.editorItem = item
+        this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
+      },
+      itemSaved () {
+        this.$router.go(-1)
       },
       normalizeData (form) {
         const preForm = form
@@ -113,7 +163,7 @@
             } else {
               item.isDatetimeSentitive && (moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
-          } else if (item.type === 'TextInput' && item.isNumSentitive) {
+          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
             preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
           }
           if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
@@ -127,10 +177,6 @@
         })
         return preForm
       },
-      openEditor (item) {
-        this.isItemEditorActive = true
-        this.editorItem = item
-      },
       update (form) {
         const normalizedForm = this.normalizeData(form)
         return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
@@ -141,8 +187,14 @@
         })
       },
     },
-    mounted () {},
+    mounted () {
+      this.activeEditor === 'edit' && isEmpty(this.editorItem) && this.backToParent()
+    },
     props: {
+      backToParent: {
+        type: Function,
+        default: () => {},
+      },
       flag: {
         type: String,
       },
@@ -172,15 +224,12 @@
 </script>
 <style lang="stylus" scoped>
   .list-container
-    padding 30px 30px 70px
-    background-color rgba(250,250,250,0.5)
+    padding 30px 0 70px
     position relative
-    // height 750px
-    // height 100%
-    &:hover
-      background-color rgba(250,250,250,0.9)
+    &.editor-active
+      // height calc(100vh - 100px)
+      height 100%
     &__footer
-      // margin-top 20px
       position absolute
       bottom 0
       left 0
@@ -190,7 +239,4 @@
       display flex
       justify-content space-between
       align-items center
-      background-color rgba(0,0,0,0.7)
-      &:hover
-        background-color rgba(0,0,0,0.5)
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app">
-    <NewHeader class="app-header"></NewHeader>
-    <NewAside class="app-aside"></NewAside>
+    <ReadMeHeader class="app-header"></ReadMeHeader>
+    <ReadMeAside class="app-aside"></ReadMeAside>
     <Alert></Alert>
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
@@ -12,43 +12,34 @@
 
 <script>
 import Alert from 'src/components/Alert.vue'
-import NewHeader from 'src/components/new-header/NewHeader.vue'
-import NewAside from 'src/components/new-aside/NewAside.vue'
+import ReadMeHeader from 'src/components/header/ReadMeHeader.vue'
+import ReadMeAside from 'src/components/aside/ReadMeAside.vue'
 import SystemInfo from 'src/components/SystemInfo.vue'
 
 export default {
   components: {
     Alert,
-    NewHeader,
-    NewAside,
+    ReadMeHeader,
+    ReadMeAside,
     SystemInfo,
   },  
 }
 </script>
 
 <style lang="stylus">
-a
+a, a:hover, a:link, a:visited
   text-decoration none
+  color #000
+  
 
 button
   cursor pointer
   &:disabled
     cursor not-allowed
 .view
-  // max-width 800px
   min-height calc(100vh - 60px)
   margin 0 auto
   position relative
-  // background-color #4a4a4a
-  box-shadow 1px 1px 5px rgba(50,50,50,0.5)
-
-// .backstage
-//   min-height 100vh
-//   max-height 100vh
-//   padding-left 20% /* This Padding is for PageAside */
-//   background-color #4a4a4a
-//   main
-//     padding 20px 40px
     
 .datepicker__input
   padding-left 10px
@@ -66,9 +57,9 @@ button
 
 .app
   padding-top 50px
-  padding-left 220px
+  padding-left 300px
   position relative
-  background-color #4a4a4a
+  background-color #fff
   min-height 100vh
 
   &-header

@@ -19,7 +19,13 @@ export function postItem ({ params, flag, }) {
   return targetApi ? post(url, params) : Promise.reject({ status: '400', message: '"targetApi" Not Found.', })
 }
 
-export function delItem ({ params, flag, }) {
+// export function delItem ({ params, flag, }) {
+//   const targetApi = get(filter(apiMap, { item: flag, method: 'DELETE', }), '0.target')
+//   const url = `${host}/api/${targetApi}`
+//   return targetApi ? del(url, params) : Promise.reject({ status: '400', message: '"targetApi" Not Found.', })
+// }
+
+export function delItems ({ params, flag, }) {
   const targetApi = get(filter(apiMap, { item: flag, method: 'DELETE', }), '0.target')
   const url = `${host}/api/${targetApi}`
   return targetApi ? del(url, params) : Promise.reject({ status: '400', message: '"targetApi" Not Found.', })

@@ -12,9 +12,15 @@ export default {
     'EDIT': '修改',
     'DEL': '刪除',
     'ADD': '新增',
+    'BACK': '返回列表',
     'RECORD_COUNT': {
       'PREFIX': '共',
       'POSTFIX': '筆',
+    },
+    'ACTIONS': {
+      'EDIT': '編輯',
+      'DELETE': '刪除',
+      'COPY': '複製',
     },
   },
   'HEADER': {
@@ -33,10 +39,12 @@ export default {
     'PUBLISH_STATUS_DRAFT': '草稿',
     'PUBLISH_STATUS_PUBLISHED': '發布',
     'PUBLISH_STATUS_SCHEDULING': '排程',
+    'PUBLISH_STATUS_NEVER': '不明',
     'STATUS': '狀態',
     'STATUS_CANDIDATE': '候選',
     'STATUS_WIP': '進行中',
     'STATUS_DONE': '完成',
+    'STATUS_NEVER': '不明',
     'PROJECT_ORDER': '排序',
     'CREATED_AT': '建立時間',
     'UPDATED_AT': '更新時間',
@@ -46,9 +54,10 @@ export default {
     'DESCRIPTION': '專題說明',
     'HERO_IMAGE': '首圖',
     'OG_IMAGE': 'OG 首圖',
-    'MEMO_POINTS': 'MEMO 點數',
+    'MEMO_POINTS': '所需點數',
     'PROGRESS': '進度',
     'UPDATED_BY': '最後更新',
+    'TAGS': '關鍵字',
   },
   'REPORT': {
     'AUTHORS': '作者',
@@ -144,5 +153,33 @@ export default {
     'AD': '廣告管理',
     'PAYMENT': '付款管理',
     'REPORT': '報導管理',
+    'ENEWS': '電子報管理',
+    'ENEWS_GROUP_LIST': '群組列表',
+    'MANAGEMENT': '管理',
+    'PLUG_IN': '應用程式 Plug-in'
+  },
+  'ENEWS_GROUP_LIST': {
+    'GROUP_NAME': '群組名稱',
+    'COUNT': '人數',
+    'UPDATED_AT': '更新日期',
+    'CREATED_AT': '建立日期',
+    'ID': 'ID',
+    'NICKNAME': '暱稱',
+    'MAIL': '電子信箱',
+    'ACTIVE': '狀態',
+    'ACTIVE_0': '-',
+    'ACTIVE_1': '正常',
+    'ACTIVE_NEVER': '-',    
+    'NICKNAME': '暱稱',
+  },
+  'IMAGE_UPLOADER': {
+    'SIZE_LIMIT': '(圖檔大小限制：3MB)',
+    'OVER_SIZE': '圖檔過大',
+  },
+  'DROPDOWN_LIST': {
+    'HINT': '請選擇',
+  },
+  'MANAGEMENT': {
+
   },
 }

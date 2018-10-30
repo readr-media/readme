@@ -1,5 +1,5 @@
 const { get, } = require('lodash')
-const debug = require('debug')('READR:api:comm')
+const debug = require('debug')('README:api:comm')
 
 const handlerError = (err, res) => {
   debug('err:')

@@ -11,7 +11,7 @@ const {
   REDIS_WRITE_PORT,
   REDIS_TIMEOUT, } = require('../config')
 
-const debug = require('debug')('READR:api:middle:redis')
+const debug = require('debug')('README:api:middle:redis')
 
 const redisPoolRead = RedisConnectionPool('myRedisPoolRead', {
   host: REDIS_READ_HOST,

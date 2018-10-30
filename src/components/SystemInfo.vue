@@ -1,6 +1,6 @@
 <template>
   <div class="sys-info">
-    <div class="name"><span>Readr-Manager</span></div>
+    <div class="name"><span>ReadMe</span></div>
     <div class="version"><span v-text="`version ${systemVersion}`"></span></div>
     <div class="right"><span>Readr-Team©2018</span></div>
   </div>
@@ -23,7 +23,8 @@
     position fixed
     left 0px
     bottom 10px
-    background-color rgba(0,0,0,0.5)
+    // background-color rgba(0,0,0,0.5)
+    background-color rgba(0,0,0,0.2)
     width 210px
     height 100px
     z-index 9997
@@ -31,7 +32,8 @@
     flex-direction column
     justify-content center
     align-items center
-    color #d3d3d3
+    // color #d3d3d3
+    color #fff
     padding 20px 30px
     > div
       font-size 0.75rem

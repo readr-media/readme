@@ -1,8 +1,8 @@
 <template>
-  <ItemEditorLayout v-if="isActive">
+  <ItemEditorLayout>
     <div class="panel">
       <div class="panel__content">
-        <template v-for="obj in structure">
+        <template v-for="obj in sortedStructure">
           <div class="panel__content--item" v-if="!obj.isHidden">
             <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
               <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
@@ -37,6 +37,12 @@
                   :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>     
                 <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
+                <ImageUploader v-else-if="obj.type === 'Image'"
+                  :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
+                <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
+                  :name="obj.name"
+                  :fetchSource="obj.fetchSource"
+                  :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
               </template>
               <template v-else>
                 <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
@@ -48,23 +54,25 @@
       </div>
       <div class="panel__actions">
         <div class="save" @click="save"><span v-text="$t('EDITOR.SAVE')"></span></div>
-        <div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div>
+        <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
   </ItemEditorLayout>
 </template>
 <script>
-  import BooleanSwitcher from 'src/components/new-form/BooleanSwitcher.vue'
+  import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
+  import Dropdownlist from 'src/components/form/Dropdownlist.vue'
+  import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
-  import RadioItem from 'src/components/new-form/RadioItem.vue'
-  import TextInput from 'src/components/new-form/TextInput.vue'
-  import TextareaInput from 'src/components/new-form/TextareaInput.vue'
-  import TextTagItem from 'src/components/new-form/TextTagItem.vue'
-  import QuillEditor from 'src/components/new-form/QuillEditor.vue'
-  import preventScroll from 'prevent-scroll'
+  import RadioItem from 'src/components/form/RadioItem.vue'
+  import TextInput from 'src/components/form/TextInput.vue'
+  import TextareaInput from 'src/components/form/TextareaInput.vue'
+  import TextTagItem from 'src/components/form/TextTagItem.vue'
+  import QuillEditor from 'src/components/form/QuillEditor.vue'
+  // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
-  import { filter, get, map, } from 'lodash'
+  import { filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
 
@@ -72,7 +80,9 @@
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
+      Dropdownlist,
       Datetime,
+      ImageUploader,
       ItemEditorLayout,
       QuillEditor,
       RadioItem,
@@ -82,7 +92,11 @@
     },
     computed: {
       model () {
-        return get(this.$route, 'params.item', '').toUpperCase()
+        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
+      },
+      sortedStructure () {
+        debug(`sortBy(this.structure, [ obj => get(obj, 'order.editor') ])`, sortBy(this.structure, [ obj => get(obj, 'order.editor') ]))
+        return sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
       },
     },
     data () {
@@ -93,7 +107,9 @@
       }
     },
     methods: {
-      close () { this.$emit('update:isActive', false) },
+      // close () {
+      //   this.$emit('update:isActive', false)
+      // },
       decamelize,
       get,
       initValue () {
@@ -130,6 +146,7 @@
                   break
                 case 'TextTagItem':
                   this.formData[ item.name ] = []
+                  this.setupTagInputWatcher(item) 
                   break
                 default:
                   this.formData[ item.name ] = null
@@ -145,13 +162,15 @@
       save () {
         if (this.type === 'update') {
           this.update(this.formData).then(() => {
-            this.$emit('update:isActive', false)
+            // this.$emit('update:isActive', false)
+            this.$emit('saved')
           }).catch(err => {
             debug('err', err)
           })
         } else if (this.type === 'create') {
           this.add(this.formData).then(() => {
-            this.$emit('update:isActive', false)
+            // this.$emit('update:isActive', false)
+            this.$emit('saved')
           }).catch(err => {
             debug('err', err)
           })          
@@ -194,10 +213,10 @@
           resolve()
         }),
       },
-      isActive: {
-        type: Boolean,
-        default: () => false,
-      },
+      // isActive: {
+      //   type: Boolean,
+      //   default: () => false,
+      // },
       structure: Array,
       item: {
         type: Object,
@@ -217,13 +236,13 @@
       },
     },
     watch: {
-      isActive () {
-        if (this.isActive) {
-          preventScroll.on()
-        } else {
-          preventScroll.off()
-        }
-      },   
+      // isActive () {
+      //   if (this.isActive) {
+      //     preventScroll.on()
+      //   } else {
+      //     preventScroll.off()
+      //   }
+      // },   
       item () { this.initValue() }, 
       structure () { this.initValue() },
     },

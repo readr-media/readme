@@ -3,7 +3,7 @@ import { ROLE_MAP, } from './constants'
 import { createApp, } from './app' 
 import { getProfile, } from './util/services'
 
-const debug = require('debug')('READR:entry-server')
+const debug = require('debug')('READR-API:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
 
 // This exported function will be called by `bundleRenderer`.
@@ -17,6 +17,7 @@ export default context => {
     const { app, i18n, router, store, } = createApp()
 
     const { url, cookie, initmember, setting, error, } = context
+    // const { url, initmember, setting, error, } = context
     const { route, } = router.resolve(url)
     const { fullPath, } = route
 
@@ -24,44 +25,56 @@ export default context => {
       return reject({ url: fullPath, })
     }
 
-    // const preRouteInit = cookie ? [
-    //   getProfile(cookie),
-    // ] : [ new Promise((rslv) => rslv()), ]
-    const preRouteInit = [ new Promise(resolve => resolve()) ]
+    const preRouteInit = cookie ? [
+      getProfile(cookie),
+    ] : [ new Promise((rslv) => rslv()), ]
+
     Promise.all(preRouteInit).then((res) => {
-    //   const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
-    //   const permission = get(route, [ 'meta', 'permission', ])
-    //   const isInitMember = get(route, [ 'path', ]) === '/initmember'
-    //   debug('role:', role)
-    //   debug('permission:', permission)
-    //   debug('url', url)
+      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+      const permission = get(route, 'meta.permission')
+      const isInitMember = get(route, 'path') === '/initmember'
+      debug('permission:', permission)
+      debug('url', url)
+      debug('fullPath', fullPath)
 
       let targUrl
-    //   if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
-    //     store.state.unauthorized = true
-    //     if (!cookie) {
-    //       router.push('/login')
-    //       targUrl = '/login'
-    //       store.state.targ_url = '/login'
-    //     } else {
-    //       router.push('/')
-    //       targUrl = '/'
-    //       store.state.targ_url = '/'
-    //     }
-    //   } else {
+      // if (permission || (isInitMember && !initmember)) {
+      //   store.state.unauthorized = true
+      //   return reject({ code: 403, })
+      // } else {
+      //   router.push(url)
+      //   targUrl = url
+      // }
+      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
+        store.state.unauthorized = true
+        // if (!cookie) {
+        //   router.push('/login')
+        //   targUrl = '/login'
+          // store.state.targ_url = '/login'
+        // } else {
+        //   router.push('/')
+        //   targUrl = '/'
+          // store.state.targ_url = '/'
+        // }
+        return reject({ code: 403, })
+      } else {
         router.push(url)
         targUrl = url
-    //   }
+      }
       setting && (store.state.setting = setting)
       error && (store.state.error = error)
 
       // wait until router has resolved possible async hooks
       router.onReady(() => {
-        const matchedComponents = router.getMatchedComponents(targUrl)
+        let matchedComponents = router.getMatchedComponents(targUrl)
         // const matchedComponents = get(route, [ 'matched' ], [])
         // no matched routes
         if (!matchedComponents.length) {
           return reject({ code: 404, })
+        } else {
+          if (typeof(matchedComponents[ 0 ]) === 'function') {
+            return reject({ url: fullPath, })
+          }
         }
         // Call fetchData hooks on components matched by the route.
         // A preFetch hook dispatches a store action and returns a Promise,
@@ -73,7 +86,8 @@ export default context => {
           route: router.currentRoute,
         }))
         Promise.all(jobs).then(() => {
-          isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)
+          // isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)
+          console.info(`data pre-fetch: ${Date.now() - s}ms`, targUrl)
           // After all preFetch hooks are resolved, our store is now
           // filled with the state needed to render the app.
           // Expose the state on the render context, and let the request handler

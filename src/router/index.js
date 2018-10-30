@@ -17,10 +17,10 @@ export function createRouter () {
     fallback: false,
     scrollBehavior: () => ({ y: 0 }),
     routes: [
-      { path: '/', component: Index, },
+      { path: '/', component: Index, meta: { permission: 'admin', }, },
       { path: '/login', component: Login, },
-      { path: '/setup/:type?', component: SetUp, },
-      { path: '/:item/:subItem?', component: List, },
+      { path: '/setup/:type?', component: SetUp, meta: { permission: 'admin', }, },
+      { path: '/:item/:subItem?/:action?', component: List, meta: { permission: 'admin', }, },
     ]
   })
 }

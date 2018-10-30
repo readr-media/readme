@@ -1,9 +1,9 @@
 const { camelizeKeys } = require('humps')
-const { find, get, mapKeys } = require('lodash')
+const { find, get, map, mapKeys } = require('lodash')
 const { handlerError } = require('../../comm')
 const { sendActivationMail, } = require('./comm')
 const config = require('../../config')
-const debug = require('debug')('READR:api:member')
+const debug = require('debug')('README:api:member')
 const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
@@ -121,26 +121,61 @@ router.put('/update', (req, res) => {
   })
 })
 
+// router.delete('/', (req, res) => {
+//   debug('Got a proj del call.')
+//   debug(req.body)
+//   const id = get(req, 'body.id')
+//   const url = `${apiHost}/member/${id}`
+//   debug(url)
+//   superagent
+//   .delete(url)
+//   .end((error, response) => {
+//     if (!error && response) {
+//       res.send({ status: 200, text: 'Updating a new member successfully.' })
+//     } else {
+//       const errWrapped = handlerError(error, response)
+//       res.status(errWrapped.status).send({
+//         status: errWrapped.status,
+//         text: errWrapped.text
+//       })
+//       console.error(`Error occurred during update member: ${url}`)
+//       console.error(error) 
+//     }
+//   })
+// })
+
 router.delete('/', (req, res) => {
   debug('Got a proj del call.')
   debug(req.body)
-  const id = get(req, 'body.id')
-  const url = `${apiHost}/member/${id}`
-  debug(url)
-  superagent
-  .delete(url)
-  .end((error, response) => {
-    if (!error && response) {
-      res.send({ status: 200, text: 'Updating a new member successfully.' })
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during update member: ${url}`)
-      console.error(error) 
-    }
+  const ids = get(req, 'body.ids', [])
+  
+  
+  Promise.all(map(ids, id => new Promise(resolve => {
+    const url = `${apiHost}/member/${id}`
+    debug('MEMBER### DELETING MEMBER:', id)
+    
+    superagent
+    .delete(url)
+    .end((error, response) => {
+      if (error) {
+        console.error('Error occurred during deleting member', id)
+        console.error(error)     
+      }
+      resolve()
+    })
+  }).catch(error => {
+    console.error('Error occurred during deleting member', id)
+    console.error(error)    
+  }))).then(() => {
+    res.send({ status: 200, text: 'Done.' })
+  }).catch(err => {
+    const errWrapped = handlerError(err)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during deleting member: ${url}`)
+    console.error(err)     
   })
 })
 

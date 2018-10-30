@@ -1,6 +1,6 @@
 const { IMAGE_UPLOAD_QUALITY_JPEG, IMAGE_UPLOAD_QUALITY_PNG } = require('../../config')
 const _ = require('lodash')
-const debug = require('debug')('READR:api:middle:sharp')
+const debug = require('debug')('README:api:middle:sharp')
 const fs = require('fs')
 const moment = require('moment')
 const sharp = require('sharp')

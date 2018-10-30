@@ -1,43 +1,48 @@
 <template>
   <div class="list">
-    <div class="list__header">
-      <div class="list__title"><span v-text="model"></span></div>
-      <div class="list__wrapper right">
-        <div class="list__toolbox">
-          <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
-        </div>
-        <FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup>
-        <div class="list__search" :class="{ focused: isSearchFocused }" tabindex="0" @click="focusSearch" @focusout="focusSearchOut">
-          <TextInput
-            :backgroundColor="isSearchFocused ? '#fff' : '#a3a3a3'"
-            :placeHolder="$t('LIST.SEARCH')"
-            :value.sync="filter"></TextInput>
-          <div class="btn">
-            <span v-text="$t('LIST.SEARCH_APPLIED')" class="applied" v-if="isFilterApplied"></span>
-            <span v-text="$t('LIST.SEARCH_APPLY')" class="apply" v-else @click="search"></span>
+    <template v-if="type !== 'wrapper'">
+      <div class="list__header">
+        <template v-if="!isEditorActive">
+          <div class="list__wrapper left">
+            <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
+            <ListFilter class="list__search" :value.sync="filter"></ListFilter>
           </div>
-        </div>
-      </div>
-    </div>
-    <ListContainer class="list__container" :flag="model" :refresh="refresh" :refreshItemsCount="refreshItemsCount">
-      <template slot="new-item" slot-scope="props">
-        <Editor type="create"
-          :is="props.Editor"
-          :isActive.sync="isNewItemEditorActive"
-          :structure="props.structure"
-          :add="props.add"></Editor>
-      </template>
-      <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
-    </ListContainer>
+          <div class="list__wrapper right">
+            <div class="list__toolbox">
+              <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
+              <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="list__wrapper left"></div>
+          <div class="list__wrapper right">
+            <div class="list__toolbox">
+              <div class="btn back" @click="back"><span v-text="$t('LIST.BACK')"></span></div>
+            </div>
+          </div>
+        </template>
+      </div>      
+      <ListContainer class="list__container"
+        :flag="model"
+        :backToParent="backToParent"
+        :refresh="refresh"
+        :refreshItemsCount="refreshItemsCount">
+        <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
+      </ListContainer>
+    </template>
+    <WrapperContainer v-else :items="sub"></WrapperContainer>
   </div>
 </template>
 <script>
-  import FilterGroup from 'src/components/list/FilterGroup.vue'
+  // import FilterGroup from 'src/components/list/FilterGroup.vue'
+  import ListFilter from 'src/components/list/ListFilter.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
-  import TextInput from 'src/components/new-form/TextInput.vue'
+  import TextInput from 'src/components/form/TextInput.vue'
+  import WrapperContainer from 'src/components/wrapper/WrapperContainer.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
-  import { get, map, } from 'lodash'
+  import { find, get, map, } from 'lodash'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
@@ -59,20 +64,52 @@
   export default {
     name: 'List',
     components: {
-      FilterGroup,
+      // FilterGroup,
+      ListFilter,
       ListContainer,
       Spinner,
       TextInput,
+      WrapperContainer,
     },
     computed: {
+      asideItems () {
+        return get(this.$store, 'state.asideItems', [])
+      },
+      isEditorActive () {
+        return get(this.$route, 'params.subItem') === 'new'
+          || get(this.$route, 'params.action') === 'new'
+          || get(this.$route, 'params.subItem') === 'edit'
+          || get(this.$route, 'params.action') === 'edit'
+      },
+      isSubItem () {
+        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
+      },
       filterChecks () {
-        return require(`src/model/${this.model.toUpperCase()}`).filter || []
+        return this.modelData ? this.modelData.filter || [] : []
       },
       model () {
+        return get(this.$route, 'params.item').replace(/-/g, '_')
+      },
+      modelRaw () {
         return get(this.$route, 'params.item')
       },
+      modelData () {
+        let model
+        try {
+          model = require(`src/model/${this.model.toUpperCase()}`)
+        } catch (error) {
+          console.log(`There's no model found:`, this.model.toUpperCase())
+        }
+        return model
+      },
       maxResult () {
-        return require(`src/model/${this.model.toUpperCase()}`).LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT
+        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+      },
+      sub () {
+        return get(find(this.asideItems, { name: this.modelRaw, }), 'sub', [])
+      },
+      type () {
+        return this.isSubItem ? 'list' : get(find(this.asideItems, { name: this.modelRaw, }), 'type', 'list')
       },
     },
     data () {
@@ -80,16 +117,23 @@
         filter: '',
         filterSearched: '',
         filterChecksCurrent: {},
-        isFilterApplied: false,
-        isNewItemEditorActive: false,
+        // isFilterApplied: false,
         isSearchFocused: false,
         isSpinnerActive: false,
         page: DEFAULT_PAGE,
       }
     },
     methods: {
+      back () {
+        this.$router.go(-1)
+      },
+      backToParent () {
+        this.isSubItem ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}`) : this.$router.push(`/${get(this.$route, 'params.item')}`)
+      },
       create () {
-        this.isNewItemEditorActive = true
+        this.isSubItem
+          ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}/new`)
+          : this.$router.push(`/${get(this.$route, 'params.item')}/new`)
       },
       focusSearch () {
         this.isSearchFocused = true
@@ -106,11 +150,13 @@
           params.page = this.page
         }
         params.maxResult = this.maxResult
+        params.id = this.isSubItem || undefined
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
         })
         debug('params.maxResult', params.maxResult)
-        fetchList(this.$store, params, this.model).then(() => {
+        debug('this.model', this.modelRaw)
+        fetchList(this.$store, params, this.modelRaw).then(() => {
           this.isSpinnerActive = false
         })
       },
@@ -119,11 +165,11 @@
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
         })        
-        fetchItemsCount(this.$store, params, this.model)
+        fetchItemsCount(this.$store, params, this.modelRaw)
       },
       search () {
         this.filterSearched = this.filter
-        this.isFilterApplied = true
+        // this.isFilterApplied = true
         Promise.all([
           this.refresh({
             params: {
@@ -145,6 +191,12 @@
       ])
     },
     watch: {
+      '$route': function () {
+        Promise.all([
+          this.refresh({}),
+          this.refreshItemsCount({})
+        ])        
+      },
       model () {
         this.isSpinnerActive = true
         Promise.all([
@@ -154,7 +206,8 @@
       },
       filter () {
         debug('Mutation detected: filter', this.filter)
-        this.isFilterApplied = this.filterSearched === this.filter
+        this.search()
+        // this.isFilterApplied = this.filterSearched === this.filter
       },
       filterChecksCurrent () {
         debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
@@ -168,7 +221,7 @@
 </script>
 <style lang="stylus" scoped>
   .list
-    background-color #404040
+    // background-color #404040
     padding 10px 60px 40px 10px
     // position relative
     &__header
@@ -176,20 +229,6 @@
       margin-bottom 10px
       display flex
       justify-content space-between
-    &__title
-      // position absolute
-      // top 10px
-      // left 10px
-      min-width 300px
-      height 100%
-      font-size 1.375rem
-      color rgba(250,250,250,0.9)
-      background-color rgba(138,138,138,0.5)
-      border-radius 2px
-      padding 0 20px
-      display flex
-      justify-content center
-      align-items center
     &__search, &__toolbox, &__filter
       display flex
       align-items flex-end
@@ -202,59 +241,29 @@
       outline none
       padding 0 10px
     &__search
-      background-color #a3a3a3
-      height 30px
-      margin-top 10px
-      outline none
-      &.focused
-        background-color #fff
-        .btn
-          span
-            color #fff
-      .btn
-        display flex
-        justify-content center
-        align-items center
-        padding 2px
-        height 100%
-        span
-          box-shadow 0 0 5px rgba(0,0,0,0.5)
-          color #d3d3d3
-          display flex
-          justify-content center
-          align-items center
-          width 100%
-          height 100%
-          padding 0 7px
-          border-radius 3px
-          font-size 0.8125rem
-          &.applied
-            cursor pointer
-            background-color #909090
-          &.apply
-            background-color #a80606
-            &:hover
-              background-color #d40505
-              color #fff
-
+      width 400px
     &__toolbox
       .btn
         cursor pointer
-        padding 5px
         display flex
         justify-content center
         align-items center
         margin 0 10px
-        border-radius 2px
         background-color #d3d3d3
         border 1px solid #d3d3d3
+        
+        font-size 1rem
+        padding 5px 20px
+        border-radius 4px
+        color #fff
+        &.back
+          background-color #a0a0a0
         &.create
-          background-color green
-          border 1px solid green
-          color #d3d3d3
+          background-color #000
+          border 1px solid #000
           &:hover
-            background-color #13a213
-            border 1px solid #13a213
+            background-color #505050
+            border 1px solid #505050
             box-shadow 0 0 5px rgba(250,250,250, 0.7)
     &__wrapper
       display flex

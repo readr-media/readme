@@ -13,7 +13,7 @@ const config = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 const { filter, get } = require('lodash')
 
-const debug = require('debug')('READR:server')
+const debug = require('debug')('README:server')
 const isProd = process.env.NODE_ENV === 'production'
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
 const serverInfo =
@@ -74,7 +74,7 @@ const serve = (path, cache) => express.static(resolve(path), {
 })
 
 app.use(compression({ threshold: 0 }))
-app.use(favicon('./public/favicon-48x48.png'))
+app.use(favicon('./public/favicon-50x50.png'))
 app.use('/dist', serve(path.join(__dirname, './dist'), true))
 app.use('/public', serve(path.join(__dirname, './public'), true))
 app.use('/manifest.json', serve(path.join(__dirname, './manifest.json'), true))
@@ -117,25 +117,26 @@ function render (req, res, next) {
   }
 
   const handleError = err => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
     if (err.url) {
-      res.redirect(err.url)
+      return res.redirect(err.url)
     } else if(err.code === 404) {
-      res.status(404).send('404 | Page Not Found')
+      return res.status(404).send('404 | Page Not Found')
     } else if (err.code === 403) {
-      res.status(403).send('Please login through readr-site.')
+      return res.status(403).send('Please login through readr-site or you dont have any permission at this moment.')
     } else {
       // Render Error Page or Redirect
-      res.status(500).send('500 | Internal Server Error')
       console.error(`error during render : ${req.url}`)
       console.error(err.stack)
+      return res.status(500).send('500 | Internal Server Error')
     }
   }
 
   let context = {
-    title: 'Readr Admin',
+    title: 'ReadMe',
     ogTitle: 'Readr',
     description: 'Readr',
-    metaUrl: 'dev.readr.tw',
+    metaUrl: 'cms.readr.tw',
     metaImage: '/public/og.png',
     url: req.url,
     cookie: cookies.get('csrf'),

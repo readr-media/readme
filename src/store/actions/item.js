@@ -20,8 +20,18 @@ const POST_ITEM = ({ commit, }, { params, flag, }) => {
     return Promise.reject(err)
   })
 }
-const DEL_ITEM = ({ commit, }, { params, flag, }) => {
-  return itemFunc.delItem({ params, flag, }).then(({ status, body, }) => {
+// const DEL_ITEM = ({ commit, }, { params, flag, }) => {
+//   return itemFunc.delItem({ params, flag, }).then(({ status, body, }) => {
+//     debug('{ params, flag }', { params, flag })
+//     return { status, }
+//   }).catch(err => {
+//     debug('Error ocurred!', err)
+//     return Promise.reject(err)
+//   })
+// }
+
+const DEL_ITEMS = ({ commit, }, { params, flag, }) => {
+  return itemFunc.delItems({ params, flag, }).then(({ status, body, }) => {
     debug('{ params, flag }', { params, flag })
     return { status, }
   }).catch(err => {
@@ -46,6 +56,7 @@ const GET_ITEMS_COUNT = ({ commit, }, { params, flag, }) => {
 export {
   UPDATE_ITEM,
   POST_ITEM,
-  DEL_ITEM,
+  // DEL_ITEM,
+  DEL_ITEMS,
   GET_ITEMS_COUNT,
 }

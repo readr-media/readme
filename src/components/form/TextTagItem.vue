@@ -9,12 +9,15 @@
         :disabled="isTagsExceedLimit"
         :placeholder="placeholder"
         v-model="currInput"
-        @keyup="keyupHandeler"
-        @keypress="keypressHandler"
-        @keypress.delete.stop="removeLastTag">
+        @keyup.stop.prevent="keyupHandeler"
+        @keydown.8="removeLastTag"
+        @keypress="keypressHandler">
       <div class="autocomplete" v-show="currInput" ref="autocomplete" 
         tabIndex="0"
-        @keyup="browser">
+        @keyup.stop.prevent="browser"
+        @keydown.9.stop.prevent="donothing"
+        @focus="focusin"
+        @focusout="focusout">
         <span class="autocomplete__item"
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
@@ -26,6 +29,7 @@
 <script>
   import { find, get } from 'lodash'
   import { isDescendant } from 'src/util/comm'
+  import preventScroll from 'prevent-scroll'
 
   const debug = require('debug')('CLIENT:TextTagItem')
   export default {
@@ -47,6 +51,7 @@
       }
     },
     methods: {
+      donothing (e) {},
       keyupHandeler (e) {
         if (e) {
           if (e.keyCode === 40 && this.currInput) {
@@ -56,25 +61,26 @@
             return
           } else if (this.keys.indexOf(e.keyCode) === -1 ) {
             this.$emit('update:currInput', this.currInput)
+            // if (!this.currInput && e.keyCode === 8) {
+            //   this.removeLastTag()
+            // }
             return
           }
-          e.stopPropagation()
-          e.preventDefault()
         }
       },
       keypressHandler (e) {
         if (e && this.keys.indexOf(e.keyCode) === -1) { return }
-        if (e) {
-          e.stopPropagation()
-          e.preventDefault()
+        if (this.currInput) {
+          if (this.tags.indexOf(this.currInput) === -1) {
+            const item = find(this.autocomplete, (i) => get(i, 'name').indexOf(this.currInput) > -1)
+            debug('item', item)
+            debug('this.currInput', this.currInput)
+            item && this.tags.push(item)
+            this.currInput = ''
+          }
         }
-        if (this.currInput && this.tags.indexOf(this.currInput) === -1) {
-          const item = find(this.autocomplete, (i) => get(i, 'name').indexOf(this.currInput) > -1)
-          debug('item', item)
-          debug('this.currInput', this.currInput)
-          item && this.tags.push(item)
-          this.currInput = ''
-        }
+        e.stopPropagation()
+        e.preventDefault()
       },
       focus (e) {
         if (this.readOnly || isDescendant(e.target, { parant: this.$refs[ 'autocomplete' ] })) {
@@ -83,11 +89,19 @@
         this.$refs[ 'input' ].focus()
         this.isAutocompleteActive = true
       },
+      focusin () {
+        preventScroll.on()
+      },
+      focusout () {
+        preventScroll.off()
+      },
       get,
       getTagVal (rawVal) {
         return typeof(rawVal) !== 'string' ? get(rawVal, 'name') : rawVal
       },
-      browser (e) {
+      browser (e) {     
+        e.stopPropagation()
+        e.preventDefault()
         if (e.keyCode !== 38 && e.keyCode !== 40 && e.keyCode !== 13) {
           return
         } else {
@@ -107,10 +121,14 @@
       },
       remove (index) {
         this.tags.splice(index, 1)
+        this.$forceUpdate()
       },
-      removeLastTag () {
+      removeLastTag (e) {
         if (this.currInput) { return }
+        e.stopPropagation()
+        e.preventDefault()
         this.tags.pop()
+        this.$forceUpdate()
       },
     },
     mounted () {},
@@ -129,7 +147,7 @@
       autocomplete: function () {
         debug('autocomplete change detected.', this.autocomplete)
       },
-      tags: function () {
+      tags () {
         debug('tags change detected.')
         this.$emit('update:currTagValues', this.tags)
       },

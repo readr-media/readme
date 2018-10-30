@@ -7,6 +7,7 @@
       :placeholder="placeHolder"
       :style="{
         backgroundColor: background_color,
+        width,
       }"
       @focus="focus"
       @focusout="focusout"
@@ -75,7 +76,7 @@
       border none
       border-radius 2px
       width 100%
-      height 30px
+      height 34px
       font-size 1.125rem
       padding 0 10px
       vertical-align top
