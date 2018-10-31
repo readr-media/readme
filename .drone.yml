@@ -1,7 +1,6 @@
-#for push
 workspace:
   base: /vue
-  path: src/github.com/FalseChord/readme
+  path: src/github.com/readr-media/readme
 pipeline:
   clone:
     image: plugins/git
