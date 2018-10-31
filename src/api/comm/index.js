@@ -11,6 +11,7 @@ export function _buildQuery (params = {}) {
   const whitelist = [
     'where',
     'max_result',
+    'maxResult',
     'page',
     'sort',
     'sorting',
@@ -32,6 +33,7 @@ export function _buildQuery (params = {}) {
     'project_slugs',
     'report_slugs',
     'member_id',
+    'memberId',
     'memo_publish_status',
     'emotion',
     'fields',

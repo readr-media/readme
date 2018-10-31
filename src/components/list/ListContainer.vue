@@ -92,7 +92,7 @@
       modelData () {
         let model
         try {
-          model = require(`src/model/${this.model}`)
+          model = require(`model/${this.model}`)
         } catch (error) {
           console.log(`There's no model found:`, this.model)
         }

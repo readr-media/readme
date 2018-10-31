@@ -3,7 +3,7 @@ import { ROLE_MAP, } from './constants'
 import { createApp, } from './app' 
 import { getProfile, } from './util/services'
 
-const debug = require('debug')('READR-API:entry-server')
+const debug = require('debug')('README:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
 
 // This exported function will be called by `bundleRenderer`.
@@ -32,30 +32,14 @@ export default context => {
     Promise.all(preRouteInit).then((res) => {
       const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
       const permission = get(route, 'meta.permission')
-      const isInitMember = get(route, 'path') === '/initmember'
       debug('permission:', permission)
       debug('url', url)
       debug('fullPath', fullPath)
+      debug('role', role)
 
       let targUrl
-      // if (permission || (isInitMember && !initmember)) {
-      //   store.state.unauthorized = true
-      //   return reject({ code: 403, })
-      // } else {
-      //   router.push(url)
-      //   targUrl = url
-      // }
-      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
+      if (permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) {
         store.state.unauthorized = true
-        // if (!cookie) {
-        //   router.push('/login')
-        //   targUrl = '/login'
-          // store.state.targ_url = '/login'
-        // } else {
-        //   router.push('/')
-        //   targUrl = '/'
-          // store.state.targ_url = '/'
-        // }
         return reject({ code: 403, })
       } else {
         router.push(url)
