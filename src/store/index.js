@@ -18,7 +18,6 @@ export function createStore () {
       listCurrent: '',
       listItemsCount: 0,
       isLoggedIn: false,
-      peopleList: [],
       profile: {},
       systemVersion: '1.0.0'
     },

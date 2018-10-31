@@ -96,7 +96,7 @@
       modelData () {
         let model
         try {
-          model = require(`src/model/${this.model.toUpperCase()}`)
+          model = require(`model/${this.model.toUpperCase()}`)
         } catch (error) {
           console.log(`There's no model found:`, this.model.toUpperCase())
         }

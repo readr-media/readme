@@ -20,7 +20,9 @@ module.exports = {
       'public': path.resolve(__dirname, '../public'),
       'src': path.resolve(__dirname, '../src'),
       'components': path.resolve(__dirname, '../src/components'),
-      'api': path.resolve(__dirname, '../api')
+      'api': path.resolve(__dirname, '../api'),
+      'configuration': path.resolve(__dirname, '../configuration'),
+      'model': path.resolve(__dirname, '../model')
     }
   },
   module: {
