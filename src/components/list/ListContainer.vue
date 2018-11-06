@@ -179,6 +179,7 @@
       },
       update (form) {
         const normalizedForm = this.normalizeData(form)
+        console.log('DONE FOR NORMALIZATIOM')
         return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
           /**
            * Go refresh item-list.
