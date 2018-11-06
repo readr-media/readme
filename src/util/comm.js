@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-const debug = require('debug')('CLIENT:comm')
+// const debug = require('debug')('CLIENT:comm')
 
 export function getDatetime (dateStr, format = 'YYYY/MM/DD HH:mm:ss') {
   return dateStr && moment(new Date(dateStr)).format(format)

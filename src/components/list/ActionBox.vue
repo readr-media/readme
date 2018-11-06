@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-  const debug = require('debug')('CLIENT:ActionBox')
+  // const debug = require('debug')('CLIENT:ActionBox')
   export default {
     name: 'ActionBox',
     methods: {

@@ -9,7 +9,7 @@
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
     "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.config.js --progress --hide-modules",
     "build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.config.js --progress --hide-modules",
-    "lint": "eslint --ext .js,.vue src test/unit/specs"
+    "lint": "eslint --ext .js,.vue src"
   },
   "engines": {
     "node": ">=7.0",
@@ -61,11 +61,14 @@
   "devDependencies": {
     "autoprefixer": "^8.6.2",
     "babel-core": "^6.26.0",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^7.1.2",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-preset-env": "^1.6.1",
     "chokidar": "^2.0.3",
     "css-loader": "^0.28.7",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^4.7.1",
     "file-loader": "^1.1.5",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "rimraf": "^2.6.2",
@@ -83,5 +86,8 @@
   },
   "pre-commit": [
     "lint"
+  ],
+  "eslintIgnore": [
+    "api/config.js"
   ]
 }

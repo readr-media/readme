@@ -1,6 +1,6 @@
 <template>
   <div class="filter">
-    <div class="filter__item" v-for="f in filterChecks">
+    <div class="filter__item" v-for="f in filterChecks" :key="`filter__item-${f}`">
       <input type="checkbox" :id="`checkbox-${f}`" :checked="filterVals[ f ]">
       <label class="checkmark" :class="{ checked: filterVals[ f ], }" @click="check(f)"></label>
       <label class="label" v-text="$t(`${model.toUpperCase()}.${f.toUpperCase()}`)" @click="check(f)"></label>
