@@ -3,10 +3,10 @@
     <template v-if="!activeEditor">
       <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
-        <template v-for="item in items">
+        <template v-for="(item, index) in items">
           <ListItem @edit="editItem" @checkup="checkup"
             :item="item" :structure="itemStructure"
-            :key="`list-container__items-${item.name}-${Date.now()}`" :model="model"></ListItem>
+            :key="`list-container__items-${index}`" :model="model"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
