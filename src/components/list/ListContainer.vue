@@ -4,7 +4,9 @@
       <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
         <template v-for="item in items">
-          <ListItem :item="item" :structure="itemStructure" :model="model" @edit="editItem" @checkup="checkup"></ListItem>
+          <ListItem @edit="editItem" @checkup="checkup"
+            :item="item" :structure="itemStructure"
+            :key="`list-container__items-${item.name}-${Date.now()}`" :model="model"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -17,7 +19,7 @@
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
         @saved="itemSaved"
         :structure="itemStructure"
-        :add="add"></ItemEditor>        
+        :add="add"></ItemEditor>
       <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
         @saved="itemSaved"
         :structure="itemStructure"
@@ -179,7 +181,6 @@
       },
       update (form) {
         const normalizedForm = this.normalizeData(form)
-        console.log('DONE FOR NORMALIZATIOM')
         return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
           /**
            * Go refresh item-list.

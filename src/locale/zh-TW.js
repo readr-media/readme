@@ -172,7 +172,6 @@ export default {
     'ACTIVE_0': '-',
     'ACTIVE_1': '正常',
     'ACTIVE_NEVER': '-',    
-    'NICKNAME': '暱稱',
   },
   'IMAGE_UPLOADER': {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',

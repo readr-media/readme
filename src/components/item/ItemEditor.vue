@@ -3,7 +3,7 @@
     <div class="panel">
       <div class="panel__content">
         <template v-for="obj in sortedStructure">
-          <div class="panel__content--item" v-if="!obj.isHidden">
+          <div class="panel__content--item" v-if="!obj.isHidden" :key="`panel__content--item-${obj.name}-${Date.now()}`">
             <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
               <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
             </div>
@@ -26,15 +26,14 @@
                     :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
                     :key="get(opt, 'name')"
                     :value="get(opt, 'value')"
-                    :currSelected.sync="formData[ obj.name ]"></RadioItem>                
+                    :currSelected.sync="formData[ obj.name ]"></RadioItem>
                 </template>
-                <QuillEditor v-else-if="obj.type === 'ContentEditor'"
-                  :content.sync="formData[ obj.name ]" /></QuillEditor>
+                <QuillEditor v-else-if="obj.type === 'ContentEditor'" :content.sync="formData[ obj.name ]" />
                 <TextTagItem v-else-if="obj.type === 'TextTagItem'"
                   :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                   :currTagValues.sync="formData[ obj.name ]"
                   :currInput.sync="currTagInput[ obj.name ]"
-                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>     
+                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>
                 <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
                   :status.sync="formData[ obj.name ]"></BooleanSwitcher>
                 <ImageUploader v-else-if="obj.type === 'Image'"

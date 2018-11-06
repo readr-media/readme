@@ -1,6 +1,5 @@
 import { PROJECT_ACTIVE, } from 'api/config'
 import { constructUrlWithQuery, del, fetchInStrict, put, post, } from 'src/api/comm'
-import { filter, get, } from 'lodash'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:item')
 const host = getHost()
