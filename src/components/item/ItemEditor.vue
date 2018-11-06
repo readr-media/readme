@@ -160,6 +160,7 @@
         return this.$t(`${this.model}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
       },    
       save () {
+        console.log('GO UPDATE.')
         if (this.type === 'update') {
           this.update(this.formData).then(() => {
             // this.$emit('update:isActive', false)
