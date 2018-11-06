@@ -3,6 +3,8 @@ import { get, } from 'lodash'
 const debug = require('debug')('CLIENT:store:actions:item')
 
 const UPDATE_ITEM = ({ commit, }, { params, endpoint, }) => {
+  console.log('UPDATE_ITEM', endpoint)
+
   return itemFunc.updateItem({ params, endpoint, }).then(({ status, body, }) => {
     debug('{ params, endpoint }', { params, endpoint })
     return { status, }
