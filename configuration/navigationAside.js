@@ -1,109 +1,101 @@
+export const nav = [
+  { name: 'management', },
+  { name: 'plugin', },
+  { name: 'configure', },
+]
 export const items = [
   {
-    name: 'management',
-    route: 'management',
+    nav: 'management',
+    name: 'dashbord',
     type: 'wrapper',
-    active: true,
-    sub: [
-      { name: 'project', route: 'project', active: true, },      
-      { name: 'report', route: 'report', active: true, },
-      { name: 'memo', route: 'memo', active: true, },      
-      { name: 'member', route: 'member', active: true, },      
-    ],
+    active: false,
   },
   {
-    name: 'plug-in',
-    route: 'plug-in',
-    type: 'wrapper',
-    active: true,
-    sub: [
-      // { name: 'campaign', route: '', active: false, },
-      { name: 'enews', route: 'enews', active: true, }
-    ],
-  },
-
-
-  {
-    name: 'enews',
-    route: 'enews',
-    type: 'wrapper',
-    active: true,
-    isSubItem: true, 
-    sub: [
-      { name: 'campaign', route: '', active: false, },
-      { name: 'enews-group-list', route: 'enews-group-list', active: true, }
-    ],
-  },
-  {
-    name: 'enews-group-list',
-    route: 'enews-group-list',
-    active: true, 
-    isSubItem: true, 
-  },
-  {
+    nav: 'management',
     name: 'project',
-    route: 'project',
-    active: true, 
-    isSubItem: true, 
+    type: 'list',
+    active: true,
   },
   {
-    name: 'member',
-    route: 'member',
-    active: true,
-    isSubItem: true, 
-  },  
+    nav: 'management',
+    name: 'post',
+    type: 'wrapper',
+    active: false,
+  },
   {
+    nav: 'management',
     name: 'memo',
-    route: 'memo',
+    type: 'list',
     active: true,
-    isSubItem: true, 
-  },  
-
-
-  // {
-  //   name: 'EDM',
-  //   route: '',
-  //   active: false,
-  // },
-  // {
-  //   name: 'RECOMMEND',
-  //   route: '',
-  //   active: false,
-  // },
-  // {
-  //   name: 'Analytics',
-  //   route: '',
-  //   active: false,
-  // },
-  // {
-  //   name: 'Image',
-  //   route: '',
-  //   active: false,
-  // },
-  // {
-  //   name: 'AB',
-  //   route: '',
-  //   active: false,
-  //   sub: [
-  //     { name: 'project', route: '' },
-  //     { name: 'candidate', route: '' }
-  //   ]
-  // },
-  // {
-  //   name: 'Ad',
-  //   route: '',
-  //   active: false,
-  //   sub: [
-  //     { name: 'report', route: '' },
-  //   ]
-  // },
-  // {
-  //   name: 'Payment',
-  //   route: 'memo-manager',
-  //   active: false,
-  //   sub: [
-  //     { name: 'memo-list', route: '' },
-  //     { name: 'memo-replies', route: '' }
-  //   ]
-  // },
+  },
+  {
+    nav: 'management',
+    name: 'report',
+    type: 'list',
+    active: true,
+  },
+  {
+    nav: 'management',
+    name: 'poll',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'management',
+    name: 'ad',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'management',
+    name: 'tag',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'management',
+    name: 'member',
+    type: 'list',
+    active: true,
+  },
+  {
+    nav: 'plugin',
+    name: 'enews',
+    type: 'wrapper',
+    active: true,
+    sub: [
+      { name: 'enews-event-list', active: false },
+      { name: 'enews-group-list', active: true }
+    ],
+  },
+  {
+    nav: 'plugin',
+    name: 'epay',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'configure',
+    name: 'account_role',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'configure',
+    name: 'account_permission',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'configure',
+    name: 'share',
+    type: 'wrapper',
+    active: false,
+  },
+  {
+    nav: 'configure',
+    name: 'domain',
+    type: 'wrapper',
+    active: false,
+  },
 ]
