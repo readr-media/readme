@@ -56,8 +56,8 @@ button
 
 
 .app
-  padding-top 50px
-  padding-left 300px
+  padding-top 60px
+  padding-left 310px
   position relative
   background-color #fff
   min-height 100vh
