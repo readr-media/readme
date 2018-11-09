@@ -222,7 +222,7 @@
 <style lang="stylus" scoped>
   .list
     // background-color #404040
-    padding 10px 60px 40px 10px
+    padding 50px 60px 40px 10px
     // position relative
     &__header
       height 40px
