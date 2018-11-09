@@ -2,7 +2,7 @@
   <div class="list-item" tabIndex="0"
     :class="{ header: type === 'header', }">
     <div class="list-item__checkbox" v-if="type !== 'header'"><CheckboxItem :value.sync="checked" :id="get(item, 'id', `${Date.now()}`)"></CheckboxItem></div>
-    <div class="list-item__checkbox header" v-else><ActionBox @copy="copy" @del="del"></ActionBox></div>
+    <div class="list-item__checkbox header" v-else><ListActionBox @copy="copy" @del="del"></ListActionBox></div>
     <template v-for="obj in structure">
       <div v-if="obj.isListable"
         @click="clickHandler(obj.isEditEntry)"
@@ -26,16 +26,16 @@
   </div>
 </template>
 <script>
-  import ActionBox from 'src/components/list/ActionBox.vue'
+  import ListActionBox from 'src/components/list/ListActionBox.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import moment from 'moment'
   import { decamelize, } from 'humps'
   import { filter, get, } from 'lodash'
-  // const debug = require('debug')('CLIENT:ListItem')
+  const debug = require('debug')('CLIENT:ListItem')
   export default {
     name: 'ListItem',
     components: {
-      ActionBox,
+      ListActionBox,
       CheckboxItem,
     },
     data () {
@@ -51,6 +51,9 @@
         this.$emit('copy')
       },
       del () {
+        debug('DEL!!')
+        debug('DEL!!')
+        debug('DEL!!')
         this.$emit('del')
       },
       get,

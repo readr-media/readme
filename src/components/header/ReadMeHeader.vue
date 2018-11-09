@@ -7,15 +7,20 @@
         </div>
       </div>
       <div class="right">
-        <div class="logout" @click="logout" v-show="showLogout"><span v-text="$t('HEADER.LOGOUT')"></span></div>
+        <AccountActionBox></AccountActionBox>
+        <!--div class="logout" @click="logout" v-show="showLogout"><span v-text="$t('HEADER.LOGOUT')"></span></div-->
       </div>    
     </div>
   </div>
 </template>
 <script>
+  import AccountActionBox from 'src/components/header/AccountActionBox.vue'
   const debug = require('debug')('CLIENT:ReadMeHeader')
   export default {
     name: 'ReadMeHeader',
+    components: {
+      AccountActionBox,
+    },
     computed: {
       showLogout () {
         return !this.$route.path.match(/\/login([A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*)?$/)
