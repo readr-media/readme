@@ -1,4 +1,5 @@
 export default {
+  'USER': '使用者',
   'LOGIN': {
     'ACCOUNT': '帳號',
     'PASSWORD': '密碼',
