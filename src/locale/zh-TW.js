@@ -1,4 +1,5 @@
 export default {
+  'USER': '使用者',
   'LOGIN': {
     'ACCOUNT': '帳號',
     'PASSWORD': '密碼',
@@ -143,22 +144,29 @@ export default {
     'CANCEL': '取消',  
   },
   'NAVIGATION': {
-    'INDEX': '選單',
+    'MANAGEMENT': '管理',
+    'PLUGIN': '應用程式',
+    'CONFIGURE': '設定',
+    
+    'REPORT': '報導管理',
+    'AD': '廣告管理',
     'PROJECT': '專題管理',
     'MEMO': '筆記管理',
     'MEMBER': '會員管理',
-    'EDM': '電子報管理',
-    'RECOMMEND': '推薦文章管理',
-    'ANALYTICS': '分析',
-    'IMAGE': '圖片管理',
-    'AB': 'A/B TEST',
-    'AD': '廣告管理',
-    'PAYMENT': '付款管理',
-    'REPORT': '報導管理',
+    'ITEM': '項目',
+    'DASHBORD': '儀表板',
+    'POST': '貼文',
+    'POLL': '投票',
+    'TAG': '關鍵字',
+    'EPAY': '付費',
+    'ACCOUNT_ROLE': '會員角色',
+    'ACCOUNT_PERMISSION': '使用者角色',
+    'SHARE': '分享',
+    'DOMAIN': '網域',
+
     'ENEWS': '電子報管理',
+    'ENEWS_EVENT_LIST': '活動列表',
     'ENEWS_GROUP_LIST': '群組列表',
-    'MANAGEMENT': '管理',
-    'PLUG_IN': '應用程式 Plug-in'
   },
   'ENEWS_GROUP_LIST': {
     'GROUP_NAME': '群組名稱',
@@ -172,7 +180,6 @@ export default {
     'ACTIVE_0': '-',
     'ACTIVE_1': '正常',
     'ACTIVE_NEVER': '-',    
-    'NICKNAME': '暱稱',
   },
   'IMAGE_UPLOADER': {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',

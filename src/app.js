@@ -14,8 +14,7 @@ if (process.browser) {
   Vue.use(VueQuillEditor)
 }
 
-const debug = require('debug')('CLIENT:app.js')
-
+// const debug = require('debug')('CLIENT:app.js')
 // Expose a factory function that creates a fresh set of store, router,
 // app instances on each call (which is called for each SSR request)
 export function createApp () {

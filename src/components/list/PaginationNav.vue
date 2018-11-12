@@ -1,11 +1,14 @@
 <template>
   <div class="pagination-nav" ref="pagination">
     <template v-if="totalPages > 0">
-      <div class="pagination-nav__prev" @click="clickPrev">&lt;</div>
+      <div class="pagination-nav__prev prev" @click="clickPrev">&lt;</div>
       <!--div class="pagination-nav__rest" @click="clickPrev" v-if="showLeftRest">...</div-->
-      <div class="pagination-nav__page" :class="{ active: i === currPage }" v-for="i in activePages" v-text="i" @click="clickHandler(i)"></div>
+      <div class="pagination-nav__page" v-for="i in activePages" v-text="i"
+        :key="`pagination-nav__page-${i}`"
+        :class="{ active: i === currPage }"
+        @click="clickHandler(i)"></div>
       <!--div class="pagination-nav__rest" @click="clickNext" v-if="showRightRest">...</div-->
-      <div class="pagination-nav__next" @click="clickNext">&gt;</div>
+      <div class="pagination-nav__next next" @click="clickNext">&gt;</div>
     </template>
   </div>
 </template>
@@ -110,27 +113,25 @@
 </script>
 <style lang="stylus" scoped>
   .pagination-nav
-    font-size 0.875rem
-    color #808080
+    font-size 0.75rem
+    color #d3d3d3
     > div
       cursor pointer
       margin 0 4px
       width 20px
       padding 2px
-      background-color green
+      // background-color green
       display inline-flex
       justify-content center
       align-items center
-      color #d3d3d3
       border-radius 2px
       &:hover
-        box-shadow 0 0 5px rgba(0,0,0,0.5)
+        background-color #f7f7f7
     &__page
       &.active
-        font-weight 600
-        font-size 1rem
-        // box-shadow 0 0 5px rgba(250,250,250,0.7)
-        color #fff
+        color #626262
+    &__prev, &__next
+      color #626262
   .main-panel
     .pagination-nav
       margin-bottom 25px

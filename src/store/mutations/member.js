@@ -1,4 +1,4 @@
-  const debug = require('debug')('CLIENT:mutations:member')
+  // const debug = require('debug')('CLIENT:mutations:member')
 
   const SET_PROFILE = (state, { profile, }) => {
     state['profile'] = profile

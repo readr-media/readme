@@ -1,4 +1,4 @@
-const debug = require('debug')('CLIENT:mutations:list')
+// const debug = require('debug')('CLIENT:mutations:list')
 
 const SET_LIST = (state, { items, }) => {
   state['list'] = items

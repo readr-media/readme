@@ -1,5 +1,4 @@
 import { constructUrlWithQuery, fetchInStrict, } from 'src/api/comm'
-import { filter, get, } from 'lodash'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:list')
 const host = getHost()

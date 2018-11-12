@@ -1,11 +1,11 @@
 import { PROJECT_ACTIVE, } from 'api/config'
 import { constructUrlWithQuery, del, fetchInStrict, put, post, } from 'src/api/comm'
-import { filter, get, } from 'lodash'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:item')
 const host = getHost()
 
 export function updateItem ({ params, endpoint, }) {
+  console.log('UPDATE_ITEM', endpoint)
   debug('update', endpoint)
   const url = `${host}/api/${endpoint}/update`
   return put(url, params)

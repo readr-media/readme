@@ -12,7 +12,7 @@
         @keyup.stop.prevent="keyupHandeler"
         @keydown.8="removeLastTag"
         @keypress="keypressHandler">
-      <div class="autocomplete" v-show="currInput" ref="autocomplete" 
+      <div class="autocomplete" v-show="currInput" ref="autocomplete"
         tabIndex="0"
         @keyup.stop.prevent="browser"
         @keydown.9.stop.prevent="donothing"
@@ -21,6 +21,7 @@
         <span class="autocomplete__item"
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
+          :key="`autocom-item-${get(item, 'name', Date.now())}`"
           :class="{ selected: currAutocompleteIndex === index }"></span>
       </div>
     </div>

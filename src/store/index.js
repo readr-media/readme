@@ -14,6 +14,7 @@ export function createStore () {
         active: false,
       },
       asideItems: [],
+      asideNav: [],
       list: [],
       listCurrent: '',
       listItemsCount: 0,

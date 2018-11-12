@@ -1,5 +1,6 @@
 import {
   fetchAsideItems,
+  fetchAsideNav,
   checkLoginStatus,
   fetchProfile,
   uploadImage,
@@ -22,6 +23,12 @@ export default Object.assign({
   FETCH_ASIDE_ITEMS: ({ commit, dispatch, state, }, { params, }) => {
     return fetchAsideItems().then(({ items, }) => {
       commit('SET_ASIDE_ITEMS', { items })
+    })
+  },
+
+  FETCH_ASIDE_NAV: ({ commit, dispatch, state, }, { params, }) => {
+    return fetchAsideNav().then(({ items, }) => {
+      commit('SET_ASIDE_NAV', { items })
     })
   },
 

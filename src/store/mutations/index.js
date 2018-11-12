@@ -6,6 +6,9 @@ export default Object.assign({
   SET_ASIDE_ITEMS: (state, { items }) => {
     state[ 'asideItems' ] = items
   },
+  SET_ASIDE_NAV: (state, { items }) => {
+    state[ 'asideNav' ] = items
+  },
   SET_ALERT_FLAG: (state, { active, message, callback, }) => {
     state[ 'alertFlag' ][ 'active' ] = active
     state[ 'alertFlag' ][ 'message' ] = message

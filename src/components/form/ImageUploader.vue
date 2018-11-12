@@ -25,9 +25,9 @@
     debug('file', file)
     return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
   }
-  const deleteImage = (store, file) => {
-    return store.dispatch('DELETE_IMAGE', { file, type: 'post' })
-  }
+  // const deleteImage = (store, file) => {
+  //   return store.dispatch('DELETE_IMAGE', { file, type: 'post' })
+  // }
 
   export default {
     name: 'ImageUploader',
