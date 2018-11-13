@@ -1,7 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { find, get, map, mapKeys } = require('lodash')
-const { handlerError } = require('../../comm')
-const config = require('../../config')
+const { handlerError } = require('../comm')
+const config = require('../config')
 const debug = require('debug')('README:api:memo')
 const express = require('express')
 const router = express.Router()
@@ -93,6 +93,8 @@ router.post('/create', (req, res) => {
   debug(req.body)
   // res.send('ok')
   const url = `${apiHost}/memo`
+  req.body.author = req.user.id
+
   superagent
   .post(url)
   .send(req.body)

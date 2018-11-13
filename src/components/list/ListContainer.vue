@@ -157,7 +157,7 @@
          * And remove those data which's not editable(excluding 'ID').
          */
         map(this.itemStructure, item => {
-          debug('item.name', item.name, item.name.toUpperCase())
+          debug('item.name', item.name, item.name.toUpperCase(), item)
           if (item.type === 'Datetime') {
             debug('preForm[ item.name ]', preForm[ item.name ])
             if (!preForm[ item.name ]) {
@@ -171,6 +171,9 @@
           if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
+          }
+          if (item.type === 'TextTagItem' && get(item, 'map.isValArraySensitive')) {
+            preForm[ item.name ] = map(get(preForm, item.name, []), tag => tag.value)
           }
           if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
             preForm[ item.name ] = this.me

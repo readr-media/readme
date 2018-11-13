@@ -45,7 +45,7 @@ const fetchPromise = (url, req) => {
   })
 }
 
-router.use('/enews-group-list/list', (req, res) => {
+router.use('/enews-group-list/list', authVerify, (req, res) => {
   debug('Got id', req.query.id)
   debug('Got id', req.body.id)
 
@@ -66,20 +66,14 @@ router.use('/enews-group-list/list', (req, res) => {
 
 
 router.use('/activate', verifyToken, require('./middle/member/activation'))
-
-router.use('/project', require('./middle/project'))
-router.use('/report', require('./middle/report'))
-router.use('/memo', require('./middle/memo'))
-router.use('/member', require('./middle/member'))
-router.use('/members', require('./middle/member'))
-
-router.use('/image-post', require('./middle/image'))
-router.use('/tags', require('./middle/tags'))
-
-
-
-
-
+router.use('/project', authVerify, require('./middle/project'))
+router.use('/report', authVerify, require('./middle/report'))
+router.use('/memo', authVerify, require('./middle/memo'))
+router.use('/member', authVerify, require('./middle/member'))
+router.use('/members', authVerify, require('./middle/member'))
+router.use('/post', [ authVerify, authorize ], require('./middle/post'))
+router.use('/image-post', authVerify, require('./middle/image'))
+router.use('/tags', authVerify, require('./middle/tags'))
 
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
