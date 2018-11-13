@@ -10,7 +10,7 @@ const superagent = require('superagent')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.use('/list', (req, res) => {
-  const url = `${apiHost}/posts${req.url.slice(1)}`
+  const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true`
   debug('Got a /post call:')
   debug(req.url)
   
@@ -58,8 +58,6 @@ router.post('/create', (req, res) => {
 router.put('/update', (req, res) => {  
   const url = `${apiHost}/post`
   debug('Got a post updating call.')
-
-  req.body.author = req.user.id
   debug('req.body', req.body)
 
   superagent
