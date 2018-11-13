@@ -1,7 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { find, get, map, mapKeys } = require('lodash')
-const { handlerError } = require('../../comm')
-const config = require('../../config')
+const { handlerError } = require('../comm')
+const config = require('../config')
 const debug = require('debug')('README:api:project')
 const express = require('express')
 const router = express.Router()
@@ -63,14 +63,13 @@ router.post('/create', (req, res) => {
 router.put('/update', (req, res) => {
   debug('Got a project updating call.')
   const url = `${apiHost}/project`
-  req.body.tags = get(req, 'body.tags') && map(get(req, 'body.tags', []), tag => tag.value)
   debug(req.body)
   superagent
   .put(url)
   .send(req.body)
   .end((error, response) => {
     if (!error && response) {
-      res.send({ status: 200, text: 'Updating a new project successfully.' })
+      res.send({ status: 200, text: 'Updating a project successfully.' })
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({

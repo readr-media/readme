@@ -26,6 +26,7 @@
       change () {
         debug(this.$refs[ 'radio' ].checked)
         this.$emit('update:currSelected', this.value)
+        this.$emit('updateForm')
       }
     },
     mounted () {},

@@ -19,8 +19,8 @@ export const items = [
   {
     nav: 'management',
     name: 'post',
-    type: 'wrapper',
-    active: false,
+    type: 'list',
+    active: true,
   },
   {
     nav: 'management',
