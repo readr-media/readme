@@ -1,6 +1,6 @@
 const { camelizeKeys } = require('humps')
-const { handlerError } = require('../../comm')
-const config = require('../../config')
+const { handlerError } = require('../comm')
+const config = require('../config')
 const debug = require('debug')('README:api:tag')
 const express = require('express')
 const router = express.Router()

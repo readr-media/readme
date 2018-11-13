@@ -3,7 +3,10 @@
     <div class="panel">
       <div class="panel__content">
         <template v-for="obj in sortedStructure">
-          <div class="panel__content--item" v-if="!obj.isHidden" :key="`panel__content--item-${obj.name}-${Date.now()}`">
+          <div v-if="!obj.isHidden"
+            v-show="obj.showWith ? obj.showWith(formData) : true"
+            class="panel__content--item"
+            :key="`panel__content--item-${obj.name}`">
             <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
               <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
             </div>
@@ -23,6 +26,7 @@
                   :value.sync="formData[ obj.name ]"></TextareaInput>
                 <template v-else-if="obj.type === 'RadioItem'">
                   <RadioItem v-for="opt in obj.options" :name="get(obj, 'name')"
+                    @updateForm="updateForm"
                     :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
                     :key="get(opt, 'name')"
                     :value="get(opt, 'value')"
@@ -71,7 +75,7 @@
   // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
-  import { filter, get, map, sortBy, } from 'lodash'
+  import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
 
@@ -109,8 +113,33 @@
       // close () {
       //   this.$emit('update:isActive', false)
       // },
+      // checkShowWith (obj) {
+      //   const flag = obj.showWith ? get(filter([ this.formData ], obj.showWith), 'length', 0) > 0 : true
+      //   debug('obj.showWithWatcher', obj.showWithWatcher)
+      //   debug('isFormdataWatchOn', this.isFormdataWatchOn)
+      //   debug(`!this.isFormdataWatch[ obj.showWithWatcher ]`, !this.isFormdataWatch[ obj.showWithWatcher ])
+      //   debug(`formData.${obj.showWithWatcher}`)
+      //   if (flag && !this.isFormdataWatch[ obj.showWithWatcher ]) {
+      //     this.45[ obj.showWithWatcher ] = this.formData[ obj.showWithWatcher ] || undefined
+      //     this.$watch(`formData.${obj.showWithWatcher}`, (newValue, oldValue) => {
+      //       debug('go update')
+      //       debug('go update')
+      //       debug('go update')
+      //       debug('go update')
+      //       debug('go update')
+      //       this.$forceUpdate()
+      //     }, {
+      //       deep: true
+      //     })
+      //     this.isFormdataWatch[ obj.showWithWatcher ] = true
+      //   }
+      //   return flag
+      // },
       decamelize,
       get,
+      // isSupposedToShow () {
+
+      // },
       initValue () {
         this.formData = {}
         if (this.type === 'update') {
@@ -200,10 +229,22 @@
           debug(`Mutation detected: autocompleteArr.${item.name}`)
           debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
         })       
-      },     
+      },   
+      updateForm () {
+        this.$forceUpdate()
+      }
     },
-    beforeMount () { this.initValue() },
+    beforeMount () {
+      this.initValue()
+      // this.setupWatcher()
+    },
     mounted () {},
+    updated () {
+      debug('updated detected!')
+      debug('updated detected!')
+      debug('updated detected!')
+      debug('updated detected!')
+    },
     props: {
       add: {
         type: Function,
