@@ -151,6 +151,13 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
+    'GROUPS': {
+      'BASIC': '基本設定',
+      'CONTENT': '內容設定',
+      'EMBED': '嵌入設定',
+      'NONE': '',
+      'INFO': '',
+    },
   },
   'POLL': {
     'NEW': '新增投票',
@@ -171,7 +178,7 @@ export default {
     'ACTIVE_DEACTIVATE': '無效',
     'CREATED_BY': '建立',
     'UPDATED_BY': '最後更新',
-    'IMAGE': '照片',
+    'IMAGE': '首圖',
     'VIDEO': '影片',
     'TOTAL_VOTE': '投票人數',
     'FREQUENCY': '投票頻率',

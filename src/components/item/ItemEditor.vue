@@ -2,56 +2,61 @@
   <ItemEditorLayout>
     <div class="panel">
       <div class="panel__content">
-        <template v-for="obj in sortedStructure">
-          <div v-if="!obj.isHidden"
-            v-show="obj.showWith ? obj.showWith(formData) : true"
-            class="panel__content--item"
-            :key="`panel__content--item-${obj.name}`">
-            <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
-              <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
-            </div>
-            <div class="value">
-              <template v-if="obj.isEditable || (obj.isInitiliazible && type === 'create')">
-                <TextInput v-if="obj.type === 'TextInput'"
-                  backgroundColor="#fff"
-                  :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                  :value.sync="formData[ obj.name ]"></TextInput>
-                <Datetime v-else-if="obj.type === 'Datetime'"
-                  v-model="formData[ obj.name ]"
-                  input-format="YYYY/MM/DD HH:mm"
-                  input-class="datepicker__input"
-                  type="datetime"></Datetime>
-                <TextareaInput v-else-if="obj.type === 'TextareaInput'"
-                  :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                  :value.sync="formData[ obj.name ]"></TextareaInput>
-                <template v-else-if="obj.type === 'RadioItem'">
-                  <RadioItem v-for="opt in obj.options" :name="get(obj, 'name')"
-                    @updateForm="updateForm"
-                    :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
-                    :key="get(opt, 'name')"
-                    :value="get(opt, 'value')"
-                    :currSelected.sync="formData[ obj.name ]"></RadioItem>
-                </template>
-                <QuillEditor v-else-if="obj.type === 'ContentEditor'" :content.sync="formData[ obj.name ]" />
-                <TextTagItem v-else-if="obj.type === 'TextTagItem'"
-                  :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                  :currTagValues.sync="formData[ obj.name ]"
-                  :currInput.sync="currTagInput[ obj.name ]"
-                  :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>
-                <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
-                  :status.sync="formData[ obj.name ]"></BooleanSwitcher>
-                <ImageUploader v-else-if="obj.type === 'Image'"
-                  :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
-                <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
-                  :name="obj.name"
-                  :fetchSource="obj.fetchSource"
-                  :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
-              </template>
-              <template v-else>
-                <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
-                <span v-else v-text="get(item, obj.name)"></span>
-              </template>
-            </div>
+        <template v-for="group in groups">
+          <div class="panel__group">
+            <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.toUpperCase()}`)"></span></div>
+            <template v-for="obj in sortedStructure">
+              <div v-if="!obj.isHidden && (obj.group === group || group === 'none')"
+                v-show="obj.showWith ? obj.showWith(formData) : true"
+                class="panel__content--item"
+                :key="`panel__content--item-${obj.name}`">
+                <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
+                  <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
+                </div>
+                <div class="value">
+                  <template v-if="obj.isEditable || (obj.isInitiliazible && type === 'create')">
+                    <TextInput v-if="obj.type === 'TextInput'"
+                      backgroundColor="#fff"
+                      :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
+                      :value.sync="formData[ obj.name ]"></TextInput>
+                    <Datetime v-else-if="obj.type === 'Datetime'"
+                      v-model="formData[ obj.name ]"
+                      input-format="YYYY/MM/DD HH:mm"
+                      input-class="datepicker__input"
+                      type="datetime"></Datetime>
+                    <TextareaInput v-else-if="obj.type === 'TextareaInput'"
+                      :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
+                      :value.sync="formData[ obj.name ]"></TextareaInput>
+                    <template v-else-if="obj.type === 'RadioItem'">
+                      <RadioItem v-for="opt in obj.options" :name="get(obj, 'name')"
+                        @updateForm="updateForm"
+                        :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
+                        :key="get(opt, 'name')"
+                        :value="get(opt, 'value')"
+                        :currSelected.sync="formData[ obj.name ]"></RadioItem>
+                    </template>
+                    <QuillEditor v-else-if="obj.type === 'ContentEditor'" :content.sync="formData[ obj.name ]" />
+                    <TextTagItem v-else-if="obj.type === 'TextTagItem'"
+                      :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
+                      :currTagValues.sync="formData[ obj.name ]"
+                      :currInput.sync="currTagInput[ obj.name ]"
+                      :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>
+                    <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
+                      :status.sync="formData[ obj.name ]"></BooleanSwitcher>
+                    <ImageUploader v-else-if="obj.type === 'Image'"
+                      :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
+                    <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
+                      :name="obj.name"
+                      :fetchSource="obj.fetchSource"
+                      :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
+                  </template>
+                  <template v-else>
+                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
+                    <span v-else v-text="get(item, obj.name)"></span>
+                  </template>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
       </div>
@@ -259,6 +264,10 @@
       //   default: () => false,
       // },
       structure: Array,
+      groups: {
+        type: Array,
+        default: () => [ 'none' ]
+      },
       item: {
         type: Object,
         default: () => {},

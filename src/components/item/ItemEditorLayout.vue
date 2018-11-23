@@ -27,6 +27,19 @@
       border-radius 2px
       padding 30px 50px 70px
       position relative
+      &__group
+        &:not(:first-child)
+          margin-top 80px
+        &--title
+          font-size 1.5rem
+          font-weight normal
+          font-style normal
+          font-stretch normal
+          line-height normal
+          letter-spacing normal
+          text-align left
+          color #000000
+          margin-bottom 30px
       &__content
         overflow auto
         height 100%
