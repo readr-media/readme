@@ -102,6 +102,7 @@ export default {
     'PUBLISH_STATUS_DRAFT': '草稿',
     'PUBLISH_STATUS_PUBLISHED': '發布',
     'PUBLISH_STATUS_SCHEDULING': '排程',
+    'PUBLISH_STATUS_NEVER': '不明',
     'PUBLISHED_AT': '發佈時間',
     'CREATED_AT': '建立時間',
     'OG_DESCRIPTION': 'OG 說明',
