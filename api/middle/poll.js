@@ -10,27 +10,68 @@ const superagent = require('superagent')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.use('/list', (req, res) => {
-  const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true`
-  debug('Got a /post call:')
+  const url = `${apiHost}/poll`
+  debug('Got a /poll call:')
   debug(req.url)
+  res.json({
+    _items: [
+      {
+        id: 0,
+        status: 0,
+        active: 1,
+        title: 'poll 1',
+        description: 'desc',
+        image: 'https://www.google.com',
+        video: 'https://www.google.com',
+        total_vote: 20,
+        frequency: '10',
+        start_at: '2018-10-19T03:37:11Z',
+        end_at: '2018-10-19T03:37:11Z',
+        kind: 1,
+        max_choice: 1,
+        changeable: 1,
+        created_by: 22,
+        created_at: '2018-10-19T03:37:11Z',
+      },
+      {
+        id: 1,
+        status: 0,
+        active: 1,
+        title: 'poll 1',
+        description: 'desc',
+        image: 'https://www.google.com',
+        video: 'https://www.google.com',
+        total_vote: 20,
+        frequency: '10',
+        start_at: '2018-10-19T03:37:11Z',
+        end_at: '2018-10-19T03:37:11Z',
+        kind: 1,
+        max_choice: 1,
+        changeable: 1,
+        created_by: 22,
+        created_at: '2018-10-19T03:37:11Z',
+      },      
+    ]
+  })   
   
-  superagent
-  .get(url)
-  .end((error, response) => {
-    if (!error && response) {
-      debug('Fetch posts from api successfully.')
-      res.send(camelizeKeys(response.body))
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during fetch data from : ${url}`)
-      console.error(error) 
-    }
-  })
+  // superagent
+  // .get(url)
+  // .end((error, response) => {
+  //   if (!error && response) {
+  //     debug('Fetch polls from api successfully.')
+  //     res.send(camelizeKeys(response.body))
+  //   } else {
+  //     const errWrapped = handlerError(error, response)
+  //     res.status(errWrapped.status).send({
+  //       status: errWrapped.status,
+  //       text: errWrapped.text
+  //     })
+  //     console.error(`Error occurred during fetch data from : ${url}`)
+  //     console.error(error) 
+  //   }
+  // })
 })
+
 router.post('/create', (req, res) => {
   debug('Got a post creating call.')
   debug(req.body)
@@ -79,22 +120,25 @@ router.put('/update', (req, res) => {
 })
 router.get('/count', (req, res) => {
   const url = `${apiHost}/posts/count`
-  superagent
-  .get(url)
-  .end((error, response) => {
-    if (!error && response) {
-      debug('Fetch posts count from api successfully.')
-      res.send(camelizeKeys(response.body))
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during fetch data from : ${url}`)
-      console.error(error) 
-    }
+  res.json({
+    count: 99
   })
+  // superagent
+  // .get(url)
+  // .end((error, response) => {
+  //   if (!error && response) {
+  //     debug('Fetch posts count from api successfully.')
+  //     res.send(camelizeKeys(response.body))
+  //   } else {
+  //     const errWrapped = handlerError(error, response)
+  //     res.status(errWrapped.status).send({
+  //       status: errWrapped.status,
+  //       text: errWrapped.text
+  //     })
+  //     console.error(`Error occurred during fetch data from : ${url}`)
+  //     console.error(error) 
+  //   }
+  // })
 })
 router.delete('/', (req, res) => {
   debug('Got a post del call.')

@@ -5,9 +5,10 @@
         <template v-if="!isEditorActive">
           <div class="list__wrapper left">
             <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
-            <ListFilter class="list__search" :value.sync="filter"></ListFilter>
+            <div class="list__name"><span v-text="title"></span></div>
           </div>
           <div class="list__wrapper right">
+            <ListFilter class="list__search" :value.sync="filter"></ListFilter>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
               <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
@@ -15,7 +16,9 @@
           </div>
         </template>
         <template v-else>
-          <div class="list__wrapper left"></div>
+          <div class="list__wrapper left">
+            <div class="list__name"><span v-text="title"></span></div>
+          </div>
           <div class="list__wrapper right">
             <div class="list__toolbox">
               <div class="btn back" @click="back"><span v-text="$t('LIST.BACK')"></span></div>
@@ -111,6 +114,15 @@
       type () {
         return this.isSubItem ? 'list' : get(find(this.asideItems, { name: this.modelRaw, }), 'type', 'list')
       },
+      title () {
+        if (get(this.$route, 'params.subItem') === 'new') {
+          return this.$t(`${this.model.toUpperCase()}.NEW`)
+        } else if (get(this.$route, 'params.subItem') === 'edit') {
+          return this.$t(`${this.model.toUpperCase()}.EDIT`)
+        } else {
+          return this.$t(`NAVIGATION.${this.model.toUpperCase()}`)
+        }
+      },
     },
     data () {
       return {
@@ -141,6 +153,7 @@
       focusSearchOut () {
         this.isSearchFocused = false
       },
+      get,
       refresh ({ params = {}, }) {
         this.filterSearched && (params.keyword = this.filterSearched)
         this.page = params.page || this.page
@@ -225,10 +238,19 @@
     padding 50px 60px 40px 10px
     // position relative
     &__header
-      height 40px
+      height 36px
       margin-bottom 10px
       display flex
       justify-content space-between
+    &__name
+      font-size 1.5rem
+      font-weight bold
+      font-style normal
+      font-stretch normal
+      line-height normal
+      letter-spacing normal
+      text-align left
+      color #000000
     &__search, &__toolbox, &__filter
       display flex
       align-items flex-end
@@ -256,6 +278,7 @@
         padding 5px 20px
         border-radius 4px
         color #fff
+        height 36px
         &.back
           background-color #a0a0a0
         &.create
@@ -267,4 +290,5 @@
             box-shadow 0 0 5px rgba(250,250,250, 0.7)
     &__wrapper
       display flex
+      align-items center
 </style>

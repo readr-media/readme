@@ -147,6 +147,7 @@
         this.editorItem = item
         this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
       },
+      get,
       itemSaved () {
         this.$router.go(-1)
       },
