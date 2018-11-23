@@ -10,7 +10,7 @@ const publish_status_options = map(POLL_PUBLISH_STATUS, (s, k) => {
 })
 
 export const model = [
-  { name: 'id', type: 'TextInput', group: 'content', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { editor: 0 }, },
+  { name: 'id', type: 'TextInput', group: 'basic', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { editor: 0 }, },
   { name: 'start_at', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
   { name: 'end_at', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
   { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2 }, },

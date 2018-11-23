@@ -267,6 +267,7 @@ export default {
   'IMAGE_UPLOADER': {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',
     'OVER_SIZE': '圖檔過大',
+    'TOOLTIP': '上傳圖片',
   },
   'DROPDOWN_LIST': {
     'HINT': '請選擇',
