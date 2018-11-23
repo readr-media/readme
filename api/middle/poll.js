@@ -9,49 +9,51 @@ const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
+const fake = [
+  {
+    id: 0,
+    status: 0,
+    active: 1,
+    title: 'poll 1',
+    description: 'desc',
+    image: 'https://www.google.com',
+    video: 'https://www.google.com',
+    total_vote: 20,
+    frequency: '10',
+    start_at: '2018-10-19T03:37:11Z',
+    end_at: '2018-10-19T03:37:11Z',
+    kind: 1,
+    max_choice: 1,
+    changeable: 1,
+    created_by: 22,
+    created_at: '2018-10-19T03:37:11Z',
+  },
+  {
+    id: 1,
+    status: 0,
+    active: 1,
+    title: 'poll 1',
+    description: 'desc',
+    image: 'https://www.google.com',
+    video: 'https://www.google.com',
+    total_vote: 20,
+    frequency: '10',
+    start_at: '2018-10-19T03:37:11Z',
+    end_at: '2018-10-19T03:37:11Z',
+    kind: 1,
+    max_choice: 1,
+    changeable: 1,
+    created_by: 22,
+    created_at: '2018-10-19T03:37:11Z',
+  },      
+]
+
 router.use('/list', (req, res) => {
   const url = `${apiHost}/poll`
   debug('Got a /poll call:')
   debug(req.url)
   res.json({
-    _items: [
-      {
-        id: 0,
-        status: 0,
-        active: 1,
-        title: 'poll 1',
-        description: 'desc',
-        image: 'https://www.google.com',
-        video: 'https://www.google.com',
-        total_vote: 20,
-        frequency: '10',
-        start_at: '2018-10-19T03:37:11Z',
-        end_at: '2018-10-19T03:37:11Z',
-        kind: 1,
-        max_choice: 1,
-        changeable: 1,
-        created_by: 22,
-        created_at: '2018-10-19T03:37:11Z',
-      },
-      {
-        id: 1,
-        status: 0,
-        active: 1,
-        title: 'poll 1',
-        description: 'desc',
-        image: 'https://www.google.com',
-        video: 'https://www.google.com',
-        total_vote: 20,
-        frequency: '10',
-        start_at: '2018-10-19T03:37:11Z',
-        end_at: '2018-10-19T03:37:11Z',
-        kind: 1,
-        max_choice: 1,
-        changeable: 1,
-        created_by: 22,
-        created_at: '2018-10-19T03:37:11Z',
-      },      
-    ]
+    _items: fake
   })   
   
   // superagent
@@ -79,22 +81,41 @@ router.post('/create', (req, res) => {
   const url = `${apiHost}/post`
   req.body.author = req.user.id
 
-  superagent
-  .post(url)
-  .send(req.body)
-  .end((error, response) => {
-    if (!error && response) {
-      res.send({ status: 200, text: 'Create a new post successfully.' })
-    } else {
-      const errWrapped = handlerError(error, response)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error(`Error occurred during create a new post : ${url}`)
-      console.error(error) 
-    }
+  fake.push({
+    id: fake.length + 1,
+    status: 0,
+    active: 1,
+    title: 'poll 1',
+    description: 'desc',
+    image: 'https://www.google.com',
+    video: 'https://www.google.com',
+    total_vote: 20,
+    frequency: '10',
+    start_at: '2018-10-19T03:37:11Z',
+    end_at: '2018-10-19T03:37:11Z',
+    kind: 1,
+    max_choice: 1,
+    changeable: 1,
+    created_by: 22,
+    created_at: '2018-10-19T03:37:11Z',
   })
+  res.send('GJ!')
+  // superagent
+  // .post(url)
+  // .send(req.body)
+  // .end((error, response) => {
+  //   if (!error && response) {
+  //     res.send({ status: 200, text: 'Create a new post successfully.' })
+  //   } else {
+  //     const errWrapped = handlerError(error, response)
+  //     res.status(errWrapped.status).send({
+  //       status: errWrapped.status,
+  //       text: errWrapped.text
+  //     })
+  //     console.error(`Error occurred during create a new post : ${url}`)
+  //     console.error(error) 
+  //   }
+  // })
 })
 router.put('/update', (req, res) => {  
   const url = `${apiHost}/post`

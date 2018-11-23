@@ -61,7 +61,10 @@
         </template>
       </div>
       <div class="panel__actions">
-        <div class="save" @click="save"><span v-text="$t('EDITOR.SAVE')"></span></div>
+        <div class="save" :class="{ block: isProcessing }" @click="save">
+          <span v-text="$t('EDITOR.SAVE')" v-show="!isProcessing"></span>
+          <Spinner class="spinner" :show="isProcessing"></Spinner>
+        </div>
         <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
@@ -77,6 +80,7 @@
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
   import QuillEditor from 'src/components/form/QuillEditor.vue'
+  import Spinner from 'src/components/Spinner.vue'
   // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
@@ -94,6 +98,7 @@
       ItemEditorLayout,
       QuillEditor,
       RadioItem,
+      Spinner,
       TextareaInput,
       TextInput,
       TextTagItem,
@@ -112,6 +117,7 @@
         formData: {},
         currTagInput: {},
         autocompleteArr: {},
+        isProcessing: false,
       }
     },
     methods: {
@@ -194,9 +200,15 @@
       },    
       save () {
         console.log('GO UPDATE.')
+        if (this.isProcessing) {
+          return
+        } else {
+          this.isProcessing = true
+        }
         if (this.type === 'update') {
           this.update(this.formData).then(() => {
             // this.$emit('update:isActive', false)
+            this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
             debug('err', err)
@@ -204,6 +216,7 @@
         } else if (this.type === 'create') {
           this.add(this.formData).then(() => {
             // this.$emit('update:isActive', false)
+            this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
             debug('err', err)

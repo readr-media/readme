@@ -82,6 +82,10 @@
           border-radius 2px
           padding 5px
           cursor pointer
+          &.block, &.block:hover
+            cursor not-allowed
+            background-color #d2d2d2
+
           &:not(:last-child)
             margin-right 10px
           &:hover
