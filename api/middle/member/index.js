@@ -53,6 +53,7 @@ router.post('/create', (req, res, next) => {
   const url = `${apiHost}/member`
   delete payload.id
   payload.active = 0
+  payload.register_mode = 'ordinary'
 
   debug('payload:')
   debug(payload)

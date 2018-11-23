@@ -64,7 +64,14 @@
         return format ? moment(datetime).format(format) : moment(datetime).format('YYYY-MM-DD hh:mm:ss')
       }, 
     },
-    mounted () {},
+    mounted () {
+      // this.$can('memberManage') && Promise.all([
+      //   getMembers(this.$store, { type: 'normal', }),
+      //   getMembersCount(this.$store),
+      // ])
+      // .then(() => this.loading = false)
+      // .catch(() => this.loading = false)
+    },
     props: {
       model: {
         type: String,
