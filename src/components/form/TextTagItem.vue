@@ -168,13 +168,12 @@
 </script>
 <style lang="stylus">
   .input-tag-container
-    // margin-top 5px
     background-color #fff
-    // overflow hidden
     cursor text
     text-align left
     -webkit-appearance textfield
     padding 0 5px
+    border-radius 4px
     .input
       &__tag
         margin 5px 5px 5px 0

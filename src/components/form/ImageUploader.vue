@@ -6,7 +6,7 @@
           :src="preImgByte"
           :class="{ notEmpty: !isImgEmpty }">
       </div>
-      <div class="upload-image__upload"></div>
+      <div class="upload-image__upload" :class="{ hidden: !isImgEmpty }"></div>
       <div class="upload-image__name">
         <div class="title" v-text="title || $t('IMAGE_UPLOADER.TOOLTIP')"></div>
         <div class="desc">
@@ -145,10 +145,12 @@
   .upload-image
     display flex
     position relative
+    min-height 185px
     // align-items center
     &__container
       flex 1
       background-color #fff
+      border-radius 4px    
       &.grey
         background-color #f7f7f7
       // height 80px
@@ -189,6 +191,8 @@
       box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
       position relative
       margin-top 30px
+      &.hidden
+        opacity 0
       &:before
         @extends $plus-sign
         width 24px

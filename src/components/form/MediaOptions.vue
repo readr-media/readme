@@ -114,12 +114,17 @@
     height 36px
     width 100%
     cursor pointer
+    margin-bottom 20px
+    border-radius 4px
+    &:hover
+     background-color #222
   .item
     background-color #fff
     box-shadow 1.6px 1.2px 2px 0px rgba(0, 0, 0, 0.1)    
     padding 30px 20px
     display flex
     position relative
+    border-radius 4px
     &:not(:last-child)
       margin-bottom 10px
     .left, .right

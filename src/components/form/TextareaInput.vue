@@ -25,14 +25,13 @@
     },
     methods: {
       autosize(){
-        debug('autosize')
         this.autoHeight = 'auto'
         this.autoHeight = this.$refs[ 'textarea' ].scrollHeight + 'px'
       }
     },
     mounted () {
       this.current = this.value
-      this.autosize()
+      setTimeout(() => this.autosize(), 100)
     },
     props: {
       backgroundColor: {},
@@ -70,6 +69,7 @@
       line-height normal
       overflow hidden
       box-sizing border-box
+      border-radius 4px
       &::-webkit-input-placeholder
         color #bdbdbd
         font-weight 100

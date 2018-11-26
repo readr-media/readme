@@ -74,7 +74,7 @@
   .text-input
     input
       border none
-      border-radius 2px
+      border-radius 4px
       width 100%
       height 34px
       font-size 1.125rem
