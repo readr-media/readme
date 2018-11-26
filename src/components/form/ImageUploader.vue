@@ -1,13 +1,11 @@
 <template>
   <div class="upload-image">
-    <div class="upload-image__container" @click="uploadImage">
+    <div class="upload-image__container" @click="uploadImage" :class="{ grey: theme === 'grey' }">
       <div class="upload-image__thumbnail" v-if="(!isImgEmpty || preImgByte) && !isUploading">
         <img alt="thumbnail" ref="thumbnail"
           :src="preImgByte"
           :class="{ notEmpty: !isImgEmpty }">
       </div>
-      <template v-else-if="!isUploading">
-      </template>
       <div class="upload-image__upload"></div>
       <div class="upload-image__name">
         <div class="title" v-text="title || $t('IMAGE_UPLOADER.TOOLTIP')"></div>
@@ -122,6 +120,10 @@
     props: {
       title: {},
       imageUrl: {},
+      theme: {
+        type: String,
+        default: "white"
+      },
     },
     watch: {
       imageUrl () {
@@ -147,12 +149,14 @@
     &__container
       flex 1
       background-color #fff
+      &.grey
+        background-color #f7f7f7
       // height 80px
       display flex
       align-items center
       justify-content center
       flex-direction column
-      padding 10px 10px
+      padding 10px
       position relative
       cursor pointer
       z-index 1
@@ -165,12 +169,14 @@
       justify-content center
       width 100%
       height calc(100% - 20px)
+      padding 10px
       img
         // width 100%
         height 100%
         // width auto
-        // object-position center center
-        // object-fit contain
+        // width auto
+        object-position center center
+        object-fit contain
         // &.notEmpty
         //   // height 100%
         //   width 100%                

@@ -25,6 +25,7 @@
                       input-class="datepicker__input"
                       type="datetime"></Datetime>
                     <TextareaInput v-else-if="obj.type === 'TextareaInput'"
+                      :autoHeightActive="obj.autoHeightActive"
                       :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                       :value.sync="formData[ obj.name ]"></TextareaInput>
                     <template v-else-if="obj.type === 'RadioItem'">
@@ -45,10 +46,12 @@
                       :status.sync="formData[ obj.name ]"></BooleanSwitcher>
                     <ImageUploader v-else-if="obj.type === 'Image'"
                       :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
-                    <Dropdownlist  v-else-if="obj.type === 'Dropdownlist'"
+                    <Dropdownlist v-else-if="obj.type === 'Dropdownlist'"
                       :name="obj.name"
                       :fetchSource="obj.fetchSource"
                       :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
+                    <MediaOptions v-else-if="obj.type === 'MediaOptions'"
+                      :options.sync="formData[ obj.name ]"></MediaOptions>
                   </template>
                   <template v-else>
                     <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
@@ -75,6 +78,7 @@
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
+  import MediaOptions from 'src/components/form/MediaOptions.vue'
   import RadioItem from 'src/components/form/RadioItem.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
@@ -96,6 +100,7 @@
       Datetime,
       ImageUploader,
       ItemEditorLayout,
+      MediaOptions,
       QuillEditor,
       RadioItem,
       Spinner,

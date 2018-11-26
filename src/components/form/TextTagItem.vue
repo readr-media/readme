@@ -1,9 +1,11 @@
 <template>
   <div class="input-tag-container" @click="focus">
-    <span v-for="(tag, index) in tags" :key="index" class="input__tag">
-      <span v-text="getTagVal(tag)"></span>
-      <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="input__tag__remove"></a>
-    </span>
+    <div v-for="(tag, index) in tags" :key="index" class="input__tag">
+      <div class="input__tag__container">
+        <span v-text="getTagVal(tag)"></span>
+        <a v-if="!readOnly && removeBtnActive" @click.prevent.stop="remove(index)" class="input__tag__remove"></a>
+      </div>
+    </div>
     <div class="input__wrapper">
       <input type="text" class="input" ref="input"
         :disabled="isTagsExceedLimit"
@@ -142,7 +144,11 @@
       tagLimitNum: {
         type: Number,
         default: Infinity,
-      }
+      },
+      removeBtnActive: {
+        type: Boolean,
+        default: false
+      },
     },
     watch: {
       autocomplete: function () {
@@ -172,25 +178,36 @@
     .input
       &__tag
         margin 5px 5px 5px 0
-        padding 0 7px
-        background-color #f5e845
-        border-radius 2px
-        border 1px solid #c8bf56
-        color #847a00
         display inline-flex
         font-size 1rem
         font-weight 400
         height 35px
         align-items center
-        &__remove
-          cursor pointer
-          height 100%
-          display flex
-          align-items center
-          &::before
-            content "x"
-            margin-left 5px
-            vertical-align text-top
+
+        font-size 1rem
+        font-weight normal
+        font-style normal
+        font-stretch normal
+        line-height normal
+        letter-spacing normal
+        text-align left
+        color #000000
+
+        &__container
+          height 24px
+          border-radius 12px
+          background-color #e6f8f9
+          padding 0 10px
+
+          &__remove
+            cursor pointer
+            height 100%
+            display flex
+            align-items center
+            &::before
+              content "x"
+              margin-left 5px
+              vertical-align text-top
       &__wrapper
         display inline-block
         vertical-align top

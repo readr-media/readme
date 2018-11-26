@@ -158,6 +158,13 @@ export default {
       'NONE': '',
       'INFO': '',
     },
+    'MEDIA_OPTIONS': {
+      'ORDER': '這是第幾個選項（1 為第一）',
+      'CONTENT': '請輸入選項內容（最多 256 字）',
+      'DEL': '刪除',
+      'COPY': '複製',
+      'GEN': '新增選項',
+    },
   },
   'POLL': {
     'NEW': '新增投票',
@@ -186,6 +193,8 @@ export default {
     'END_AT': '結束時間',
     'MAX_CHOICE': '最多可選',
     'CHANGEABLE': '可否重選',
+    'OPTIONS': '選項',
+    'TAGS': '關鍵字',
   },
   'POST': {
     'NEW': '新增貼文',
