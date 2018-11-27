@@ -6,6 +6,7 @@
     </div> -->
     <div id="toolbar">
       <span class="ql-formats">
+        <select class="ql-color"></select>        
         <button class="ql-bold"></button>
         <button class="ql-header" value="1"></button>
         <button class="ql-header" value="2"></button>
@@ -53,7 +54,8 @@ export default {
   data () {
     return {
       editorOption: {
-        formats: [ 'bold', 'header', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video', 'hr', 'figcaption', ],
+        // theme: 'bubble',
+        formats: [ 'bold', 'color', 'header', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video', 'hr', 'figcaption', ],
         modules: {
           toolbar: {
             container: '#toolbar',
@@ -73,6 +75,7 @@ export default {
     /*global Quill*/
     const Block = Quill.import('blots/block')
     const BlockEmbed = Quill.import('blots/block/embed')
+    const descImageHint = this.$t('EDITOR.QUILLEDITOR.IMAGE.DESCRIPTION')
     class Hr extends BlockEmbed {
       static create(value) {
         const node = super.create(value)
@@ -86,7 +89,7 @@ export default {
     class Figcaption extends Block {
       static create(value) {
         const node = super.create(value)
-        node.innerText = `請在此輸入圖說`
+        node.innerText = descImageHint
         return node
       }
       static value(node) {
@@ -100,10 +103,10 @@ export default {
   },
   methods: {
     $_quillEditor_customHrHandler () {
-      if (this.$can('editPostOg')) {
+      // if (this.$can('editPostOg')) {
         const range = this.quillEditorNews.getSelection()
         this.quillEditorNews.insertEmbed(range.index, 'hr', 'null')
-      }
+      // }
     },
     $_quillEditor_imageHandler () {
       this.$refs.uploadImg.click()
@@ -145,6 +148,21 @@ export default {
     margin-top 15px
     width 100%
     background-color white
+    border-radius 4px
+
+    >>> .ql-toolbar
+      .ql-picker-label
+        outline none
+      &.ql-snow
+        border none
+        border-bottom 1px solid #f1f1f1
+    >>> .ql-container
+      .ql-color-label.ql-stroke
+        stroke #00ff00
+      &.ql-bubble
+        overflow visible
+      &.ql-snow
+        border none      
     >>> .ql-hr
       width 54px
       &:after
@@ -202,5 +220,4 @@ export default {
       padding 10px
       border-right 1px solid #d3d3d3
       border-bottom 1px solid #d3d3d3
-
 </style>

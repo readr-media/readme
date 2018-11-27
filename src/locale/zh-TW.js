@@ -165,6 +165,11 @@ export default {
       'COPY': '複製',
       'GEN': '新增選項',
     },
+    'QUILLEDITOR': {
+      'IMAGE': {
+        'DESCRIPTION': '請在此輸入圖說'
+      },
+    },
   },
   'POLL': {
     'NEW': '新增投票',
