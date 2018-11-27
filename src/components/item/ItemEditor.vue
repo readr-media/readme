@@ -71,6 +71,7 @@
         <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
+    <ValueSetter></ValueSetter>
   </ItemEditorLayout>
 </template>
 <script>
@@ -80,11 +81,12 @@
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import MediaOptions from 'src/components/form/MediaOptions.vue'
   import RadioItem from 'src/components/form/RadioItem.vue'
+  import QuillEditor from 'src/components/form/Quill/QuillEditor.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
-  import QuillEditor from 'src/components/form/QuillEditor.vue'
-  import Spinner from 'src/components/Spinner.vue'
+  import ValueSetter from 'src/components/form/Quill/ValueSetter.vue'
   // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
@@ -107,6 +109,7 @@
       TextareaInput,
       TextInput,
       TextTagItem,
+      ValueSetter,
     },
     computed: {
       model () {

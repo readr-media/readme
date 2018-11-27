@@ -169,6 +169,13 @@ export default {
       'IMAGE': {
         'DESCRIPTION': '請在此輸入圖說'
       },
+      'VALUE_SETTER': {
+        'TITLE': {
+          'EMBED': '嵌入碼',
+        },
+        'CONFIRM': '確定',
+        'CANCEL': '取消',
+      },
     },
   },
   'POLL': {
