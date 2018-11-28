@@ -40,6 +40,10 @@ export default Object.assign({
     })
   },
 
+  SET_VALUE: ({ commit, dispatch }, { active, type, value }) => {
+    return commit('SET_VALUE', { active, type, value })
+  },
+
   UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
     return uploadImage(file, type)
   },

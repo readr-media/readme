@@ -1,18 +1,25 @@
 <template>
   <div class="upload-image">
-    <div class="upload-image__name">
-      <div class="title" v-text="title"></div>
-      <div class="desc"><span v-text="$t('IMAGE_UPLOADER.SIZE_LIMIT')"></span></div>
-      <div class="alert"><span v-text="alert"></span></div>
-      <div class="filename"></div>
-    </div>
-    <div class="upload-image__container" @click="uploadImage">
-      <img class="upload-image__thumbnail" alt="thumbnail" ref="thumbnail"
-        v-if="(!isImgEmpty || preImgByte) && !isUploading"
-        :src="preImgByte"
-        :class="{ notEmpty: !isImgEmpty }">
-      <div class="upload-image__upload" v-else-if="!isUploading"></div>
+    <div class="upload-image__container" @click="uploadImage" :class="{ grey: theme === 'grey' }">
+      <div class="upload-image__thumbnail" v-if="(!isImgEmpty || preImgByte) && !isUploading">
+        <img alt="thumbnail" ref="thumbnail"
+          :src="preImgByte"
+          :class="{ notEmpty: !isImgEmpty }">
+      </div>
+      <div class="upload-image__upload" :class="{ hidden: !isImgEmpty }"></div>
+      <div class="upload-image__name">
+        <div class="title" v-text="title || $t('IMAGE_UPLOADER.TOOLTIP')"></div>
+        <div class="desc">
+          <span v-text="$t('IMAGE_UPLOADER.SIZE_LIMIT')"></span>
+        </div>
+        <div class="alert"><span v-text="alert"></span></div>
+        <div class="filename"></div>
+      </div>      
       <Spinner class="upload-image__spinner" :show="isUploading"></Spinner>
+      <!--template >
+      </template>
+      <div class="upload-image__upload" v-else-if="!isUploading"></div>
+      <Spinner class="upload-image__spinner" :show="isUploading"></Spinner-->
     </div>
   </div>
 </template>
@@ -113,6 +120,10 @@
     props: {
       title: {},
       imageUrl: {},
+      theme: {
+        type: String,
+        default: "white"
+      },
     },
     watch: {
       imageUrl () {
@@ -134,25 +145,43 @@
   .upload-image
     display flex
     position relative
+    min-height 185px
     // align-items center
     &__container
       flex 1
       background-color #fff
-      height 80px
+      border-radius 4px    
+      &.grey
+        background-color #f7f7f7
+      // height 80px
       display flex
       align-items center
       justify-content center
-      padding 10px 10px
+      flex-direction column
+      padding 10px
       position relative
       cursor pointer
+      z-index 1
     &__thumbnail
       // border 1px solid #b5b5b5
-      height 50%
-      object-position center center
-      object-fit contain
-      &.notEmpty
+      position absolute
+      top 10px
+      left 0
+      display flex
+      justify-content center
+      width 100%
+      height calc(100% - 20px)
+      padding 10px
+      img
+        // width 100%
         height 100%
-        width 100%        
+        // width auto
+        // width auto
+        object-position center center
+        object-fit contain
+        // &.notEmpty
+        //   // height 100%
+        //   width 100%                
     &__upload
       r = 38px
       width r
@@ -160,6 +189,10 @@
       background-color #808080
       border-radius r
       box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
+      position relative
+      margin-top 30px
+      &.hidden
+        opacity 0
       &:before
         @extends $plus-sign
         width 24px
@@ -169,14 +202,26 @@
         width 4px
         height 24px
     &__name
-      min-width 80px
-      max-width 80px
-      margin-right 15px
+      background-color rgba(255,255,255,0.9)
+      padding 10px
+      border-radius 5px
+      position relative
+      z-index 1
+      margin-top 17px
+      margin-bottom 30px
+      font-size 1rem
+      font-weight normal
+      font-style normal
+      font-stretch normal
+      line-height 1.5
+      letter-spacing normal
+      text-align center
+      color #a0a0a0
       .title
-        font-size 1.25rem
+        // font-size 1.25rem
       .desc
         margin 5px 0
-        font-size 0.75rem
+        // font-size 0.75rem
       .alert
         margin 5px 0
         color #ff7979

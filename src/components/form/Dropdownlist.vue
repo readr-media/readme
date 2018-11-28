@@ -58,4 +58,6 @@
     height 35px
     font-weight 300
     font-size 1.125rem
+    background-color #fff
+    border-radius 4px
 </style>

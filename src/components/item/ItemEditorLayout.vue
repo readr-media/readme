@@ -22,11 +22,26 @@
       overflow hidden
       height 100%
       width 100%
-      background-color #eeeeee
+      // background-color #eeeeee
       // box-shadow 0px 0px 10px rgba(250,250,250,0.8)
       border-radius 2px
-      padding 30px 50px 70px
       position relative
+      padding 0 0 90px
+      &__group
+        padding 30px 50px
+        background-color #f7f7f7
+        &:not(:first-child)
+          margin-top 18px
+        &--title
+          font-size 1.25rem
+          font-weight 600
+          font-style normal
+          font-stretch normal
+          line-height 1.3
+          letter-spacing normal
+          text-align left
+          color #0db9c9
+          margin-bottom 30px
       &__content
         overflow auto
         height 100%
@@ -55,7 +70,7 @@
         position absolute
         left 0
         bottom 25px
-        padding 0 50px
+        padding 0
         > div
           // flex 1
           font-size 1.25rem
@@ -64,14 +79,19 @@
           display flex
           justify-content center
           align-items center
-          background-color #ddcf21
+          color #fff
+          background-color #0db9c9
           box-shadow 0px 0px 5px rgba(100,100,100,0.5)
           border-radius 2px
           padding 5px
           cursor pointer
+          &.block, &.block:hover
+            cursor not-allowed
+            background-color #d2d2d2
+
           &:not(:last-child)
             margin-right 10px
           &:hover
-            background-color rgba(203,175,94,0.7)
+            background-color #d2d2d2
             box-shadow 0px 0px 5px rgba(250,250,250,0.5)      
 </style>

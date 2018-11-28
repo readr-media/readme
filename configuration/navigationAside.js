@@ -24,6 +24,12 @@ export const items = [
   },
   {
     nav: 'management',
+    name: 'poll',
+    type: 'list',
+    active: true,
+  },
+  {
+    nav: 'management',
     name: 'memo',
     type: 'list',
     active: true,

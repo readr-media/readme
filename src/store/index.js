@@ -20,7 +20,12 @@ export function createStore () {
       listItemsCount: 0,
       isLoggedIn: false,
       profile: {},
-      systemVersion: '1.0.0'
+      systemVersion: '1.0.0',
+      valueSetter: {
+        active: false,
+        type: '',
+        value: '',
+      },
     },
     actions,
     mutations,
