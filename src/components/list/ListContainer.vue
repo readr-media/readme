@@ -18,10 +18,12 @@
     <template v-else>
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
         @saved="itemSaved"
+        :groups="groups"
         :structure="itemStructure"
         :add="add"></ItemEditor>
       <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
         @saved="itemSaved"
+        :groups="groups"
         :structure="itemStructure"
         :item="editorItem"
         :update="update"></ItemEditor>
@@ -69,6 +71,9 @@
           item[ i.name ] = this.$t(`${this.model}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
+      },
+      groups () {
+        return this.modelData ? this.modelData.groups : [ 'none' ]
       },
       isSubItem () {
         return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
@@ -147,6 +152,7 @@
         this.editorItem = item
         this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
       },
+      get,
       itemSaved () {
         this.$router.go(-1)
       },

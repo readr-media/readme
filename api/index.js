@@ -72,6 +72,7 @@ router.use('/memo', authVerify, require('./middle/memo'))
 router.use('/member', authVerify, require('./middle/member'))
 router.use('/members', authVerify, require('./middle/member'))
 router.use('/post', [ authVerify, authorize ], require('./middle/post'))
+router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
 router.use('/image-post', authVerify, require('./middle/image'))
 router.use('/tags', authVerify, require('./middle/tags'))
 

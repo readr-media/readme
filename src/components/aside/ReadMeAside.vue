@@ -75,7 +75,7 @@
 <style lang="stylus" scoped>
   .aside
     height 100%
-    width 310px
+    width 250px
     padding-top 60px
     display flex
     &__nav
@@ -142,4 +142,7 @@
           padding-left 20px
         &.availible
           cursor pointer
+  @media screen and (min-width: 1200px)
+    .aside
+      width 310px
 </style>

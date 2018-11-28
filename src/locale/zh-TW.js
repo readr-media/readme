@@ -32,6 +32,8 @@ export default {
     'CANCEL': '取消',
   },
   'PROJECT': {
+    'NEW': '新增專題',
+    'EDIT': '編輯專題',      
     'ID': '編號',
     'TITLE': '標題',
     'SLUG': 'SLUG',
@@ -61,6 +63,8 @@ export default {
     'TAGS': '關鍵字',
   },
   'REPORT': {
+    'NEW': '新增報導',
+    'EDIT': '編輯報導',      
     'AUTHORS': '作者',
     'BELONG_TO_PROJECT': '所屬議題',
     'DESCRIPTION': '說明',
@@ -91,6 +95,8 @@ export default {
     'UPDATED_BY': '最後等新',
   },
   'MEMO': {
+    'NEW': '新增筆記',
+    'EDIT': '編輯筆記',      
     'AUTHOR': '作者',
     'BELONG_TO_PROJECT': '所屬議題',
     'DESCRIPTION': '說明',
@@ -122,6 +128,8 @@ export default {
     'CONTENT': '內文',
   },
   'MEMBER': {
+    'NEW': '新增會員',
+    'EDIT': '編輯會員',      
     'ID': 'ID',
     'NICKNAME': '暱稱',
     'ROLE': '身份',
@@ -143,8 +151,66 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
+    'GROUPS': {
+      'BASIC': '基本設定',
+      'CONTENT': '內容設定',
+      'EMBED': '嵌入設定',
+      'NONE': '',
+      'INFO': '',
+    },
+    'MEDIA_OPTIONS': {
+      'ORDER': '這是第幾個選項（1 為第一）',
+      'CONTENT': '請輸入選項內容（最多 256 字）',
+      'DEL': '刪除',
+      'COPY': '複製',
+      'GEN': '新增選項',
+    },
+    'QUILLEDITOR': {
+      'IMAGE': {
+        'DESCRIPTION': '請在此輸入圖說'
+      },
+      'VALUE_SETTER': {
+        'TITLE': {
+          'EMBED': '嵌入碼',
+        },
+        'CONFIRM': '確定',
+        'CANCEL': '取消',
+      },
+    },
+  },
+  'POLL': {
+    'NEW': '新增投票',
+    'EDIT': '編輯投票',    
+    'ID': 'ID',
+    'TITLE': '標題',
+    'UPDATED_AT': '更新時間',
+    'CREATED_AT': '建立時間',
+    'UPDATED_BY': '最後更新',
+    'DESCRIPTION': '說明',
+    'STATUS': '狀態',
+    'STATUS_PUBLISHED': '發布',
+    'STATUS_UNPUBLISHED': '未發布',
+    'STATUS_DRAFT': '草稿',
+    'STATUS_NEVER': '不明',
+    'ACTIVE': '狀態',
+    'ACTIVE_ACTIVE': '有效',
+    'ACTIVE_DEACTIVATE': '無效',
+    'CREATED_BY': '建立',
+    'UPDATED_BY': '最後更新',
+    'IMAGE': '首圖',
+    'VIDEO': '影片',
+    'TOTAL_VOTE': '投票人數',
+    'FREQUENCY': '投票頻率',
+    'START_AT': '開始時間',
+    'END_AT': '結束時間',
+    'MAX_CHOICE': '最多可選',
+    'CHANGEABLE': '可否重選',
+    'CHOICES': '選項',
+    'TAGS': '關鍵字',
   },
   'POST': {
+    'NEW': '新增貼文',
+    'EDIT': '編輯貼文',
     'ID': 'ID',
     'TITLE': '標題',
     'UPDATED_AT': '更新時間',
@@ -192,7 +258,7 @@ export default {
     'ITEM': '項目',
     'DASHBORD': '儀表板',
     'POST': '貼文管理',
-    'POLL': '投票',
+    'POLL': '投票管理',
     'TAG': '關鍵字',
     'EPAY': '付費',
     'ACCOUNT_ROLE': '會員角色',
@@ -205,6 +271,8 @@ export default {
     'ENEWS_GROUP_LIST': '群組列表',
   },
   'ENEWS_GROUP_LIST': {
+    'NEW': '新增群組',
+    'EDIT': '編輯群組',      
     'GROUP_NAME': '群組名稱',
     'COUNT': '人數',
     'UPDATED_AT': '更新日期',
@@ -220,6 +288,7 @@ export default {
   'IMAGE_UPLOADER': {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',
     'OVER_SIZE': '圖檔過大',
+    'TOOLTIP': '上傳圖片',
   },
   'DROPDOWN_LIST': {
     'HINT': '請選擇',

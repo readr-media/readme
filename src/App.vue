@@ -57,7 +57,7 @@ button
 
 .app
   padding-top 60px
-  padding-left 310px
+  padding-left 250px
   position relative
   background-color #fff
   min-height 100vh
@@ -72,4 +72,8 @@ button
     left 0
     top 0
     z-index 1
+@media screen and (min-width: 1200px)
+  .app
+    padding-left 310px
+
 </style>

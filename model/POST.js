@@ -53,9 +53,9 @@ export const model = [
   { name: 'tags', type: 'TextTagItem', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, watcher: 'type', },
   
   // For post.type === news
-  { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', },
-  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', },
-  { name: 'ogTitle', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', },
+  { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
+  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
+  { name: 'ogTitle', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
 
   // For post.type === review
   { name: 'link', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeReview, watcher: 'type', },
