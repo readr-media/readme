@@ -205,7 +205,7 @@ export default {
     'END_AT': '結束時間',
     'MAX_CHOICE': '最多可選',
     'CHANGEABLE': '可否重選',
-    'OPTIONS': '選項',
+    'CHOICES': '選項',
     'TAGS': '關鍵字',
   },
   'POST': {

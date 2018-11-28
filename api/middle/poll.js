@@ -38,7 +38,7 @@ const putOpts = (url, opts) => new Promise(resolve => {
   })  
 })
 const updateOptions = (req, res) => {
-  const options = get(req, 'body.options', [])
+  const choices = get(req, 'body.choices', [])
   const id = get(req, 'body.id')
   
   if (!id) {
@@ -48,14 +48,14 @@ const updateOptions = (req, res) => {
 
     const url = `${apiHost}/v2/polls/${id}/choices`
   
-    map(options, (opt, index) => {
-      opt.created_by = req.user.id
+    map(choices, (opt, index) => {
+      opt.created_by = !opt.created_by && req.user.id
       opt.updated_by = req.user.id
-      opt.active = 1
+      opt.active = !opt.created_by && 1
       opt.group_order = index
     })
 
-    const oldOpts = remove(options, opt => opt.id)
+    const oldOpts = remove(choices, opt => opt.id)
   
     /**
      * 	ID         int64             `json:"id" db:"id"`
@@ -74,7 +74,7 @@ const updateOptions = (req, res) => {
     debug(oldOpts)
     
     Promise.all([
-      postOpts(url, options),
+      postOpts(url, choices),
       putOpts(url, oldOpts)
     ]).then(() => {
       res.send({ status: 200, text: 'Creating/Updating a poll successfully.' })
@@ -144,6 +144,14 @@ router.post('/create', (req, res) => {
   req.body.created_by = req.user.id
   req.body.updated_by = req.user.id
 
+  const choices = get(req, 'body.choices', [])
+  map(choices, (opt, index) => {
+    opt.created_by = req.user.id
+    opt.updated_by = req.user.id
+    opt.active = 1
+    opt.group_order = index
+  })
+
   superagent
   .post(url)
   .send(req.body)
@@ -173,14 +181,14 @@ router.put('/update', (req, res, next) => {
   debug('Got a poll updating call.')
   debug('req.body', req.body)
 
-  const options = get(req, 'body.options', [])
+  const choices = get(req, 'body.choices', [])
   superagent
   .put(url)
   .send(req.body)
   .end((error, response) => {
     if (!error && response) {
-      if (options.length) {
-        debug('options.length', options.length)
+      if (choices.length) {
+        debug('choices.length', choices.length)
         next()
       } else {
         res.send({ status: 200, text: 'Updating a poll successfully.' })

@@ -40,7 +40,7 @@ export const model = [
   { name: 'description', type: 'TextareaInput', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, order: { editor: 2 }, autoHeightActive: true, },
   { name: 'tags', type: 'TextTagItem', group: 'content', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
   { name: 'image', type: 'Image', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 4 }, },
-  { name: 'options', type: 'MediaOptions', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 5 }, fetchData, },
+  { name: 'choices', type: 'MediaOptions', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 5 }, fetchData, },
   { name: 'totalVote', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isNumSentitive: true, order: { editor: 1, }, },
   { name: 'frequency', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: false, isListable: false, isEditEntry: true, order: { editor: 2 }, },
   { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
