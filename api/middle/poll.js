@@ -49,9 +49,9 @@ const updateOptions = (req, res) => {
     const url = `${apiHost}/v2/polls/${id}/choices`
   
     map(choices, (opt, index) => {
+      opt.active = !opt.created_by ? 1 : opt.active
       opt.created_by = !opt.created_by && req.user.id
       opt.updated_by = req.user.id
-      opt.active = !opt.created_by && 1
       opt.group_order = index
     })
 

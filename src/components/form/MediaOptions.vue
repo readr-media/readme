@@ -1,36 +1,38 @@
 <template>
   <div class="media-options">
     <div class="gen-item" @click="gen"><span v-text="$t('EDITOR.MEDIA_OPTIONS.GEN')"></span></div>
-    <div class="item" v-for="(opt, index) in opts" :key="opt.key" :id="`opt-${opt.key}`">
-      <div class="left">
-        <div class="order">
-          <span v-text="index + 1"></span>
-          <!--TextInput
-            backgroundColor="#f7f7f7"
-            :disabled="true"
-            :placeHolder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
-            :value.sync="opt.groupOrder"--></TextInput>
+    <template v-for="(opt, index) in opts">
+      <div class="item" :key="opt.key || opt.id" :id="`opt-${opt.key || opt.id}`" v-if="opt.active">
+        <div class="left">
+          <div class="order">
+            <span v-text="index + 1"></span>
+            <!--TextInput
+              backgroundColor="#f7f7f7"
+              :disabled="true"
+              :placeHolder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
+              :value.sync="opt.groupOrder"></TextInput-->
+          </div>
+          <div class="choice-content">
+            <TextareaInput
+              backgroundColor="#f7f7f7"
+              :autoHeightActive="true"
+              :placeholder="$t('EDITOR.MEDIA_OPTIONS.CONTENT')"
+              :value.sync="opt.choice"></TextareaInput>
+          </div>
         </div>
-        <div class="choice-content">
-          <TextareaInput
-            backgroundColor="#f7f7f7"
-            :autoHeightActive="true"
-            :placeholder="$t('EDITOR.MEDIA_OPTIONS.CONTENT')"
-            :value.sync="opt.choice"></TextareaInput>
+        <div class="right">
+          <ImageUploader :imageUrl.sync="opt.image" theme="grey"></ImageUploader>
+        </div>
+        <div class="option-tools">
+          <div class="tool del" @click="del(opt)">
+            <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.DEL')"></span></div>
+          </div>
+          <div class="tool copy" @click="copy(opt)">
+            <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.COPY')"></span></div>
+          </div>
         </div>
       </div>
-      <div class="right">
-        <ImageUploader :imageUrl.sync="opt.image" theme="grey"></ImageUploader>
-      </div>
-      <div class="option-tools">
-        <div class="tool del" @click="del(opt)">
-          <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.DEL')"></span></div>
-        </div>
-        <div class="tool copy" @click="copy(opt)">
-          <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.COPY')"></span></div>
-        </div>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 <script>
@@ -62,13 +64,18 @@
         this.goOpt(key)
       },
       del (opt) {
-        remove(this.opts, (o, i) => opt === o)
-        debug('this.opts', this.opts)
+        debug('Del', opt)
+        if (!opt.createdBy) {
+          debug('DEL!')
+          remove(this.opts, (o, i) => opt === o)
+        } else {
+          opt.active = 0
+        }
         this.$forceUpdate()
       },
       gen () {
         const key = Date.now()
-        this.opts.push({ key, })   
+        this.opts.push({ key, active: 1  })   
         this.goOpt(key)
       },
       get,
@@ -80,10 +87,10 @@
     },
     beforeMount () {
       this.fetchData(this.$store, { id: this.id, }).then(data => {
-        this.opts = data || [{ key: Date.now() }]
+        this.opts = data || [{ key: Date.now(), active: 1 }]
       }).catch(err => {
         console.error('Fetching choices with error.', err)
-        this.opts = [{ key: Date.now() }]
+        this.opts = [{ key: Date.now(), active: 1 }]
       })      
     },
     mounted () {},
