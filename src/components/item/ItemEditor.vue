@@ -51,6 +51,8 @@
                       :fetchSource="obj.fetchSource"
                       :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
                     <MediaOptions v-else-if="obj.type === 'MediaOptions'"
+                      :fetchData="obj.fetchData"
+                      :id="formData[ 'id' ]"
                       :options.sync="formData[ obj.name ]"></MediaOptions>
                   </template>
                   <template v-else>
@@ -71,7 +73,6 @@
         <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
-    <ValueSetter></ValueSetter>
   </ItemEditorLayout>
 </template>
 <script>
@@ -86,7 +87,6 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
-  import ValueSetter from 'src/components/form/Quill/ValueSetter.vue'
   // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
@@ -109,7 +109,6 @@
       TextareaInput,
       TextInput,
       TextTagItem,
-      ValueSetter,
     },
     computed: {
       model () {

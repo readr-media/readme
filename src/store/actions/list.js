@@ -17,8 +17,14 @@ const FETCH_AUTOCOMPLETE_LIST = ({ commit, }, { params, endpoint, }) => {
     return { status, items: get(body, 'items'), }
   })
 }
+const FETCH_CHOICES = ({ commit, }, { id, params, endpoint, }) => {
+  return listFunc.fetchChoices({ id, params, endpoint }).then(({ status, body, }) => {
+    return { status, items: get(body, 'items'), }
+  })
+}
 
 export {
+  FETCH_CHOICES,
   FETCH_LIST,
   FETCH_AUTOCOMPLETE_LIST
 }

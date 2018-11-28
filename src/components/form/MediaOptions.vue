@@ -1,19 +1,21 @@
 <template>
   <div class="media-options">
     <div class="gen-item" @click="gen"><span v-text="$t('EDITOR.MEDIA_OPTIONS.GEN')"></span></div>
-    <div class="item" v-for="(opt, index) in opts" :key="opt.id" :id="`opt-${opt.id}`">
+    <div class="item" v-for="(opt, index) in opts" :key="opt.key" :id="`opt-${opt.key}`">
       <div class="left">
         <div class="order">
-          <TextInput
+          <span v-text="index + 1"></span>
+          <!--TextInput
             backgroundColor="#f7f7f7"
+            :disabled="true"
             :placeHolder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
-            :value.sync="opt.group_order"></TextInput>
+            :value.sync="opt.groupOrder"--></TextInput>
         </div>
         <div class="choice-content">
           <TextareaInput
             backgroundColor="#f7f7f7"
             :autoHeightActive="true"
-            :placeholder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
+            :placeholder="$t('EDITOR.MEDIA_OPTIONS.CONTENT')"
             :value.sync="opt.choice"></TextareaInput>
         </div>
       </div>
@@ -53,10 +55,11 @@
     },
     methods: {
       copy (duplicated) {
-        const id = Date.now()
-        const copy = Object.assign({}, duplicated, { id, })
+        const key = Date.now()
+        const copy = Object.assign({}, duplicated, { key, })
+        delete copy.id
         this.opts.push(copy)
-        this.goOpt(id)
+        this.goOpt(key)
       },
       del (opt) {
         remove(this.opts, (o, i) => opt === o)
@@ -64,24 +67,35 @@
         this.$forceUpdate()
       },
       gen () {
-        const id = Date.now()
-        this.opts.push({ id, })   
-        this.goOpt(id)
+        const key = Date.now()
+        this.opts.push({ key, })   
+        this.goOpt(key)
       },
       get,
-      goOpt (id) {
+      goOpt (key) {
         setTimeout(() => {
-          smoothScrollTo({ eID: `#opt-${id}`, })
+          smoothScrollTo({ eID: `#opt-${key}`, })
         }, 100) 
       },
     },
-    mounted () {
-      this.opts = this.options || [{ id: Date.now() }]
+    beforeMount () {
+      this.fetchData(this.$store, { id: this.id, }).then(data => {
+        this.opts = data || [{ key: Date.now() }]
+      }).catch(err => {
+        console.error('Fetching choices with error.', err)
+        this.opts = [{ key: Date.now() }]
+      })      
     },
+    mounted () {},
     props: {
+      id: {},
       options: {
         type: Array
       },
+      fetchData: {
+        type: Function,
+        default: () => Promise.resolve(),
+      },      
     },
     watch: {
       opts: {
@@ -134,6 +148,12 @@
       flex-direction column
       .order, .choice-content
         background-color #f7f7f7
+      .order
+        span
+          display flex
+          align-items center
+          height 34px
+          padding 9px 14px
       .choice-content
         margin-top 30px
         flex 1      
@@ -161,9 +181,13 @@
         margin-bottom 20px
         position relative
         &.del
-          background-image url(/public/icons/icon-tick.png)
+          background-image url(/public/icons/icon-delete.png)
+          &:hover
+            background-image url(/public/icons/icon-delete-hover.png)
         &.copy
-          background-image url(/public/icons/icon-tick.png)
+          background-image url(/public/icons/icon-copy.png)
+          &:hover
+            background-image url(/public/icons/icon-copy-hover.png)
         &:hover
           .hint
             display flex

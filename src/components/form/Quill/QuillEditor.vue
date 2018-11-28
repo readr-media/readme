@@ -1,45 +1,48 @@
 <template>
-  <section class="editor news">
-    <!-- <div class="editor__heading">
-      <div class="editor__heading-text" v-text="$t('POST_EDITOR.EDITOR')"></div>
-      <div class="editor__heading-switch" @click="$_quillEditor_toggleHtml">&lt; / &gt;</div>
-    </div> -->
-    <div id="toolbar" v-show="isInitialized">
-      <span class="ql-formats">
-        <select class="ql-color"></select>   
-        <button class="ql-bold"></button>
-        <button class="ql-header" value="1"></button>
-        <button class="ql-header" value="2"></button>
-        <button class="ql-italic" value="2"></button>
-        <button class="ql-blockquote"></button>
-        <button class="ql-code-block"></button>
-      </span>
-      <span class="ql-formats">
-        <button class="ql-image"></button>
-      </span>
-      <span class="ql-formats">
-        <button class="ql-link"></button>
-        <button class="ql-video"></button>
-        <button v-show="$can('editPostOg')" class="ql-hr"></button>
-        <button class="ql-embed"></button>
-      </span>
-    </div>
-    <div
-      ref="quillEditor"
-      :content="content"
-      class="editor__quill"
-      v-quill:quillEditor="editorOption"
-      @change="$_quillEditor_onEditorChange($event)">
-    </div>
-    <div class="editor__html" v-text="content"></div>
-    <input ref="uploadImg" type="file" accept="image/*" @change="$_quillEditor_uploadImg">
-  </section>
+  <QuillEditorWrapper>
+    <section class="editor news">
+      <!-- <div class="editor__heading">
+        <div class="editor__heading-text" v-text="$t('POST_EDITOR.EDITOR')"></div>
+        <div class="editor__heading-switch" @click="$_quillEditor_toggleHtml">&lt; / &gt;</div>
+      </div> -->
+      <div id="toolbar" v-show="isInitialized">
+        <span class="ql-formats">
+          <select class="ql-color"></select>   
+          <button class="ql-bold"></button>
+          <button class="ql-header" value="1"></button>
+          <button class="ql-header" value="2"></button>
+          <button class="ql-italic" value="2"></button>
+          <button class="ql-blockquote"></button>
+          <button class="ql-code-block"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-image"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link"></button>
+          <button class="ql-video"></button>
+          <button v-show="$can('editPostOg')" class="ql-hr"></button>
+          <button class="ql-embed"></button>
+        </span>
+      </div>
+      <div
+        ref="quillEditor"
+        :content="content"
+        class="editor__quill"
+        v-quill:quillEditor="editorOption"
+        @change="$_quillEditor_onEditorChange($event)">
+      </div>
+      <div class="editor__html" v-text="content"></div>
+      <input ref="uploadImg" type="file" accept="image/*" @change="$_quillEditor_uploadImg">
+    </section>
+  </QuillEditorWrapper>
 </template>
 
 <script>
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import QuillEditorWrapper from './QuillEditorWrapper.vue'
 import { get, } from 'lodash'
 import {
   registerEmbed,
@@ -54,6 +57,9 @@ const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE
 
 export default {
   name: 'QuillEditor',
+  components: {
+    QuillEditorWrapper,
+  },
   computed: {
     valueSetter () {
       return get(this.$store, 'state.valueSetter', {})

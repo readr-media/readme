@@ -1,7 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { find, get, map, mapKeys } = require('lodash')
 const { handlerError } = require('../../comm')
-const { sendActivationMail, } = require('./comm')
+const { sendInvitationEmail, } = require('./comm')
 const config = require('../../config')
 const debug = require('debug')('README:api:member')
 const express = require('express')
@@ -79,7 +79,7 @@ router.post('/create', (req, res, next) => {
       }
     })
 }, (req, res) => {
-  sendActivationMail({
+  sendInvitationEmail({
     id: req.body.mail,
     email: req.body.mail,
     role: req.body.role,
