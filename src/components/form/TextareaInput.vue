@@ -25,12 +25,13 @@
     },
     methods: {
       autosize(){
+        debug('press', this.content)
         this.autoHeight = 'auto'
         this.autoHeight = this.$refs[ 'textarea' ].scrollHeight + 'px'
       }
     },
     mounted () {
-      this.current = this.value
+      this.current = this.value || ''
       setTimeout(() => this.autosize(), 100)
     },
     props: {
@@ -47,6 +48,7 @@
     },
     watch: {
       current: function () {
+        debug('Mutation detected: current', this.current)
         this.$emit('update:value', validator.trim(`${this.current}` || '') || undefined)
       }
     }
