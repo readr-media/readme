@@ -1,6 +1,6 @@
 <template>
   <select :name="name" v-model.number="selected" class="dropdown-selector">
-    <option disabled value="0" v-text="$t('DROPDOWN_LIST.HINT')"></option>
+    <option disabled v-text="$t('DROPDOWN_LIST.HINT')"></option>
     <option v-for="opt in source"
             :key="opt.id"
             :value="`${opt.id}`"

@@ -203,7 +203,7 @@ export default {
     'FREQUENCY': '投票頻率',
     'START_AT': '開始時間',
     'END_AT': '結束時間',
-    'MAX_CHOICE': '最多可選',
+    'MAX_CHOICE': '可選數量',
     'CHANGEABLE': '投票人可以更改選項',
     'CHOICES': '選項',
     'TAGS': '關鍵字',

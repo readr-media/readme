@@ -40,7 +40,7 @@ export const model = [
   { name: 'id', type: 'TextInput', group: 'basic', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, order: { editor: 0 }, },
   { name: 'startAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
   { name: 'endAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
-  { name: 'status', type: 'RadioItem', group: 'basic', width: { list: '50', editor: '400' }, isEditable: true, isListable: true, options: publish_status_options, order: { editor: 0 }, },
+  { name: 'status', type: 'RadioItem', group: 'basic', width: { list: '50', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, order: { editor: 0 }, },
   { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2 }, },
   { name: 'description', type: 'TextareaInput', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, order: { editor: 2 }, autoHeightActive: true, },
   { name: 'tags', type: 'TextTagItem', group: 'content', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
