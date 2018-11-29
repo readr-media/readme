@@ -37,6 +37,7 @@
   import PaginationNav from 'src/components/list/PaginationNav.vue'
   import RecordCount from 'src/components/list/RecordCount.vue'
   import moment from 'moment'
+  import numeral from 'numeral'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
   import { filter, get, isEmpty, map, } from 'lodash'
@@ -172,7 +173,8 @@
               item.isDatetimeSentitive && (moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
           } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
-            preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
+            // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
+            preForm[ item.name ] = preForm[ item.name ] && numeral(preForm[ item.name ]).value()
           }
           if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
             debug('Going to delete item that is not editable!', item.name)
