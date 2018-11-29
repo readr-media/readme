@@ -1,46 +1,52 @@
 <template>
   <div class="media-options">
     <div class="gen-item" @click="gen"><span v-text="$t('EDITOR.MEDIA_OPTIONS.GEN')"></span></div>
-    <template v-for="(opt, index) in opts">
-      <div class="item" :key="opt.key || opt.id" :id="`opt-${opt.key || opt.id}`" v-if="opt.active">
-        <div class="left">
-          <div class="order">
-            <span v-text="index + 1"></span>
-            <!--TextInput
-              backgroundColor="#f7f7f7"
-              :disabled="true"
-              :placeHolder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
-              :value.sync="opt.groupOrder"></TextInput-->
+
+    <draggable v-model="opts">
+      <transition-group>
+        <template v-for="opt in opts">
+          <div class="item" :key="opt.key || opt.id" :id="`opt-${opt.key || opt.id}`" v-if="opt.active">
+            <div class="left">
+              <div class="order">
+                <span v-text="findIndex(filteredOpts, o => o === opt) + 1"></span>
+                <!--TextInput
+                  backgroundColor="#f7f7f7"
+                  :disabled="true"
+                  :placeHolder="$t('EDITOR.MEDIA_OPTIONS.ORDER')"
+                  :value.sync="opt.groupOrder"></TextInput-->
+              </div>
+              <div class="choice-content">
+                <TextareaInput
+                  backgroundColor="#f7f7f7"
+                  :autoHeightActive="true"
+                  :placeholder="$t('EDITOR.MEDIA_OPTIONS.CONTENT')"
+                  :value.sync="opt.choice"></TextareaInput>
+              </div>
+            </div>
+            <div class="right">
+              <ImageUploader :imageUrl.sync="opt.image" theme="grey"></ImageUploader>
+            </div>
+            <div class="option-tools">
+              <div class="tool del" @click="del(opt)">
+                <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.DEL')"></span></div>
+              </div>
+              <div class="tool copy" @click="copy(opt)">
+                <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.COPY')"></span></div>
+              </div>
+            </div>
           </div>
-          <div class="choice-content">
-            <TextareaInput
-              backgroundColor="#f7f7f7"
-              :autoHeightActive="true"
-              :placeholder="$t('EDITOR.MEDIA_OPTIONS.CONTENT')"
-              :value.sync="opt.choice"></TextareaInput>
-          </div>
-        </div>
-        <div class="right">
-          <ImageUploader :imageUrl.sync="opt.image" theme="grey"></ImageUploader>
-        </div>
-        <div class="option-tools">
-          <div class="tool del" @click="del(opt)">
-            <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.DEL')"></span></div>
-          </div>
-          <div class="tool copy" @click="copy(opt)">
-            <div class="hint"><span v-text="$t('EDITOR.MEDIA_OPTIONS.COPY')"></span></div>
-          </div>
-        </div>
-      </div>
-    </template>
+        </template>        
+      </transition-group>
+    </draggable>    
   </div>
 </template>
 <script>
+  import draggable from 'vuedraggable'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
+  import { filter, findIndex, get, map, remove, } from 'lodash'
   import { smoothScrollTo, } from 'kc-scroll'   
-  import { get, map, remove, } from 'lodash'
   const debug = require('debug')('CLIENT:MediaOptions')
   const numeral = require('numeral')
   export default {
@@ -49,6 +55,12 @@
       ImageUploader,
       TextInput,
       TextareaInput,
+      draggable,
+    },
+    computed: {
+      filteredOpts () {
+        return filter(this.opts, opt => opt.active)
+      },
     },
     data () {
       return {
@@ -73,6 +85,7 @@
         }
         this.$forceUpdate()
       },
+      findIndex,
       gen () {
         const key = Date.now()
         this.opts.push({ key, active: 1  })   
@@ -146,6 +159,7 @@
     display flex
     position relative
     border-radius 4px
+    cursor move
     &:not(:last-child)
       margin-bottom 10px
     .left, .right

@@ -23,11 +23,21 @@ const postOpts = (url, opts) => new Promise(resolve => {
     resolve()
   })  
 })
-const putOpts = (url, opts) => new Promise(resolve => {
+const putOpts = (url, opts, margin) => new Promise(resolve => {
+  debug('margin', margin)
+  debug('opts', opts)
+  const choices = map(opts, opt => Object.assign({}, opt))
+  if (margin > -1) {
+    debug('reorganize group order...')
+    map(choices, c => {
+      c.group_order = c.group_order + margin
+    })    
+    debug('reorganized opts', choices)
+  }
   superagent
   .put(url)
   .send({
-    choices: opts
+    choices: choices
   })
   .end((error) => {
     if (error) {
@@ -73,10 +83,12 @@ const updateOptions = (req, res) => {
     debug('oldOpts:')
     debug(oldOpts)
     
-    Promise.all([
-      postOpts(url, choices),
-      putOpts(url, oldOpts)
-    ]).then(() => {
+    putOpts(url, oldOpts, oldOpts.length + choices.length)
+    .then(() => Promise.all([
+      putOpts(url, oldOpts),
+      postOpts(url, choices)
+    ]))
+    .then(() => {
       res.send({ status: 200, text: 'Creating/Updating a poll successfully.' })
     }).catch(err => {
       const errWrapped = handlerError(err)

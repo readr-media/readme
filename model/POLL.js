@@ -30,6 +30,11 @@ const tagsAutoComplete = (store, keyword) => {
     endpoint: 'tags',
   })
 }
+const fetchSource = (store, { vueInstance }) => new Promise(resolve => resolve([
+  { id: 0, text: vueInstance.$t('POLL.FREQUENCY_OPTION.ONCE'), },
+  { id: 1, text: vueInstance.$t('POLL.FREQUENCY_OPTION.DAILY'), },
+  { id: 7, text: vueInstance.$t('POLL.FREQUENCY_OPTION.WEEKLY'), },
+]))
 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'basic', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, order: { editor: 0 }, },
@@ -42,9 +47,9 @@ export const model = [
   { name: 'image', type: 'Image', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 4 }, },
   { name: 'choices', type: 'MediaOptions', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 5 }, fetchData, },
   { name: 'totalVote', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isNumSentitive: true, order: { editor: 1, }, },
-  { name: 'frequency', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: false, isListable: false, isEditEntry: true, order: { editor: 2 }, },
+  { name: 'frequency', type: 'Dropdownlist', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, order: { editor: 2 }, fetchSource,  },
   { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
-  { name: 'changeable', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
+  { name: 'changeable', type: 'CheckboxItem', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, hideTitle: true, subText: 'CHANGEABLE'},
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
   { name: 'createdBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: false, order: { editor: 5 }, },
 ]
