@@ -62,15 +62,14 @@
           .value
             font-size 1rem
             flex 1
-            >>> .vdatetime
-              padding-left 40px
+            >>> .datepicker__input
+              cursor pointer
               background-size 20px 20px
               background-repeat no-repeat
               background-image url(/public/icons/icon-time.png)
               background-position 15px center
               background-color #fff
-            >>> .datepicker__input
-              padding-left 10px
+              padding-left 50px
               width 100%
               height 35px
               color #808080
