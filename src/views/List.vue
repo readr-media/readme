@@ -8,7 +8,7 @@
             <div class="list__name"><span v-text="title"></span></div>
           </div>
           <div class="list__wrapper right">
-            <ListFilter class="list__search" :value.sync="filter"></ListFilter>
+            <ListFilter class="list__search" :value.sync="filter" v-if="isFilterActive"></ListFilter>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
               <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
@@ -130,6 +130,7 @@
         filterSearched: '',
         filterChecksCurrent: {},
         // isFilterApplied: false,
+        isFilterActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
         page: DEFAULT_PAGE,
@@ -202,6 +203,9 @@
         this.refresh({}),
         this.refreshItemsCount({})
       ])
+    },
+    mounted () {
+      this.isFilterActive = true
     },
     watch: {
       '$route': function () {

@@ -204,9 +204,14 @@ export default {
     'START_AT': '開始時間',
     'END_AT': '結束時間',
     'MAX_CHOICE': '最多可選',
-    'CHANGEABLE': '可否重選',
+    'CHANGEABLE': '投票人可以更改選項',
     'CHOICES': '選項',
     'TAGS': '關鍵字',
+    'FREQUENCY_OPTION': {
+      'ONCE': '只能投一次',
+      'DAILY': '一天可投一次',
+      'WEEKLY': '一週可投一次',
+    }
   },
   'POST': {
     'NEW': '新增貼文',

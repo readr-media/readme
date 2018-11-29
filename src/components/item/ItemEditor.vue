@@ -11,7 +11,7 @@
                 class="panel__content--item"
                 :key="`panel__content--item-${obj.name}`">
                 <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
-                  <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"></span>
+                  <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
                 </div>
                 <div class="value">
                   <template v-if="obj.isEditable || (obj.isInitiliazible && type === 'create')">
@@ -54,6 +54,10 @@
                       :fetchData="obj.fetchData"
                       :id="formData[ 'id' ]"
                       :options.sync="formData[ obj.name ]"></MediaOptions>
+                    <CheckboxItem v-else-if="obj.type === 'CheckboxItem'"
+                      theme="editor"
+                      :text="$t(`${model}.${obj.subText}`)"
+                      :value.sync="formData[ obj.name ]"></CheckboxItem>
                   </template>
                   <template v-else>
                     <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
@@ -77,6 +81,7 @@
 </template>
 <script>
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
+  import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
@@ -98,6 +103,7 @@
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
+      CheckboxItem,
       Dropdownlist,
       Datetime,
       ImageUploader,

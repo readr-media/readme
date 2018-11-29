@@ -20,7 +20,7 @@
     },
     methods: {},
     mounted () {
-      this.fetchSource(this.$store).then(source => {
+      this.fetchSource(this.$store, { vueInstance: this }).then(source => {
         debug('source', source)
         this.source = source || []
         this.selected = `${this.selectedItem}`
