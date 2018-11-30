@@ -50,13 +50,13 @@ export const model = [
   { name: 'author', type: 'TextInput', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isHidden: true, },
   
   // For post.type === news || review
-  { name: 'tags', type: 'TextTagItem', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, watcher: 'type', },
+  { name: 'tags', type: 'TextTagItem', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
   
   // For post.type === news
-  { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
-  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
-  { name: 'ogTitle', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, watcher: 'type', autoHeightActive: true, },
+  { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
+  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
+  { name: 'ogTitle', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
 
   // For post.type === review
-  { name: 'link', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeReview, watcher: 'type', },
+  { name: 'link', type: 'TextInput', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, showWith: isSupposedToShowWithTypeReview, },
 ]

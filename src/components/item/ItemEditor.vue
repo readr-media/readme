@@ -19,11 +19,10 @@
                       backgroundColor="#fff"
                       :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                       :value.sync="formData[ obj.name ]"></TextInput>
-                    <Datetime v-else-if="obj.type === 'Datetime'"
-                      v-model="formData[ obj.name ]"
-                      input-format="YYYY/MM/DD HH:mm"
-                      input-class="datepicker__input"
-                      type="datetime"></Datetime>
+                    <DatetimeItem v-else-if="obj.type === 'Datetime'"
+                      :relativeToRef="obj.relativeToWatcher"
+                      :dateRef="formData[ obj.watcher ]"
+                      :value.sync="formData[ obj.name ]"></DatetimeItem>
                     <TextareaInput v-else-if="obj.type === 'TextareaInput'"
                       :autoHeightActive="obj.autoHeightActive"
                       :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
@@ -70,18 +69,27 @@
         </template>
       </div>
       <div class="panel__actions">
+        <template v-for="btn in buttonizedItems">
+          <ButtunizedItem
+            :class="{ block: isProcessing }"
+            :isProcessing="isProcessing"
+            :item="btn"
+            :value.sync="formData[ btn.name ]"
+            :clickHandler="save"></ButtunizedItem>
+        </template>
         <div class="save" :class="{ block: isProcessing }" @click="save">
           <span v-text="$t('EDITOR.SAVE')" v-show="!isProcessing"></span>
           <Spinner class="spinner" :show="isProcessing"></Spinner>
         </div>
-        <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
   </ItemEditorLayout>
 </template>
 <script>
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
+  import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
+  import DatetimeItem from 'src/components/form/DatetimeItem.vue'
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
@@ -92,20 +100,21 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
-  // import preventScroll from 'prevent-scroll'
-  import { Datetime, } from 'vue-datetime'
+  import WatchJS from 'melanke-watchjs'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
-
+  const watcher = WatchJS.watch
+  const callOffWatcher = WatchJS.unwatch
   export default {
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
+      ButtunizedItem,
       CheckboxItem,
+      DatetimeItem,
       Dropdownlist,
-      Datetime,
       ImageUploader,
       ItemEditorLayout,
       MediaOptions,
@@ -117,6 +126,9 @@
       TextTagItem,
     },
     computed: {
+      buttonizedItems () {
+        return filter(this.structure, obj => obj.isButtonized)
+      },
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
@@ -127,44 +139,21 @@
     },
     data () {
       return {
-        formData: {},
-        currTagInput: {},
         autocompleteArr: {},
+        currTagInput: {},
+        formData: {},
         isProcessing: false,
       }
     },
     methods: {
-      // close () {
-      //   this.$emit('update:isActive', false)
-      // },
-      // checkShowWith (obj) {
-      //   const flag = obj.showWith ? get(filter([ this.formData ], obj.showWith), 'length', 0) > 0 : true
-      //   debug('obj.showWithWatcher', obj.showWithWatcher)
-      //   debug('isFormdataWatchOn', this.isFormdataWatchOn)
-      //   debug(`!this.isFormdataWatch[ obj.showWithWatcher ]`, !this.isFormdataWatch[ obj.showWithWatcher ])
-      //   debug(`formData.${obj.showWithWatcher}`)
-      //   if (flag && !this.isFormdataWatch[ obj.showWithWatcher ]) {
-      //     this.45[ obj.showWithWatcher ] = this.formData[ obj.showWithWatcher ] || undefined
-      //     this.$watch(`formData.${obj.showWithWatcher}`, (newValue, oldValue) => {
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       this.$forceUpdate()
-      //     }, {
-      //       deep: true
-      //     })
-      //     this.isFormdataWatch[ obj.showWithWatcher ] = true
-      //   }
-      //   return flag
-      // },
+      callForActionByWatcher (prop, action, newvalue, oldvalue) {
+        debug(`Mutation detected: formData.${prop}`, newvalue)
+        this.$forceUpdate()        
+      },
       decamelize,
       get,
-      // isSupposedToShow () {
-
-      // },
       initValue () {
+        map(this.formData, item => this.callOffWatcher(this.formData, item.name, this.callForActionByWatcher))
         this.formData = {}
         if (this.type === 'update') {
           map(this.structure, item => {
@@ -183,6 +172,7 @@
                 break
               default:
                 this.formData[ item.name ] = get(this.item, item.name)
+                this.setUpWatcher(item)
             } 
           })
         } else if (this.type === 'create') {
@@ -202,6 +192,7 @@
                   break
                 default:
                   this.formData[ item.name ] = null
+                  this.setUpWatcher(item)
               }
             }
           })
@@ -224,6 +215,7 @@
             this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
+            this.isProcessing = false
             debug('err', err)
           })
         } else if (this.type === 'create') {
@@ -232,9 +224,15 @@
             this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
+            this.isProcessing = false
             debug('err', err)
           })          
         }
+      },
+      setUpWatcher (item) {
+        if (item.watcher) {
+          watcher(this.formData, item.watcher, this.callForActionByWatcher)           
+        }        
       },
       setupTagInputWatcher (item) {
         /**
@@ -267,15 +265,9 @@
     },
     beforeMount () {
       this.initValue()
-      // this.setupWatcher()
     },
     mounted () {},
-    updated () {
-      debug('updated detected!')
-      debug('updated detected!')
-      debug('updated detected!')
-      debug('updated detected!')
-    },
+    updated () {},
     props: {
       add: {
         type: Function,
@@ -285,10 +277,6 @@
           resolve()
         }),
       },
-      // isActive: {
-      //   type: Boolean,
-      //   default: () => false,
-      // },
       structure: Array,
       groups: {
         type: Array,
@@ -312,13 +300,6 @@
       },
     },
     watch: {
-      // isActive () {
-      //   if (this.isActive) {
-      //     preventScroll.on()
-      //   } else {
-      //     preventScroll.off()
-      //   }
-      // },   
       item () { this.initValue() }, 
       structure () { this.initValue() },
     },

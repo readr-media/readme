@@ -24,15 +24,11 @@ const postOpts = (url, opts) => new Promise(resolve => {
   })  
 })
 const putOpts = (url, opts, margin) => new Promise(resolve => {
-  debug('margin', margin)
-  debug('opts', opts)
   const choices = map(opts, opt => Object.assign({}, opt))
   if (margin > -1) {
-    debug('reorganize group order...')
     map(choices, c => {
       c.group_order = c.group_order + margin
     })    
-    debug('reorganized opts', choices)
   }
   superagent
   .put(url)
@@ -65,24 +61,7 @@ const updateOptions = (req, res) => {
       opt.group_order = index
     })
 
-    const oldOpts = remove(choices, opt => opt.id)
-  
-    /**
-     * 	ID         int64             `json:"id" db:"id"`
-     * Choice     models.NullString `json:"choice" db:"choice"`
-     * TotalVote  models.NullInt    `json:"total_vote" db:"total_vote"`
-     * PollID     models.NullInt    `json:"poll_id" db:"poll_id"`
-     * Active     models.NullInt    `json:"active" db:"active"`
-     * GroupOrder models.NullInt    `json:"group_order" db:"group_order"`
-     * CreatedAt  models.NullTime   `json:"created_at" db:"created_at"`
-     * CreatedBy  models.NullInt    `json:"created_by" db:"created_by"`
-     * UpdatedAt  models.NullTime   `json:"updated_at" db:"updated_at"`
-     * UpdatedBy  models.NullInt    `json:"updated_by" db:"updated_by"`
-     */
-
-    debug('oldOpts:')
-    debug(oldOpts)
-    
+    const oldOpts = remove(choices, opt => opt.id)    
     putOpts(url, oldOpts, oldOpts.length + choices.length)
     .then(() => Promise.all([
       putOpts(url, oldOpts),
