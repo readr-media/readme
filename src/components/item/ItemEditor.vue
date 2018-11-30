@@ -70,17 +70,25 @@
         </template>
       </div>
       <div class="panel__actions">
+        <template v-for="btn in buttonizedItems">
+          <ButtunizedItem
+            :class="{ block: isProcessing }"
+            :isProcessing="isProcessing"
+            :item="btn"
+            :value.sync="formData[ btn.name ]"
+            :clickHandler="save"></ButtunizedItem>
+        </template>
         <div class="save" :class="{ block: isProcessing }" @click="save">
           <span v-text="$t('EDITOR.SAVE')" v-show="!isProcessing"></span>
           <Spinner class="spinner" :show="isProcessing"></Spinner>
         </div>
-        <!--div class="cancel" @click="close"><span v-text="$t('EDITOR.CANCEL')"></span></div-->
       </div>
     </div>
   </ItemEditorLayout>
 </template>
 <script>
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
+  import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
@@ -92,7 +100,6 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
-  // import preventScroll from 'prevent-scroll'
   import { Datetime, } from 'vue-datetime'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
@@ -103,6 +110,7 @@
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
+      ButtunizedItem,
       CheckboxItem,
       Dropdownlist,
       Datetime,
@@ -117,6 +125,9 @@
       TextTagItem,
     },
     computed: {
+      buttonizedItems () {
+        return filter(this.structure, obj => obj.isButtonized)
+      },
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
@@ -134,36 +145,8 @@
       }
     },
     methods: {
-      // close () {
-      //   this.$emit('update:isActive', false)
-      // },
-      // checkShowWith (obj) {
-      //   const flag = obj.showWith ? get(filter([ this.formData ], obj.showWith), 'length', 0) > 0 : true
-      //   debug('obj.showWithWatcher', obj.showWithWatcher)
-      //   debug('isFormdataWatchOn', this.isFormdataWatchOn)
-      //   debug(`!this.isFormdataWatch[ obj.showWithWatcher ]`, !this.isFormdataWatch[ obj.showWithWatcher ])
-      //   debug(`formData.${obj.showWithWatcher}`)
-      //   if (flag && !this.isFormdataWatch[ obj.showWithWatcher ]) {
-      //     this.45[ obj.showWithWatcher ] = this.formData[ obj.showWithWatcher ] || undefined
-      //     this.$watch(`formData.${obj.showWithWatcher}`, (newValue, oldValue) => {
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       debug('go update')
-      //       this.$forceUpdate()
-      //     }, {
-      //       deep: true
-      //     })
-      //     this.isFormdataWatch[ obj.showWithWatcher ] = true
-      //   }
-      //   return flag
-      // },
       decamelize,
       get,
-      // isSupposedToShow () {
-
-      // },
       initValue () {
         this.formData = {}
         if (this.type === 'update') {
@@ -267,15 +250,9 @@
     },
     beforeMount () {
       this.initValue()
-      // this.setupWatcher()
     },
     mounted () {},
-    updated () {
-      debug('updated detected!')
-      debug('updated detected!')
-      debug('updated detected!')
-      debug('updated detected!')
-    },
+    updated () {},
     props: {
       add: {
         type: Function,
@@ -285,10 +262,6 @@
           resolve()
         }),
       },
-      // isActive: {
-      //   type: Boolean,
-      //   default: () => false,
-      // },
       structure: Array,
       groups: {
         type: Array,
@@ -312,13 +285,6 @@
       },
     },
     watch: {
-      // isActive () {
-      //   if (this.isActive) {
-      //     preventScroll.on()
-      //   } else {
-      //     preventScroll.off()
-      //   }
-      // },   
       item () { this.initValue() }, 
       structure () { this.initValue() },
     },

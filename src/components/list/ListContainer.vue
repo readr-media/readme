@@ -164,7 +164,7 @@
          * And remove those data which's not editable(excluding 'ID').
          */
         map(this.itemStructure, item => {
-          debug('item.name', item.name, item.name.toUpperCase(), item)
+          debug('item.name', item.name, item.name.toUpperCase(), preForm[ item.name ], item)
           if (item.type === 'Datetime') {
             debug('preForm[ item.name ]', preForm[ item.name ])
             if (!preForm[ item.name ]) {
@@ -176,7 +176,7 @@
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
             preForm[ item.name ] = preForm[ item.name ] && numeral(preForm[ item.name ]).value()
           }
-          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible) {
+          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible && !item.isButtonized) {
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
           }

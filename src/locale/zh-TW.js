@@ -177,6 +177,10 @@ export default {
         'CANCEL': '取消',
       },
     },
+    'BUTTONIZED_BUTTON': {
+      'PUBLISH': '發佈',
+      'UNPUBLISH': '取消發佈'
+    },
   },
   'POLL': {
     'NEW': '新增投票',
