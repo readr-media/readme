@@ -4339,6 +4339,10 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
 
+melanke-watchjs@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/melanke-watchjs/-/melanke-watchjs-1.5.0.tgz#d82354ae47ed69580e7237644e7043e367534754"
+
 mem@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/mem/-/mem-4.0.0.tgz#6437690d9471678f6cc83659c00cbafcd6b0cdaf"

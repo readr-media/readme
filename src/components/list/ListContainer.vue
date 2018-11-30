@@ -115,6 +115,7 @@
         curr_page: this.currPage,
         checkedItems: {},
         editorItem: {},
+        isAllowedToSave: true
       }
     },
     methods: {
@@ -170,6 +171,14 @@
             if (!preForm[ item.name ]) {
               preForm[ item.name ] = null
             } else {
+              if (item.watcher) {
+                const ref = moment(preForm[ item.watcher ])
+                const curr = moment(preForm[ item.name ])
+                const diff = curr.diff(ref) / (60 * 60 * 1000)
+                if ((item.relativeToWatcher === 'after' && diff <= 0) || (item.relativeToWatcher === 'before' && diff >= 0)) {
+                  this.isAllowedToSave = false
+                }                
+              }
               item.isDatetimeSentitive && (moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
           } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
@@ -192,12 +201,20 @@
       },
       update (form) {
         const normalizedForm = this.normalizeData(form)
-        return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
-          /**
-           * Go refresh item-list.
-           */
-          this.refresh({})
-        })
+        if (!this.isAllowedToSave) {
+          switchAlert(this.$store, true, 'Incorrect value', () => {
+            this.isAllowedToSave = true
+          })            
+          return Promise.reject()
+        } else {
+          normalizedForm.updatedAt = moment().toISOString(true)
+          return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
+            /**
+            * Go refresh item-list.
+            */
+            this.refresh({})
+          })
+        }
       },
     },
     mounted () {

@@ -39,7 +39,7 @@ const fetchSource = (store, { vueInstance }) => new Promise(resolve => resolve([
 export const model = [
   { name: 'id', type: 'TextInput', group: 'basic', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, order: { editor: 0 }, },
   { name: 'startAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
-  { name: 'endAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
+  { name: 'endAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, watcher: 'startAt', relativeToWatcher: 'after' },
   { name: 'status', type: 'RadioItem', group: 'basic', width: { list: '50', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, order: { editor: 0 }, isButtonized: true, },
   { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2 }, },
   { name: 'description', type: 'TextareaInput', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, order: { editor: 2 }, autoHeightActive: true, },
@@ -51,6 +51,7 @@ export const model = [
   { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
   { name: 'changeable', type: 'CheckboxItem', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, hideTitle: true, subText: 'CHANGEABLE'},
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { editor: 5 }, },
   { name: 'createdBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: false, order: { editor: 5 }, },
 ]
 export const filter = [ 'custom_editor' ]

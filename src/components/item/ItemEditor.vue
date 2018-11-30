@@ -19,11 +19,10 @@
                       backgroundColor="#fff"
                       :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
                       :value.sync="formData[ obj.name ]"></TextInput>
-                    <Datetime v-else-if="obj.type === 'Datetime'"
-                      v-model="formData[ obj.name ]"
-                      input-format="YYYY/MM/DD HH:mm"
-                      input-class="datepicker__input"
-                      type="datetime"></Datetime>
+                    <DatetimeItem v-else-if="obj.type === 'Datetime'"
+                      :relativeToRef="obj.relativeToWatcher"
+                      :dateRef="formData[ obj.watcher ]"
+                      :value.sync="formData[ obj.name ]"></DatetimeItem>
                     <TextareaInput v-else-if="obj.type === 'TextareaInput'"
                       :autoHeightActive="obj.autoHeightActive"
                       :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
@@ -90,6 +89,7 @@
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
   import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
+  import DatetimeItem from 'src/components/form/DatetimeItem.vue'
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
   import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
@@ -100,20 +100,21 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
-  import { Datetime, } from 'vue-datetime'
+  import WatchJS from 'melanke-watchjs'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
   const debug = require('debug')('CLIENT:ItemEditor')
-
+  const watcher = WatchJS.watch
+  const callOffWatcher = WatchJS.unwatch
   export default {
     name: 'ItemEditor',
     components: {
       BooleanSwitcher,
       ButtunizedItem,
       CheckboxItem,
+      DatetimeItem,
       Dropdownlist,
-      Datetime,
       ImageUploader,
       ItemEditorLayout,
       MediaOptions,
@@ -138,16 +139,21 @@
     },
     data () {
       return {
-        formData: {},
-        currTagInput: {},
         autocompleteArr: {},
+        currTagInput: {},
+        formData: {},
         isProcessing: false,
       }
     },
     methods: {
+      callForActionByWatcher (prop, action, newvalue, oldvalue) {
+        debug(`Mutation detected: formData.${prop}`, newvalue)
+        this.$forceUpdate()        
+      },
       decamelize,
       get,
       initValue () {
+        map(this.formData, item => this.callOffWatcher(this.formData, item.name, this.callForActionByWatcher))
         this.formData = {}
         if (this.type === 'update') {
           map(this.structure, item => {
@@ -166,6 +172,7 @@
                 break
               default:
                 this.formData[ item.name ] = get(this.item, item.name)
+                this.setUpWatcher(item)
             } 
           })
         } else if (this.type === 'create') {
@@ -185,6 +192,7 @@
                   break
                 default:
                   this.formData[ item.name ] = null
+                  this.setUpWatcher(item)
               }
             }
           })
@@ -207,6 +215,7 @@
             this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
+            this.isProcessing = false
             debug('err', err)
           })
         } else if (this.type === 'create') {
@@ -215,9 +224,15 @@
             this.isProcessing = false
             this.$emit('saved')
           }).catch(err => {
+            this.isProcessing = false
             debug('err', err)
           })          
         }
+      },
+      setUpWatcher (item) {
+        if (item.watcher) {
+          watcher(this.formData, item.watcher, this.callForActionByWatcher)           
+        }        
       },
       setupTagInputWatcher (item) {
         /**
