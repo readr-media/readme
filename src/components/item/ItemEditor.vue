@@ -2,14 +2,11 @@
   <ItemEditorLayout>
     <div class="panel">
       <div class="panel__content">
-        <template v-for="group in groups">
-          <div class="panel__group">
-            <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.toUpperCase()}`)"></span></div>
-            <template v-for="obj in sortedStructure">
-              <div v-if="!obj.isHidden && (obj.group === group || group === 'none')"
-                v-show="obj.showWith ? obj.showWith(formData) : true"
-                class="panel__content--item"
-                :key="`panel__content--item-${obj.name}`">
+        <template v-for="group in actualGroups">
+          <div class="panel__group" v-if="!(type === 'create' && group.name === 'info')">
+            <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.name.toUpperCase()}`)"></span></div>
+            <template v-for="obj in group.objs">
+              <div class="panel__content--item" :key="`panel__content--item-${obj.name}`">
                 <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
                   <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
                 </div>
@@ -132,28 +129,44 @@
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
-      sortedStructure () {
-        debug(`sortBy(this.structure, [ obj => get(obj, 'order.editor') ])`, sortBy(this.structure, [ obj => get(obj, 'order.editor') ]))
-        return sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
-      },
     },
     data () {
       return {
+        actualGroups: [],
         autocompleteArr: {},
         currTagInput: {},
         formData: {},
         isProcessing: false,
+        watchedItem: {},
       }
     },
     methods: {
       callForActionByWatcher (prop, action, newvalue, oldvalue) {
         debug(`Mutation detected: formData.${prop}`, newvalue)
-        this.$forceUpdate()        
+        this.reconstructGroups()
       },
       decamelize,
       get,
+      reconstructGroups () {
+        const gps = []
+        const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
+        map(this.groups, g => {
+          const includedObj = filter(sortedStructure, obj => {
+            if (!obj.isHidden && (obj.group === g || g === 'none')) {
+              return obj.showWith ? obj.showWith(this.formData) : true
+            } else {
+              return false
+            }
+          })
+          if (includedObj.length) {
+            gps.push({ name: g, objs: includedObj })
+          }
+        })
+        this.actualGroups = gps     
+      },
       initValue () {
         map(this.formData, item => this.callOffWatcher(this.formData, item.name, this.callForActionByWatcher))
+        this.watchedItem = {}
         this.formData = {}
         if (this.type === 'update') {
           map(this.structure, item => {
@@ -197,6 +210,7 @@
             }
           })
         }
+        this.reconstructGroups()
       },
       isShort (str) { return str.length > 2 || false },
       mapValue (name, options, value) {
@@ -230,8 +244,9 @@
         }
       },
       setUpWatcher (item) {
-        if (item.watcher) {
-          watcher(this.formData, item.watcher, this.callForActionByWatcher)           
+        if (item.watcher && !this.watchedItem[ item.watcher ]) {
+          watcher(this.formData, item.watcher, this.callForActionByWatcher)
+          this.watchedItem[ item.watcher ] = true
         }        
       },
       setupTagInputWatcher (item) {
@@ -266,8 +281,6 @@
     beforeMount () {
       this.initValue()
     },
-    mounted () {},
-    updated () {},
     props: {
       add: {
         type: Function,
