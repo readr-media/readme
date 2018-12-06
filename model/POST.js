@@ -55,7 +55,7 @@ export const model = [
   { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true,  },
   { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, },
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, },
-  { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, },
+  { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
   { name: 'updatedBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
 
   { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '50', editor: '400' }, isEditable: true, isListable: true, options: type_options, fetchSource: typeOpts, },

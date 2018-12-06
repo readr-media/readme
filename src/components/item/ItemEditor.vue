@@ -68,13 +68,13 @@
       <div class="panel__actions">
         <template v-for="btn in buttonizedItems">
           <ButtunizedItem
-            :class="{ block: isProcessing }"
             :isProcessing="isProcessing"
             :item="btn"
             :value.sync="formData[ btn.name ]"
+            :publishDate.sync="formData[ 'publishedAt' ]"
             :clickHandler="save"></ButtunizedItem>
         </template>
-        <div class="save" :class="{ block: isProcessing }" @click="save">
+        <div class="save btn" :class="{ block: isProcessing }" @click="save">
           <span v-text="$t('EDITOR.SAVE')" v-show="!isProcessing"></span>
           <Spinner class="spinner" :show="isProcessing"></Spinner>
         </div>

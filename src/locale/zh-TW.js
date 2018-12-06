@@ -180,7 +180,10 @@ export default {
     },
     'BUTTONIZED_BUTTON': {
       'PUBLISH': '發佈',
-      'UNPUBLISH': '取消發佈'
+      'UNPUBLISH': '取消發佈',
+      'SCHEDULE': '排程',
+      'UNSCHEDULE': '取消排程',
+      'SCHEDULE_CONFIRM': '確定',
     },
   },
   'POLL': {

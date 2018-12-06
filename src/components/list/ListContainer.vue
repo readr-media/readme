@@ -185,7 +185,7 @@
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
             preForm[ item.name ] = preForm[ item.name ] && numeral(preForm[ item.name ]).value()
           }
-          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible && !item.isButtonized) {
+          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible && !item.isButtonized && !item.isButtonizedWith) {
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
           }

@@ -1,6 +1,6 @@
 <template>
   <Datetime
-    :class="{ warn: isWarningActive }"
+    :class="{ warn: isWarningActive, grey: theme === 'grey' }"
     v-model="current"
     input-format="YYYY/MM/DD HH:mm"
     input-class="datepicker__input"
@@ -39,13 +39,15 @@
     },
     mounted () {
       debug('this.init', this.init)
+      debug('this.value', this.value)
       this.init = this.value
       this.current = this.value || this.current
     },
     props: {
       value: {},
       dateRef: {},
-      relativeToRef: {}
+      relativeToRef: {},
+      theme: {},
     },
     watch: {
       current () {
@@ -88,4 +90,7 @@
     height 35px
     color #808080
     border none   
+  &.grey
+    >>> .datepicker__input
+      background-color rgba(0,0,0,0.05)
 </style>
