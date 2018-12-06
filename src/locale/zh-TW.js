@@ -156,7 +156,8 @@ export default {
       'CONTENT': '內容設定',
       'EMBED': '嵌入設定',
       'NONE': '',
-      'INFO': '',
+      'INFO': '資訊',
+      'SHARE': '分享設定',
     },
     'MEDIA_OPTIONS': {
       'ORDER': '這是第幾個選項（1 為第一）',
@@ -179,7 +180,10 @@ export default {
     },
     'BUTTONIZED_BUTTON': {
       'PUBLISH': '發佈',
-      'UNPUBLISH': '取消發佈'
+      'UNPUBLISH': '取消發佈',
+      'SCHEDULE': '排程',
+      'UNSCHEDULE': '取消排程',
+      'SCHEDULE_CONFIRM': '確定',
     },
   },
   'POLL': {
@@ -227,7 +231,8 @@ export default {
     'PUBLISHED_AT': '發佈時間',
     'CONTENT': '內容',
     'UPDATED_BY': '最後更新人',
-    'TYPE': '類別',
+    'HERO_IMAGE': '首圖',
+    'TYPE': '樣式',
     'TYPE_NEVER': '不明',
     'TYPE_REVIEW': '評論',
     'TYPE_NEWS': '新聞',
@@ -252,7 +257,9 @@ export default {
     'ACTIVE': '狀態',
     'ACTIVE_ACTIVE': '有效',
     'ACTIVE_DEACTIVE': '無效',
-    'AUTHOR': '作者'
+    'AUTHOR': '作者',
+    'AUTHORS': '作者',
+    'SLUG': 'SLUG',
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',
