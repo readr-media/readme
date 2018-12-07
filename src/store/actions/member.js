@@ -10,6 +10,13 @@ const LOGIN = ({ commit, }, { params, token, }) => {
   })
 }
 
+const DISPOSABLE_TOKEN = ({ commit, }, { type, }) => {
+  return memberFunc.getDisposableToken(type).then((token) => {
+    commit('SET_TOKEN', { token, type, })
+  })
+}
+
 export {
   LOGIN,
+  DISPOSABLE_TOKEN
 }

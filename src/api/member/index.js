@@ -1,8 +1,8 @@
-// import superagent from 'superagent'
+import superagent from 'superagent'
 // import { constructUrlWithQuery, fetchInStrict, } from 'src/api/comm'
-// import { getHost, } from 'src/util/comm'
-// const debug = require('debug')('CLIENT:api:comm')
-// const host = getHost()
+import { getHost, } from 'src/util/comm'
+const debug = require('debug')('CLIENT:api:comm')
+const host = getHost()
 
 // export function getMembers ({ params, }) {
 //   const url = constructUrlWithQuery(`${host}/api/members`, params)
@@ -20,21 +20,36 @@
 // }
 
 export function login (params, token) {
-  // const url = `${host}/api/login`
+  const url = `${host}/api/login`
+  debug('token', token)
   return new Promise((resolve, reject) => {
-    // superagent
-    //   .post(url)
-    //   .set('Authorization', `Bearer ${token}`)
-    //   .send(
-    //     params
-    //   ).end(function (err, res) {
-    //     if (err) {
-    //       reject(err)
-    //     } else {
-    //       saveToken(res.body.token)
-    //       resolve({ status: res.status, profile: res.body.profile, })
-    //     }
-    //   })
-    resolve({ status: 200, profile: {}, })
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${token}`)
+      .send(
+        params
+      ).end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ status: res.status, profile: res.body.profile, })
+        }
+      })
+    // resolve({ status: 200, profile: {}, })
+  })
+}
+
+export function getDisposableToken (type) {
+  const url = `${host}/api/token/${type}`
+  return new Promise((resolve, reject) => {
+    superagent
+      .get(url)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res.body.token)
+        }
+      })
   })
 }
