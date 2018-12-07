@@ -10,15 +10,17 @@
         :class="`list-item__content ${obj.name}`"
         :style="{ width: get(obj, 'width.list') && `${get(obj, 'width.list')}px`, flex: !get(obj, 'width.list') ? '1' : 'none' }">
         <template v-if="!obj.isAnchoric || type === 'header'">
-          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher') || type === 'header'"></span>
+          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher' && obj.type !== 'Dropdownlist') || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
+          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </template>
         <router-link v-else-if="obj.isAnchoric" :to="`/${get($route, 'params.item')}/${get(item, 'id')}`">
-          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher') || type === 'header'"></span>
+          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher' && obj.type !== 'Dropdownlist') || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
+          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </router-link>
       </div>
@@ -30,7 +32,7 @@
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import moment from 'moment'
   import { decamelize, } from 'humps'
-  import { filter, get, } from 'lodash'
+  import { find, filter, get, } from 'lodash'
   const debug = require('debug')('CLIENT:ListItem')
   export default {
     name: 'ListItem',
@@ -56,9 +58,13 @@
         debug('DEL!!')
         this.$emit('del')
       },
+      find,
       get,
       mapValue (name, options, value) {
-        return this.$t(`${this.model.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+        if (options) {
+          return this.$t(`${this.model.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+        }
+        return value
       },
       normalizeDatetime (datetime, format) {
         return format ? moment(datetime).format(format) : moment(datetime).format('YYYY-MM-DD hh:mm:ss')

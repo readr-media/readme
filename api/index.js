@@ -64,7 +64,11 @@ router.use('/enews-group-list/list', authVerify, (req, res) => {
 
 
 
-
+router.use('/', (req, res, next) => {
+  req.url_origin = req.url
+  next()
+})
+router.use('/login', authVerify, require('./middle/member/login'), )
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', authVerify, require('./middle/project'))
 router.use('/report', authVerify, require('./middle/report'))
@@ -75,6 +79,7 @@ router.use('/post', [ authVerify, authorize ], require('./middle/post'))
 router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
 router.use('/image-post', authVerify, require('./middle/image'))
 router.use('/tags', authVerify, require('./middle/tags'))
+router.use('/token', require('./middle/services/token'))
 
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
@@ -220,12 +225,13 @@ router.route('*')
 
 router.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError' && req.url.indexOf('/status') === -1) {
+    console.error('Error occurred:', err)
     res.status(401).send('invalid token...')
   } else if (err && req.url.indexOf('/status') > -1) {
     if (err.name === 'UnauthorizedError') {
       res.status(200).send(false)
     } else {
-      console.log('Error occurred when checking login status', err)
+      console.error('Error occurred when checking login status', err)
     }
   }
 })

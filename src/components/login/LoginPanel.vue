@@ -1,10 +1,10 @@
 <template>
-  <div class="login-panel" :class="{ active: isPanelActive, }" tabIndex="0" @focus="focusin" @focusout="focusout">
+  <div class="login-panel" tabIndex="0">
     <div class="login-panel__account">
       <div class="title"><span v-text="$t('LOGIN.ACCOUNT')"></span></div>
       <div>
         <TextInput
-          backgroundColor="#a3a3a3"
+          backgroundColor="#f1f1f1"
           backgroundColorFocused="#fff"
           :value.sync="account"></TextInput>
       </div>
@@ -13,7 +13,7 @@
       <div class="title"><span v-text="$t('LOGIN.PASSWORD')"></span></div>
       <div>
         <TextInput
-          backgroundColor="#a3a3a3"
+          backgroundColor="#f1f1f1"
           backgroundColorFocused="#fff"
           type="password"
           :value.sync="password"></TextInput>
@@ -24,8 +24,9 @@
 </template>
 <script>
   import TextInput from 'src/components/form/TextInput.vue'
+  import { get } from 'lodash'
   const debug = require('debug')('CLIENT:LoginPanel')
-  const login = (store, params) => store.dispatch('LOGIN', { params, })
+  const login = (store, params, token) => store.dispatch('LOGIN', { params, token })
 
   export default {
     name: 'LoginPanel',
@@ -35,27 +36,17 @@
     data () {
       return {
         account: undefined,
-        isPanelActive: false,
         password: undefined,
       }
     },
     methods: {
-      focusin () {
-        this.isPanelActive = true
-      },
-      focusout () {
-        this.isPanelActive = false
-      },
       login () {
         if (this.validate()) {
           login(this.$store, {
-            account: '',
-            password: '',
-          }).then((res) => {
+            account: this.account,
+            password: this.password,
+          }, get(this.$store, 'state.register-token')).then(res => {
             if (res.status === 200) {
-              // const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
-              // this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push(`/${memberCenter}`)
-              // location.replace(`/${memberCenter}`)
               location.replace('/')
             } else {
               // this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
@@ -80,10 +71,7 @@
 </script>
 <style lang="stylus" scoped>
   .login-panel
-    // width 100%
-    // height 100%
-    background-color #303030
-    box-shadow 0 0 5px rgba(100,100,100,0.5)
+    background-color #e9e9e9
     padding 30px 20px 60px
     font-size 0.9475rem
     position relative
@@ -92,9 +80,7 @@
     justify-content flex-start
     align-items center
     outline none
-    &.active
-      box-shadow 0 0 5px rgba(255,255,255,0.5)
-      background-color #353535
+    box-shadow 0 0 15px rgba(0,0,0,0.1)
     > div
       &:not(:first-child)
         margin-top 20px
@@ -102,7 +88,7 @@
         margin-bottom 10px
     &__account, &__password
       .title
-        color #d3d3d3
+        color #000
     &__go
       position absolute
       bottom 30px
@@ -111,7 +97,8 @@
       height 30px
       padding 0 30px
       span
-        background-color #808080
+        background-color #0db9c9
+        color #fff
         display flex
         justify-content center
         align-items center

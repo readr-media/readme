@@ -62,19 +62,8 @@
           .value
             font-size 1rem
             flex 1
-            >>> .vdatetime
-              padding-left 40px
-              background-size 20px 20px
-              background-repeat no-repeat
-              background-image url(/public/icons/icon-time.png)
-              background-position 15px center
-              background-color #fff
-            >>> .datepicker__input
-              padding-left 10px
-              width 100%
-              height 35px
-              color #808080
-              border none            
+            >>> .warn
+              border 1px solid #ddcf21                     
       &__actions
         display flex
         justify-content flex-end
@@ -84,12 +73,12 @@
         left 0
         bottom 25px
         padding 0
-        > div
+        >>> .btn
           // flex 1
           font-size 1.25rem
           width 160px
           height 54px
-          display flex
+          display inline-flex
           justify-content center
           align-items center
           color #fff
@@ -98,12 +87,11 @@
           border-radius 2px
           padding 5px
           cursor pointer
+          margin-left 10px
           &.block, &.block:hover
             cursor not-allowed
             background-color #d2d2d2
 
-          &:not(:last-child)
-            margin-right 10px
           &:hover
             background-color #d2d2d2
             box-shadow 0px 0px 5px rgba(250,250,250,0.5)      
