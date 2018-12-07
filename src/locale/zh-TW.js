@@ -203,8 +203,8 @@ export default {
     'ACTIVE': '狀態',
     'ACTIVE_ACTIVE': '有效',
     'ACTIVE_DEACTIVATE': '無效',
-    'CREATED_BY': '建立',
-    'UPDATED_BY': '最後更新',
+    'CREATED_BY': '作者',
+    'UPDATED_BY': '更新者',
     'IMAGE': '首圖',
     'VIDEO': '影片',
     'TOTAL_VOTE': '投票人數',
@@ -215,6 +215,7 @@ export default {
     'CHANGEABLE': '投票人可以更改選項',
     'CHOICES': '選項',
     'TAGS': '關鍵字',
+    'PUBLISHED_AT': '發佈時間',
     'FREQUENCY_OPTION': {
       'ONCE': '只能投一次',
       'DAILY': '一天可投一次',

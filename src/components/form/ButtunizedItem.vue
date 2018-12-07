@@ -8,7 +8,7 @@
       </div>    
       <div class="buttonized-item--schedule-picker" tabIndex="0">
         <div class="picker">
-          <DatetimeItem theme="grey" :value.sync="scheduleDate" v-if="scheduleDate"></DatetimeItem>
+          <DatetimeItem theme="grey" :value.sync="scheduleDate" v-if="scheduleDate || status === 'DRAFT'"></DatetimeItem>
         </div>
         <div class="confirm" @click="handlerSchedule">
           <span v-text="$t('EDITOR.BUTTONIZED_BUTTON.SCHEDULE_CONFIRM')"></span>
