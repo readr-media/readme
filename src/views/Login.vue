@@ -5,12 +5,16 @@
 </template>
 <script>
   import LoginPanel from 'src/components/login/LoginPanel.vue'
+  const getDisposableToken = store => store.dispatch('DISPOSABLE_TOKEN', { type: 'register', })
   export default {
     name: 'Login',
     components: {
       LoginPanel,
     },
     methods: {},
+    beforeMount () {
+      getDisposableToken(this.$store)
+    },
     mounted () {},
   }
 </script>

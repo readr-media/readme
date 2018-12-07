@@ -24,8 +24,9 @@
 </template>
 <script>
   import TextInput from 'src/components/form/TextInput.vue'
+  import { get } from 'lodash'
   const debug = require('debug')('CLIENT:LoginPanel')
-  const login = (store, params) => store.dispatch('LOGIN', { params, })
+  const login = (store, params, token) => store.dispatch('LOGIN', { params, token })
 
   export default {
     name: 'LoginPanel',
@@ -42,13 +43,10 @@
       login () {
         if (this.validate()) {
           login(this.$store, {
-            account: '',
-            password: '',
-          }).then((res) => {
+            account: this.account,
+            password: this.password,
+          }, get(this.$store, 'state.register-token')).then(res => {
             if (res.status === 200) {
-              // const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
-              // this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push(`/${memberCenter}`)
-              // location.replace(`/${memberCenter}`)
               location.replace('/')
             } else {
               // this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
@@ -99,7 +97,8 @@
       height 30px
       padding 0 30px
       span
-        background-color #808080
+        background-color #0db9c9
+        color #fff
         display flex
         justify-content center
         align-items center

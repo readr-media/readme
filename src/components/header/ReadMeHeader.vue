@@ -7,7 +7,7 @@
         </div>
       </div>
       <div class="right">
-        <AccountActionBox></AccountActionBox>
+        <AccountActionBox v-if="!$store.getters.isLoginPage"></AccountActionBox>
         <!--div class="logout" @click="logout" v-show="showLogout"><span v-text="$t('HEADER.LOGOUT')"></span></div-->
       </div>    
     </div>

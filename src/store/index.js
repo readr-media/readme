@@ -20,6 +20,7 @@ export function createStore () {
       listItemsCount: 0,
       isLoggedIn: false,
       profile: {},
+      'register-token': '',
       systemVersion: '1.0.0',
       valueSetter: {
         active: false,
