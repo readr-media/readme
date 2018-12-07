@@ -10,19 +10,15 @@
       <input type="text" class="input" ref="input"
         :disabled="isTagsExceedLimit"
         :placeholder="placeholder"
-        v-model="currInput"
+        v-model="currInput"     
         @keyup.stop.prevent="keyupHandeler"
         @keydown.8="removeLastTag"
         @keypress="keypressHandler">
-      <div class="autocomplete" v-show="currInput" ref="autocomplete"
-        tabIndex="0"
-        @keyup.stop.prevent="browser"
-        @keydown.9.stop.prevent="donothing"
-        @focus="focusin"
-        @focusout="focusout">
+      <div class="autocomplete" :class="{ active: currInput }" ref="autocomplete" tabIndex="0">
         <span class="autocomplete__item"
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
+          @click="selectTag(index)"
           :key="`autocom-item-${get(item, 'name', Date.now())}`"
           :class="{ selected: currAutocompleteIndex === index }"></span>
       </div>
@@ -32,7 +28,6 @@
 <script>
   import { find, get } from 'lodash'
   import { isDescendant } from 'src/util/comm'
-  import preventScroll from 'prevent-scroll'
 
   const debug = require('debug')('CLIENT:TextTagItem')
   export default {
@@ -42,7 +37,6 @@
         currInput: '',
         currAutocompleteIndex: 0,
         keys: [ 13, 188, 9 ],
-        // tags: [ ...this.currTagValues ],
       }
     },
     computed: {
@@ -57,16 +51,11 @@
       donothing (e) {},
       keyupHandeler (e) {
         if (e) {
-          if (e.keyCode === 40 && this.currInput) {
-            this.$refs[ 'input' ].blur()
-            this.$refs[ 'autocomplete' ].focus()
-            this.browser(e)
+          if ((e.keyCode === 40 || e.keyCode === 38) && this.currInput) {
+            this.browser(e)    
             return
           } else if (this.keys.indexOf(e.keyCode) === -1 ) {
             this.$emit('update:currInput', this.currInput)
-            // if (!this.currInput && e.keyCode === 8) {
-            //   this.removeLastTag()
-            // }
             return
           }
         }
@@ -76,8 +65,6 @@
         if (this.currInput) {
           if (this.tags.indexOf(this.currInput) === -1) {
             const item = find(this.autocomplete, (i) => get(i, 'name').indexOf(this.currInput) > -1)
-            debug('item', item)
-            debug('this.currInput', this.currInput)
             item && this.tags.push(item)
             this.currInput = ''
           }
@@ -90,13 +77,6 @@
           return
         }
         this.$refs[ 'input' ].focus()
-        this.isAutocompleteActive = true
-      },
-      focusin () {
-        preventScroll.on()
-      },
-      focusout () {
-        preventScroll.off()
       },
       get,
       getTagVal (rawVal) {
@@ -117,7 +97,6 @@
             item && this.tags.push(item)
             this.currInput = ''
             this.$refs[ 'input' ].focus()
-            debug('Slected item', item)
           }
         }
         debug('browser the autocomplete item.', e.keyCode)
@@ -133,9 +112,14 @@
         this.tags.pop()
         this.$forceUpdate()
       },
+      selectTag (index) {
+        const item = this.autocomplete[ index ]
+        item && this.tags.push(item)
+        this.currInput = ''
+        this.$refs[ 'input' ].focus()        
+      }
     },
     mounted () {},
-    // props: [ 'placeholder', 'autocomplete', 'readOnly', 'currTagValues', ],
     props: {
       placeholder: String,
       autocomplete: Array,
@@ -222,6 +206,8 @@
           background-color #ffffff
           outline none
           font-weight 100
+          &:focus ~ .autocomplete.active
+            display block
           &::-webkit-input-placeholder
             color #bdbdbd
             font-weight 100
@@ -233,6 +219,10 @@
           z-index 999
           background-color #fff
           outline none
+          display none
+          &:focus, &:hover
+            &.active
+              display block
           &__item
             padding 5px 20px 5px 10px
             cursor pointer
