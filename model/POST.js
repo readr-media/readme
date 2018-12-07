@@ -45,7 +45,6 @@ const typeOpts = (store, { vueInstance }) => new Promise(resolve => {
   resolve(opts)
 })
 
-const isSupposedToShowWithTypeNews = data => get(data, 'type') == POST_TYPE.NEWS
 const isSupposedToShowWithTypeReport = data => get(data, 'type') == POST_TYPE.REPORT
 const isSupposedToShowWithTypeReview = data => { return get(data, 'type') == POST_TYPE.REVIEW }
 const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW }
@@ -60,11 +59,15 @@ export const model = [
 
   { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '50', editor: '400' }, isEditable: true, isListable: true, options: type_options, fetchSource: typeOpts, },
   { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, },
+  { name: 'postOrder', type: 'TextInput', group: 'basic', width: { list: '50', editor: '80' }, isEditable: true, isListable: false, isNumSentitive: true, },
 
   { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
   { name: 'projectId', type: 'Dropdownlist', group: 'content', width: { list: '110', editor: '400' }, isEditable: true, isListable: true, isNumSentitive: true, fetchSource, },
   { name: 'content', type: 'ContentEditor', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
-  
+
+  // For post.type === review
+  { name: 'link', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
+
   // For post.type === report
   { name: 'heroImage', type: 'Image', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
   { name: 'slug', type: 'TextInput', group: 'content', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
@@ -74,12 +77,10 @@ export const model = [
   { name: 'tags', type: 'TextTagItem', group: 'content', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
   
   // For post.type === news
-  { name: 'ogDescription', type: 'TextareaInput', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
-  { name: 'ogImage', type: 'Image', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
-  { name: 'ogTitle', type: 'TextInput', group: 'share', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeNews, autoHeightActive: true, },
+  { name: 'ogTitle', type: 'TextInput', group: 'share', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
+  { name: 'ogDescription', type: 'TextareaInput', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
+  { name: 'ogImage', type: 'Image', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
 
-  // For post.type === review
-  { name: 'link', type: 'TextInput', group: 'share', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
 ]
 
 export const groups = [ 'info', 'basic', 'content', 'share' ]

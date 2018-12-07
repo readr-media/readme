@@ -17,10 +17,11 @@
 <style lang="stylus" scoped>
   .login
     padding 40px
-    background-color #404040
+    background-color #fff
     display flex
     justify-content center
     align-items center
+    background-color #f1f1f1
     &__panel
       width 250px
       height 300px

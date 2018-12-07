@@ -261,6 +261,7 @@ export default {
     'AUTHOR': '作者',
     'AUTHORS': '作者',
     'SLUG': 'SLUG',
+    'POST_ORDER': '排序',
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',

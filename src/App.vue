@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app">
+  <div id="app" class="app" :class="{ login: $store.getters.isLoginPage }">
     <ReadMeHeader class="app-header"></ReadMeHeader>
     <ReadMeAside class="app-aside"></ReadMeAside>
     <Alert></Alert>
@@ -22,7 +22,7 @@ export default {
     ReadMeHeader,
     ReadMeAside,
     SystemInfo,
-  },  
+  }
 }
 </script>
 
@@ -65,6 +65,10 @@ button
     left 0
     top 0
     z-index 1
+  &.login
+    padding-left 0
+    .app-aside
+      display none
 @media screen and (min-width: 1200px)
   .app
     padding-left 310px
