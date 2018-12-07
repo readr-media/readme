@@ -124,7 +124,7 @@ function render (req, res, next) {
       return res.status(404).send('404 | Page Not Found')
     } else if (err.code === 403) {
       if (cookies.get('csrf')) {
-        return res.status(403).send('Please login through readr-site or you dont have any permission at this moment.')
+        return res.status(403).send('You dont have any permission at this moment. Please ask admin for futher permission that you desire.')
       } else {
         return res.redirect(302, '/login')
       }
