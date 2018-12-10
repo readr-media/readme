@@ -222,29 +222,31 @@
         return this.$t(`${this.model}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
       },    
       save () {
-        console.log('GO UPDATE.')
+        console.log('GO UPDATE.', this.formData)
         if (this.isProcessing) {
-          return
+          return Promise.reject()
         } else {
           this.isProcessing = true
         }
         if (this.type === 'update') {
-          this.update(this.formData).then(() => {
+          return this.update(this.formData).then(() => {
             // this.$emit('update:isActive', false)
             this.isProcessing = false
-            this.$emit('saved')
+            return this.$emit('saved') && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
+            return Promise.reject()
           })
         } else if (this.type === 'create') {
-          this.add(this.formData).then(() => {
+          return this.add(this.formData).then(() => {
             // this.$emit('update:isActive', false)
             this.isProcessing = false
-            this.$emit('saved')
+            return this.$emit('saved') && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
+            return Promise.reject()
           })          
         }
       },
@@ -292,7 +294,7 @@
         default: (form) => new Promise(resolve => {
           debug('Run add default.') 
           debug('form:', form)
-          resolve()
+          resolve(true)
         }),
       },
       structure: Array,
@@ -309,7 +311,7 @@
         default: (form) => new Promise(resolve => {
           debug('Run update default.') 
           debug('form:', form)
-          resolve()
+          resolve(true)
         }),
       },
       type: {
