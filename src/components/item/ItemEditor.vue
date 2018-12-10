@@ -44,6 +44,8 @@
                       :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
                     <Dropdownlist v-else-if="obj.type === 'Dropdownlist'"
                       :name="obj.name"
+                      :defaultVal="obj.default"
+                      :defaultText="obj.defaultText"
                       :fetchSource="obj.fetchSource"
                       :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
                     <MediaOptions v-else-if="obj.type === 'MediaOptions'"
