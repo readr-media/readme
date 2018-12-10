@@ -10,6 +10,7 @@
   import moment from 'moment'
   import { Datetime, } from 'vue-datetime'
   const debug = require('debug')('CLIENT:DatetimeItem')
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'info' })
   export default {
     name: 'DatetimeItem',
     components: {
@@ -30,7 +31,9 @@
         debug('should refer to ref.', 'diff', diff)
         if (this.relativeToRef === 'after' && diff <= 0) {
           this.isWarningActive = true
+          switchAlert(this.$store, true, 'End time should be after this moment.', () => {})
         } else if (this.relativeToRef === 'before' && diff >= 0) {
+          switchAlert(this.$store, true, 'End time should be after this moment.', () => {})
           this.isWarningActive = true
         } else {
           this.isWarningActive = false

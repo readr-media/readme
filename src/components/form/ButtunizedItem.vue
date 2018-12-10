@@ -28,6 +28,7 @@
   import moment from 'moment'
   import { find, get, } from 'lodash'
   const debug = require('debug')('CLIENT:ButtunizedItem')
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'info' })
   export default {
     name: 'ButtunizedItem',
     components: {
@@ -88,6 +89,13 @@
       },
       handlerSchedule () {
         debug('do schedule!')
+
+        const sch = moment(this.scheduleDate)
+        const curr = moment()
+        const diff = curr.diff(sch) / 1000
+
+        debug('diff', diff, 's')
+        if (diff > 0) { return switchAlert(this.$store, true, 'Published date should be after this moment.', () => {}) }
         this.$emit('update:publishDate', this.scheduleDate)
         this.$emit('update:value', 3)
         this.clickHandler()
