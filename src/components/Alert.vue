@@ -4,7 +4,9 @@
       <div class="panel__message"><span v-text="message"></span></div>
       <div class="panel__actions">
         <div class="confirm" @click="confirm"><span v-text="$t('ALERT.CONFIRM')"></span></div>
-        <div class="cancel" @click="close"><span v-text="$t('ALERT.CANCEL')"></span></div>
+        <template v-if="type === 'action'">
+          <div class="cancel" @click="close"><span v-text="$t('ALERT.CANCEL')"></span></div>
+        </template>
       </div>
     </div>
   </div>
@@ -13,7 +15,7 @@
   import preventScroll from 'prevent-scroll'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:Alert')
-  const switchAlert = (store, active, message) => store.dispatch('ALERT_SWITCH', { active, message, })
+  const switchAlert = (store, active, message) => store.dispatch('ALERT_SWITCH', { active, message, type: 'info' })
   export default {
     name: 'Alert',
     computed: {
@@ -27,6 +29,9 @@
       },
       message () {
         return get(this.$store, 'state.alertFlag.message')
+      },
+      type () {
+        return get(this.$store, 'state.alertFlag.type', 'action')
       },
     },
     methods: {

@@ -12,6 +12,7 @@ export function createStore () {
       alertFlag: {
         message: '',
         active: false,
+        type: 'info',
       },
       asideItems: [],
       asideNav: [],

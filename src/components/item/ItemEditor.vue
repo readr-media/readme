@@ -58,7 +58,8 @@
                       :value.sync="formData[ obj.name ]"></CheckboxItem>
                   </template>
                   <template v-else>
-                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
+                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))"></span>
+                    <span v-else-if="obj.type === 'Datetime'" v-text="moment(get(item, obj.name)).format('YYYY-MM-DD HH:mm:ss')"></span>
                     <span v-else v-text="get(item, obj.name)"></span>
                   </template>
                 </div>
@@ -100,6 +101,7 @@
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
   import WatchJS from 'melanke-watchjs'
+  import moment from 'moment'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -149,6 +151,7 @@
       },
       decamelize,
       get,
+      moment,
       reconstructGroups () {
         const gps = []
         const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])

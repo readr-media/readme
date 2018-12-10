@@ -46,7 +46,7 @@
   const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })
   // const del = (store, params, endpoint) => store.dispatch('DEL_ITEM', { params, endpoint, })
   const delItems = (store, params, endpoint) => store.dispatch('DEL_ITEMS', { params, endpoint, })
-  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, })
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
   export default {
     name: 'ListContainer',
     components: {
