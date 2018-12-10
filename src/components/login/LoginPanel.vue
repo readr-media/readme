@@ -1,5 +1,5 @@
 <template>
-  <div class="login-panel" tabIndex="0">
+  <div class="login-panel" tabIndex="0" @keyup="keyupHandler">
     <div class="login-panel__account">
       <div class="title"><span v-text="$t('LOGIN.ACCOUNT')"></span></div>
       <div>
@@ -61,6 +61,11 @@
             debug('LOGGED-IN IN FAIL!!', err)
           })
         }
+      },
+      keyupHandler (e) {
+        if (e.keyCode === 13) {
+          this.login()
+        }        
       },
       validate () {
         return true
