@@ -185,6 +185,10 @@ export default {
       'UNSCHEDULE': '取消排程',
       'SCHEDULE_CONFIRM': '確定',
     },
+    'DROPDOWN_LIST': {
+      'HINT': '請選擇',
+      'NA': '無'
+    },
   },
   'POLL': {
     'NEW': '新增投票',
@@ -307,9 +311,6 @@ export default {
     'SIZE_LIMIT': '(圖檔大小限制：3MB)',
     'OVER_SIZE': '圖檔過大',
     'TOOLTIP': '上傳圖片',
-  },
-  'DROPDOWN_LIST': {
-    'HINT': '請選擇',
   },
   'MANAGEMENT': {
 
