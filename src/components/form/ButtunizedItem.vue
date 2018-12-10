@@ -94,8 +94,8 @@
       },
     },
     mounted () {
-      this.scheduleDate = this.publishDate
-      debug('MOUNTED', this.publishDate)
+      this.scheduleDate = moment(this.publishDate).add(30, 'm').toISOString(true)
+      debug('MOUNTED', this.publishDate, this.scheduleDate)
     },
     props: {
       clickHandler: {
@@ -115,7 +115,7 @@
     watch: {
       publishDate () {
         debug('Mutation detected: publishDate', this.publishDate)
-        this.scheduleDate = this.publishDate
+        this.scheduleDate = moment(this.publishDate).add(30, 'm').toISOString(true)
       }
     },
   }
