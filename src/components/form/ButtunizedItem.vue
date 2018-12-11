@@ -49,6 +49,7 @@
       wording () {
         switch (this.status) {
           case 'UNPUBLISHED': {}
+          case 'PENDING': {}
           case 'DRAFT': {
             return 'PUBLISH'
           }
