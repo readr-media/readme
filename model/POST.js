@@ -84,3 +84,5 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic', 'content', 'share' ]
+export const isPreviewable = true
+export const previewHost = 'http://localhost:8080/post'
