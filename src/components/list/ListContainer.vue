@@ -1,12 +1,12 @@
 <template>
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
-      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="$store.getters.modelName" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
         <template v-for="(item, index) in items">
           <ListItem @edit="editItem" @checkup="checkup"
             :item="item" :structure="itemStructure"
-            :key="`list-container__items-${index}`" :model="model"></ListItem>
+            :key="`list-container__items-${index}`" :model="$store.getters.modelName"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -19,15 +19,12 @@
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
         @saved="itemSaved"
         :groups="groups"
-        :structure="itemStructure"
         :add="add"></ItemEditor>
       <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
         @saved="itemSaved"
         :groups="groups"
-        :structure="itemStructure"
         :item="editorItem"
         :update="update"></ItemEditor>
-      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
     </template>
   </div>
 </template>
@@ -69,15 +66,12 @@
       header () {
         const item = {}
         map(this.itemStructure, i => { 
-          item[ i.name ] = this.$t(`${this.model}.${decamelize(i.name).toUpperCase()}`)
+          item[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
       },
       groups () {
-        return this.modelData ? this.modelData.groups : [ 'none' ]
-      },
-      isSubItem () {
-        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
+        return this.$store.getters.modelData ? this.$store.getters.modelData.groups : [ 'none' ]
       },
       items () {
         return get(this.$store, 'state.list', [])
@@ -86,19 +80,13 @@
         return get(this.$store, 'state.listItemsCount', 0)
       },
       itemStructure () {
-        return this.modelData ? this.isSubItem ? this.modelData.subModel : this.modelData.model : []
+        return this.$store.getters.structure
       },
       maxResult () {
-        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+        return this.$store.getters.modelData ? this.$store.getters.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
       },
       me () {
         return get(this.$store, 'state.profile.id')
-      },
-      model () {
-        return get(this.$store, 'getters.model')
-      },
-      modelData () {
-        return get(this.$store, 'getters.modelData')
       },
       totalPages () {
         return Math.floor(this.itemsCount / this.maxResult) + 1
