@@ -42,7 +42,7 @@ export const model = [
   { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { editor: 5 }, },
   { name: 'createdBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: false, order: { editor: 5 }, },
   { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
-  { name: 'status', type: 'RadioItem', group: 'info', width: { list: '50', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, order: { editor: 0 }, isButtonized: true, },
+  { name: 'status', type: 'RadioItem', group: 'info', width: { list: '50', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, order: { editor: 0 }, isButtonized: true, isSchedulable: true, },
   
   { name: 'startAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
   { name: 'endAt', type: 'Datetime', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, watcher: 'startAt', relativeToWatcher: 'after' },
