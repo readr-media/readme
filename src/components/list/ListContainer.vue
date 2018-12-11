@@ -95,16 +95,10 @@
         return get(this.$store, 'state.profile.id')
       },
       model () {
-        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
+        return get(this.$store, 'getters.model')
       },
       modelData () {
-        let model
-        try {
-          model = require(`model/${this.model}`)
-        } catch (error) {
-          console.log(`There's no model found:`, this.model)
-        }
-        return model
+        return get(this.$store, 'getters.modelData')
       },
       totalPages () {
         return Math.floor(this.itemsCount / this.maxResult) + 1

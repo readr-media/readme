@@ -151,6 +151,7 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
+    'PREVIEW': '預覽',
     'GROUPS': {
       'BASIC': '基本設定',
       'CONTENT': '內容設定',

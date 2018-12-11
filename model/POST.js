@@ -51,7 +51,7 @@ const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') 
 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', width: { list: '80', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, },
-  { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true,  },
+  { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true, isSchedulable: true,  },
   { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, },
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, },
   { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
@@ -84,3 +84,5 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic', 'content', 'share' ]
+export const isPreviewable = true
+export const previewHost = 'http://localhost:8080/post'

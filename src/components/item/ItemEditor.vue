@@ -69,6 +69,12 @@
         </template>
       </div>
       <div class="panel__actions">
+        <div class="preview btn" :class="{ block: isProcessing }"
+          v-if="isPreviewable && get(item, 'id')"
+          @click="preview">
+          <span v-text="$t('EDITOR.PREVIEW')" v-show="!isProcessing"></span>
+          <Spinner class="spinner" :show="isProcessing"></Spinner>
+        </div>
         <template v-for="btn in buttonizedItems">
           <ButtunizedItem
             :isProcessing="isProcessing"
@@ -133,6 +139,12 @@
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
+      isPreviewable () {
+        return get(this.$store, 'getters.modelData.isPreviewable')
+      },
+      structure () {
+        return get(this.$store, 'getters.modelData.model')
+      }, 
     },
     data () {
       return {
@@ -152,6 +164,12 @@
       decamelize,
       get,
       moment,
+      preview () {
+        const host = get(this.$store, 'getters.modelData.previewHost')
+        const id = get(this.item, 'id')
+        debug('Go preview', [ host, id ])
+        host && id && window.open(`${host}/${id}?preview=true`, '_blank')
+      },
       reconstructGroups () {
         const gps = []
         const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
@@ -280,7 +298,7 @@
           debug(`Mutation detected: autocompleteArr.${item.name}`)
           debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
         })       
-      },   
+      },  
       updateForm () {
         this.$forceUpdate()
       }
@@ -297,7 +315,6 @@
           resolve(true)
         }),
       },
-      structure: Array,
       groups: {
         type: Array,
         default: () => [ 'none' ]

@@ -1,7 +1,7 @@
 <template>
   <div class="buttonized-item--wrapper" v-if="options.length">
     <template v-if="status !== 'PUBLISHED' && status !== 'SCHEDULING'">
-      <div class="buttonized-item btn schedule" tabIndex="0"
+      <div class="buttonized-item btn schedule" tabIndex="0" v-if="isSchedulable"
         :class="{ block: isProcessing }">
         <span v-text="$t(`EDITOR.BUTTONIZED_BUTTON.SCHEDULE`)"></span>
         <Spinner class="spinner" :show="isProcessing"></Spinner>
@@ -36,6 +36,9 @@
       Spinner
     },
     computed: {
+      isSchedulable () {
+        return get(this.item, 'isSchedulable')
+      },
       status () {
         const current = find(this.options, opt => opt.value === this.value)
         return get(current, 'name', 'DRAFT')
