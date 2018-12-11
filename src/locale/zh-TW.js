@@ -185,6 +185,7 @@ export default {
       'SCHEDULE': '排程',
       'UNSCHEDULE': '取消排程',
       'SCHEDULE_CONFIRM': '確定',
+      'PENDING': '待處理'
     },
     'DROPDOWN_LIST': {
       'HINT': '請選擇',
