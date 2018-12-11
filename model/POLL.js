@@ -52,8 +52,8 @@ export const model = [
   { name: 'image', type: 'Image', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 4 }, },
   { name: 'choices', type: 'MediaOptions', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, order: { editor: 5 }, fetchData, },
   { name: 'totalVote', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isNumSentitive: true, order: { editor: 1, }, },
-  { name: 'frequency', type: 'Dropdownlist', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, order: { editor: 2 }, fetchSource,  },
-  { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
+  { name: 'frequency', type: 'Dropdownlist', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, order: { editor: 2 }, fetchSource, required: true },
+  { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, required: true },
   { name: 'changeable', type: 'CheckboxItem', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, hideTitle: true, subText: 'CHANGEABLE'},
 ]
 export const filter = [ 'custom_editor' ]

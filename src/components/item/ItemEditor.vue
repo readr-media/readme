@@ -44,6 +44,8 @@
                       :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
                     <Dropdownlist v-else-if="obj.type === 'Dropdownlist'"
                       :name="obj.name"
+                      :defaultVal="obj.default"
+                      :defaultText="obj.defaultText"
                       :fetchSource="obj.fetchSource"
                       :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
                     <MediaOptions v-else-if="obj.type === 'MediaOptions'"
@@ -56,7 +58,8 @@
                       :value.sync="formData[ obj.name ]"></CheckboxItem>
                   </template>
                   <template v-else>
-                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))" ></span>
+                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))"></span>
+                    <span v-else-if="obj.type === 'Datetime'" v-text="moment(get(item, obj.name)).format('YYYY-MM-DD HH:mm:ss')"></span>
                     <span v-else v-text="get(item, obj.name)"></span>
                   </template>
                 </div>
@@ -98,6 +101,7 @@
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
   import WatchJS from 'melanke-watchjs'
+  import moment from 'moment'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -147,6 +151,7 @@
       },
       decamelize,
       get,
+      moment,
       reconstructGroups () {
         const gps = []
         const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
@@ -217,29 +222,31 @@
         return this.$t(`${this.model}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
       },    
       save () {
-        console.log('GO UPDATE.')
+        console.log('GO UPDATE.', this.formData)
         if (this.isProcessing) {
-          return
+          return Promise.reject()
         } else {
           this.isProcessing = true
         }
         if (this.type === 'update') {
-          this.update(this.formData).then(() => {
+          return this.update(this.formData).then(() => {
             // this.$emit('update:isActive', false)
             this.isProcessing = false
-            this.$emit('saved')
+            return this.$emit('saved') && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
+            return Promise.reject()
           })
         } else if (this.type === 'create') {
-          this.add(this.formData).then(() => {
+          return this.add(this.formData).then(() => {
             // this.$emit('update:isActive', false)
             this.isProcessing = false
-            this.$emit('saved')
+            return this.$emit('saved') && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
+            return Promise.reject()
           })          
         }
       },
@@ -287,7 +294,7 @@
         default: (form) => new Promise(resolve => {
           debug('Run add default.') 
           debug('form:', form)
-          resolve()
+          resolve(true)
         }),
       },
       structure: Array,
@@ -304,7 +311,7 @@
         default: (form) => new Promise(resolve => {
           debug('Run update default.') 
           debug('form:', form)
-          resolve()
+          resolve(true)
         }),
       },
       type: {

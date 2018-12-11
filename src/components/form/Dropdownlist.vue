@@ -1,6 +1,6 @@
 <template>
   <select :name="name" v-model.number="selected" class="dropdown-selector">
-    <option disabled v-text="$t('DROPDOWN_LIST.HINT')"></option>
+    <option v-text="defaultText ? $t(`EDITOR.DROPDOWN_LIST.${defaultText}`) : $t('EDITOR.DROPDOWN_LIST.HINT')" :value="defaultVal"></option>
     <option v-for="opt in source"
             :key="opt.id"
             :value="`${opt.id}`"
@@ -20,29 +20,38 @@
     },
     methods: {},
     mounted () {
+      debug('this.selectedItem', this.selectedItem)
       this.fetchSource(this.$store, { vueInstance: this }).then(source => {
         debug('source', source)
         this.source = source || []
-        this.selected = `${this.selectedItem}`
+        this.selected = `${this.selectedItem || this.selectedItem === 0 ? this.selectedItem : this.defaultVal}` 
       }).catch(err => {
         console.error('Fetching projects list with error.', err)
+        this.selected = this.defaultVal
         this.source = []
       })
     },
     props: {
-      name: {
-        required: true,
+      defaultVal: {
+        default: -1
       },
+      defaultText: {},
       fetchSource: {
         type: Function,
         default: () => new Promise(resolve => resolve()),
+      },
+      name: {
+        required: true,
       },
       selectedItem: {},
     },
     watch: {
       selected () {
+        debug('this.selectedItem', this.selectedItem)
         debug('Mutation detected: selected.', this.selected)
-        this.$emit('update:selectedItem', this.selected)
+        debug(`this.selected !== '-1'`, this.selected !== '-1' && this.selected !== -1)
+        debug(`this.selected !== '-1' ? this.selected : undefined`, this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined)
+        this.$emit('update:selectedItem', this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined )
       },
       selectedItem () {
         !this.selected && (this.selected = this.selectedItem)

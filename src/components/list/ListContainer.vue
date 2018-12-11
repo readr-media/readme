@@ -46,7 +46,7 @@
   const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })
   // const del = (store, params, endpoint) => store.dispatch('DEL_ITEM', { params, endpoint, })
   const delItems = (store, params, endpoint) => store.dispatch('DEL_ITEMS', { params, endpoint, })
-  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, })
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
   export default {
     name: 'ListContainer',
     components: {
@@ -121,12 +121,19 @@
     methods: {
       add (form) {
         const normalizedForm = this.normalizeData(form)
-        return post(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
-          /**
-           * Go refresh item-list.
-           */
-          this.refresh({})
-        })
+        if (!this.isAllowedToSave) {
+          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          this.isAllowedToSave = true
+          return Promise.reject()
+        } else {
+          normalizedForm.updatedAt = moment().toISOString(true)
+          return post(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
+            /**
+            * Go refresh item-list.
+            */
+            return this.refresh({}) && true
+          })
+        }        
       },
       checkup ({ id, value }) {
         this.checkedItems[ id ] = value
@@ -165,10 +172,9 @@
          * And remove those data which's not editable(excluding 'ID').
          */
         map(this.itemStructure, item => {
-          debug('item.name', item.name, item.name.toUpperCase(), preForm[ item.name ], item)
           if (item.type === 'Datetime') {
-            debug('preForm[ item.name ]', preForm[ item.name ])
             if (!preForm[ item.name ]) {
+              debug('item.name', item.name, preForm[ item.name ] )
               preForm[ item.name ] = null
             } else {
               if (item.watcher) {
@@ -179,7 +185,8 @@
                   this.isAllowedToSave = false
                 }                
               }
-              item.isDatetimeSentitive && (moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
+
+              // item.isDatetimeSentitive && (preForm[ item.name ] = moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
           } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
@@ -195,16 +202,19 @@
           if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
             preForm[ item.name ] = this.me
           }
-          debug('preForm', preForm)
+          if (item.required && (!preForm[ item.name ] && preForm[ item.name ] !== 0)) {
+            debug(item.name, item.required, preForm[ item.name ])
+            this.isAllowedToSave = false
+          }
         })
+        debug('preForm', preForm)
         return preForm
       },
       update (form) {
         const normalizedForm = this.normalizeData(form)
         if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, 'Incorrect value', () => {
-            this.isAllowedToSave = true
-          })            
+          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          this.isAllowedToSave = true
           return Promise.reject()
         } else {
           normalizedForm.updatedAt = moment().toISOString(true)
@@ -212,7 +222,7 @@
             /**
             * Go refresh item-list.
             */
-            this.refresh({})
+            return this.refresh({}) && true
           })
         }
       },
