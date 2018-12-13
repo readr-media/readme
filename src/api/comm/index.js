@@ -2,7 +2,7 @@ import qs from 'qs'
 import superagent from 'superagent'
 import { camelizeKeys, } from 'humps'
 import { getToken, } from 'src/util/services'
-import { mapKeys, mapValues, snakeCase, } from 'lodash'
+import { get, mapKeys, mapValues, snakeCase, } from 'lodash'
 
 const debug = require('debug')('CLIENT:api:comm')
 
@@ -142,6 +142,16 @@ export function del (url, params) {
         }
       })
   })
+}
+
+export const handlerError = (err, res) => {
+  debug('err:', err)
+  debug('res:', res)
+  const text = get(res, 'text') || get(err, 'message', '{}')
+  return {
+    status: (typeof(get(res, 'status')) === 'number' && get(res, 'status')) || get(err, 'status') || 500,
+    text,
+  }
 }
 
 export function fetchInStrict (url, { cookie, }) {

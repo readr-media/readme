@@ -84,6 +84,6 @@
       outline none
       font-weight 100
       &::-webkit-input-placeholder
-        color #bdbdbd
+        color #a0a0a0
         font-weight 100
 </style>

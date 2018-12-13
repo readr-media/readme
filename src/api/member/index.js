@@ -1,5 +1,5 @@
 import superagent from 'superagent'
-// import { constructUrlWithQuery, fetchInStrict, } from 'src/api/comm'
+import { handlerError, } from 'src/api/comm'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:comm')
 const host = getHost()
@@ -30,7 +30,8 @@ export function login (params, token) {
         params
       ).end(function (err, res) {
         if (err) {
-          reject(err)
+          const errWrapped = handlerError(err, res)  
+          reject({ status: errWrapped.status, message: errWrapped.text })
         } else {
           resolve({ status: res.status, profile: res.body.profile, })
         }

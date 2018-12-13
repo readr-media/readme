@@ -1,6 +1,6 @@
 <template>
-  <div class="login">
-    <LoginPanel class="login__panel"></LoginPanel>
+  <div class="login-view">
+    <LoginPanel class="login-view__panel"></LoginPanel>
   </div>
 </template>
 <script>
@@ -19,14 +19,12 @@
   }
 </script>
 <style lang="stylus" scoped>
-  .login
-    padding 40px
-    background-color #fff
+  .login-view
+    padding 70px 40px 40px
+    background-color rgba(13,185,201,0.2)
     display flex
     justify-content center
-    align-items center
-    background-color #f1f1f1
+    align-items flex-start
     &__panel
-      width 250px
-      height 300px
+      width 420px
 </style>
