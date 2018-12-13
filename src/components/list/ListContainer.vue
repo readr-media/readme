@@ -1,12 +1,12 @@
 <template>
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
-      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="$store.getters.modelName" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__header"><ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
         <template v-for="(item, index) in items">
           <ListItem @edit="editItem" @checkup="checkup"
-            :item="item" :structure="itemStructure"
-            :key="`list-container__items-${index}`" :model="$store.getters.modelName"></ListItem>
+            :item="item"
+            :key="`list-container__items-${index}`"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -65,7 +65,7 @@
       },
       header () {
         const item = {}
-        map(this.itemStructure, i => { 
+        map(this.$store.getters.structure, i => { 
           item[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
@@ -78,9 +78,6 @@
       },
       itemsCount () {
         return get(this.$store, 'state.listItemsCount', 0)
-      },
-      itemStructure () {
-        return this.$store.getters.structure
       },
       maxResult () {
         return this.$store.getters.modelData ? this.$store.getters.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
@@ -153,7 +150,7 @@
          * Have to normalize any datetime type data before send put request.
          * And remove those data which's not editable(excluding 'ID').
          */
-        map(this.itemStructure, item => {
+        map(this.$store.getters.structure, item => {
           if (item.type === 'Datetime') {
             if (!preForm[ item.name ]) {
               debug('item.name', item.name, preForm[ item.name ] )
