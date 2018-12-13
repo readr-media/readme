@@ -20,6 +20,7 @@
     <div class="login-panel__keep-alive item">
       <CheckboxItem
         theme="login"
+        :value.sync="keepLive"
         :text="$t('LOGIN.KEEP_ALIVE')"></CheckboxItem>
     </div>
     <div class="login-panel__go item"><span v-text="$t('LOGIN.GO_LOGIN')" @click="login"></span></div>
@@ -46,6 +47,7 @@
     data () {
       return {
         account: undefined,
+        keepLive: false,
         password: undefined,
         hint: {
           account: '',
@@ -59,6 +61,7 @@
           login(this.$store, {
             account: this.account,
             password: this.password,
+            keepAlive: this.keepLive,
           }, get(this.$store, 'state.register-token')).then(res => {
             if (res.status === 200) {
               location.replace('/')
