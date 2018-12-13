@@ -73,7 +73,7 @@
           }).catch(err => {
             if (err.status === 401 && err.message === 'Validated in fail. Please offer correct credentials.') {
               // this.resMsg = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
-              this.hint.account = ''
+              this.hint.account = 'LOGIN.HINT.INCORRECT_CREDENTIAL'
               this.hint.password = 'LOGIN.HINT.INCORRECT_CREDENTIAL'
             }
             debug('Err status', err.status)

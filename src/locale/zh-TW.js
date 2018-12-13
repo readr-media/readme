@@ -56,7 +56,7 @@ export default {
     'PUBLISH_STATUS_PUBLISHED': '發布',
     'PUBLISH_STATUS_SCHEDULING': '排程',
     'PUBLISH_STATUS_NEVER': '不明',
-    'STATUS': '狀態',
+    'STATUS': '製作進度',
     'STATUS_CANDIDATE': '候選',
     'STATUS_WIP': '進行中',
     'STATUS_DONE': '完成',
