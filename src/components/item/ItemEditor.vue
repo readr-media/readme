@@ -69,6 +69,12 @@
         </template>
       </div>
       <div class="panel__actions">
+        <div class="preview btn" :class="{ block: isProcessing }"
+          v-if="$store.getters.isPreviewable && get(item, 'id')"
+          @click="preview">
+          <span v-text="$t('EDITOR.PREVIEW')" v-show="!isProcessing"></span>
+          <Spinner class="spinner" :show="isProcessing"></Spinner>
+        </div>
         <template v-for="btn in buttonizedItems">
           <ButtunizedItem
             :isProcessing="isProcessing"
@@ -128,11 +134,14 @@
     },
     computed: {
       buttonizedItems () {
-        return filter(this.structure, obj => obj.isButtonized)
+        return filter(this.$store.getters.structure, obj => obj.isButtonized)
       },
       model () {
         return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
       },
+      structure () {
+        return this.$store.getters.structure
+      }
     },
     data () {
       return {
@@ -152,9 +161,15 @@
       decamelize,
       get,
       moment,
+      preview () {
+        const host = get(this.$store, 'getters.modelData.previewHost')
+        const id = get(this.item, 'id')
+        debug('Go preview', [ host, id ])
+        host && id && window.open(`${host}/${id}?preview=true`, '_blank')
+      },
       reconstructGroups () {
         const gps = []
-        const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
+        const sortedStructure = sortBy(this.$store.getters.structure, [ obj => get(obj, 'order.editor') ])
         map(this.groups, g => {
           const includedObj = filter(sortedStructure, obj => {
             if (!obj.isHidden && (obj.group === g || g === 'none')) {
@@ -174,7 +189,7 @@
         this.watchedItem = {}
         this.formData = {}
         if (this.type === 'update') {
-          map(this.structure, item => {
+          map(this.$store.getters.structure, item => {
             switch (item.type) {
               case 'TextTagItem':
                 this.formData[ item.name ] = [
@@ -194,7 +209,7 @@
             } 
           })
         } else if (this.type === 'create') {
-          map(this.structure, item => {
+          map(this.$store.getters.structure, item => {
             if (item.isEditable || item.isInitiliazible) {
               switch (item.type) {
                 case 'BooleanSwitcher':
@@ -280,7 +295,7 @@
           debug(`Mutation detected: autocompleteArr.${item.name}`)
           debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
         })       
-      },   
+      },  
       updateForm () {
         this.$forceUpdate()
       }
@@ -297,7 +312,6 @@
           resolve(true)
         }),
       },
-      structure: Array,
       groups: {
         type: Array,
         default: () => [ 'none' ]
@@ -321,7 +335,7 @@
     },
     watch: {
       item () { this.initValue() }, 
-      structure () { this.initValue() },
+      // structure () { this.initValue() },
     },
   }
 </script>

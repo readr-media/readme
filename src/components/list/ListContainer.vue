@@ -1,12 +1,12 @@
 <template>
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
-      <div class="list-container__header"><ListItem :item="header" :structure="itemStructure" :model="model" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__header"><ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem></div>
       <div class="list-container__items">
         <template v-for="(item, index) in items">
           <ListItem @edit="editItem" @checkup="checkup"
-            :item="item" :structure="itemStructure"
-            :key="`list-container__items-${index}`" :model="model"></ListItem>
+            :item="item"
+            :key="`list-container__items-${index}`"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -19,15 +19,12 @@
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
         @saved="itemSaved"
         :groups="groups"
-        :structure="itemStructure"
         :add="add"></ItemEditor>
       <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
         @saved="itemSaved"
         :groups="groups"
-        :structure="itemStructure"
         :item="editorItem"
         :update="update"></ItemEditor>
-      <!--slot name="new-item" :Editor="Editor" :structure="itemStructure" :add="add"></slot-->
     </template>
   </div>
 </template>
@@ -68,16 +65,13 @@
       },
       header () {
         const item = {}
-        map(this.itemStructure, i => { 
-          item[ i.name ] = this.$t(`${this.model}.${decamelize(i.name).toUpperCase()}`)
+        map(this.$store.getters.structure, i => { 
+          item[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
       },
       groups () {
-        return this.modelData ? this.modelData.groups : [ 'none' ]
-      },
-      isSubItem () {
-        return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
+        return this.$store.getters.modelData ? this.$store.getters.modelData.groups : [ 'none' ]
       },
       items () {
         return get(this.$store, 'state.list', [])
@@ -85,26 +79,11 @@
       itemsCount () {
         return get(this.$store, 'state.listItemsCount', 0)
       },
-      itemStructure () {
-        return this.modelData ? this.isSubItem ? this.modelData.subModel : this.modelData.model : []
-      },
       maxResult () {
-        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+        return this.$store.getters.modelData ? this.$store.getters.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
       },
       me () {
         return get(this.$store, 'state.profile.id')
-      },
-      model () {
-        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
-      },
-      modelData () {
-        let model
-        try {
-          model = require(`model/${this.model}`)
-        } catch (error) {
-          console.log(`There's no model found:`, this.model)
-        }
-        return model
       },
       totalPages () {
         return Math.floor(this.itemsCount / this.maxResult) + 1
@@ -171,7 +150,7 @@
          * Have to normalize any datetime type data before send put request.
          * And remove those data which's not editable(excluding 'ID').
          */
-        map(this.itemStructure, item => {
+        map(this.$store.getters.structure, item => {
           if (item.type === 'Datetime') {
             if (!preForm[ item.name ]) {
               debug('item.name', item.name, preForm[ item.name ] )

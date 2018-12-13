@@ -3,24 +3,26 @@
     :class="{ header: type === 'header', }">
     <div class="list-item__checkbox" v-if="type !== 'header'"><CheckboxItem :value.sync="checked" :id="get(item, 'id', `${Date.now()}`)"></CheckboxItem></div>
     <div class="list-item__checkbox header" v-else><ListActionBox @copy="copy" @del="del"></ListActionBox></div>
-    <template v-for="obj in structure">
+    <template v-for="obj in sortedStructure">
       <div v-if="obj.isListable"
         @click="clickHandler(obj.isEditEntry)"
         :key="`list-item__content-${obj.name}-${Date.now()}`"
         :class="`list-item__content ${obj.name}`"
         :style="{ width: get(obj, 'width.list') && `${get(obj, 'width.list')}px`, flex: !get(obj, 'width.list') ? '1' : 'none' }">
         <template v-if="!obj.isAnchoric || type === 'header'">
-          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher' && obj.type !== 'Dropdownlist') || type === 'header'"></span>
+          <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
+          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </template>
         <router-link v-else-if="obj.isAnchoric" :to="`/${get($route, 'params.item')}/${get(item, 'id')}`">
-          <span v-text="get(item, obj.name)" v-if="(obj.type !== 'RadioItem' && obj.type !== 'Datetime' && obj.type !== 'BooleanSwitcher' && obj.type !== 'Dropdownlist') || type === 'header'"></span>
+          <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
+          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </router-link>
       </div>
@@ -32,13 +34,18 @@
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import moment from 'moment'
   import { decamelize, } from 'humps'
-  import { find, filter, get, } from 'lodash'
+  import { find, filter, get, map, sortBy, } from 'lodash'
   const debug = require('debug')('CLIENT:ListItem')
   export default {
     name: 'ListItem',
     components: {
       ListActionBox,
       CheckboxItem,
+    },
+    computed: {
+      sortedStructure () {
+        return filter(sortBy(this.$store.getters.structure, [ obj => get(obj, 'order.list') ]), { isListable: true })
+      }
     },
     data () {
       return {
@@ -48,6 +55,12 @@
     methods: {
       clickHandler (isEditEntry) {
         isEditEntry && this.$emit('edit', this.item)
+      },
+      constructval (objMap, valueArray) {
+        debug('objMap', objMap)
+        debug('valueArray', valueArray)
+        if (!objMap) { return }
+        return map(valueArray, v => get(v, objMap.name)).join(`、`)
       },
       copy () {
         this.$emit('copy')
@@ -60,37 +73,31 @@
       },
       find,
       get,
+      isSpicialItems (type) {
+        return type !== 'RadioItem'
+          && type !== 'Datetime'
+          && type !== 'BooleanSwitcher'
+          && type !== 'Dropdownlist'
+          && type !== 'TextTagItem'
+      },
       mapValue (name, options, value) {
         if (options) {
-          return this.$t(`${this.model.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+          return this.$t(`${this.$store.getters.modelName.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
         }
         return value
       },
       normalizeDatetime (datetime, format) {
-        return format ? moment(datetime).format(format) : moment(datetime).format('YYYY-MM-DD hh:mm:ss')
+        return format ? moment(datetime).format(format) : moment(datetime).format('YYYY-MM-DD hh:mm')
       }, 
     },
-    mounted () {
-      // this.$can('memberManage') && Promise.all([
-      //   getMembers(this.$store, { type: 'normal', }),
-      //   getMembersCount(this.$store),
-      // ])
-      // .then(() => this.loading = false)
-      // .catch(() => this.loading = false)
-    },
+    mounted () {},
     props: {
-      model: {
-        type: String,
-      },
       item: {
         type: Object,
         default: () => {}
       },
       type: {
         type: String,
-      },
-      structure: {
-        type: Array,
       },
     },
     watch: {
@@ -110,7 +117,7 @@
     cursor pointer
     outline none
     position relative
-    justify-content space-between
+    justify-content flex-start
     &.header
       font-weight 800
       border-bottom 1px solid #940606
@@ -132,30 +139,6 @@
     &__content
       display flex
       align-items center
-    // &__toolbox
-    //   position absolute
-    //   top 0
-    //   right 0
-    //   height 100%
-    //   width 100px
-    //   display none
-    //   > div
-    //     height 100%
-    //     max-height 30px
-    //     display inline-flex
-    //     justify-content center
-    //     align-items center
-    //     margin 0 3px
-    //     padding 0 5px
-    //     border-radius 5px
-    //     color #e1e1e1
-    //     font-size 0.875rem
-    //     background-color rgba(27, 138, 13, 0.8)
-    //     box-shadow 0px 0px 5px rgba(42,42,42,0.6)
-    //     &:hover
-    //       background-color rgba(62, 171, 48, 0.8)
-    //       box-shadow 0px 0px 5px rgba(100,100,100,0.6)
-    //       color #f1f1f1
     > div, > a
       &:not(:first-child)
         margin-left 20px

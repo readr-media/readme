@@ -50,19 +50,20 @@ const isSupposedToShowWithTypeReview = data => { return get(data, 'type') == POS
 const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW }
 
 export const model = [
-  { name: 'id', type: 'TextInput', group: 'info', width: { list: '80', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, },
-  { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true,  },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, },
+  { name: 'id', type: 'TextInput', group: 'info', width: { list: '70', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
+  { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true, isSchedulable: true, order: { list: 3 },  },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 4 }, },
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, },
   { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
   { name: 'updatedBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
 
-  { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '50', editor: '400' }, isEditable: true, isListable: true, options: type_options, fetchSource: typeOpts, required: true, },
-  { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, },
+  { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
+  { name: 'projectId', type: 'Dropdownlist', group: 'basic', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
+  { name: 'author', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: false, isListable: true, isHidden: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
+  { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', width: { list: '50', editor: '80' }, isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
-  { name: 'projectId', type: 'Dropdownlist', group: 'content', width: { list: '110', editor: '400' }, isEditable: true, isListable: true, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
+  { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, },
   { name: 'content', type: 'ContentEditor', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
 
   // For post.type === review
@@ -84,3 +85,5 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic', 'content', 'share' ]
+export const isPreviewable = true
+export const previewHost = 'http://dev.readr.tw/post'

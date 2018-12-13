@@ -5,6 +5,19 @@ export default {
     'PASSWORD': '密碼',
     'KEEP_ALIVE': '保持登入',
     'GO_LOGIN': '登入',
+    'INPUT_HINT': {
+      'ACCOUNT': '請輸入您的帳號',
+      'PASSWORD': '請輸入您的密碼',
+    },
+    'KEEP_ALIVE': '保持登入',
+    'RECOVER_PASSWORD': '找回密碼？',
+    'REGISTER': '註冊新帳號',
+    'HINT': {
+      'INCORRECT_CREDENTIAL': '帳號或密碼錯誤',
+      'INCORRECT_EMAIL_FORMAT': '請輸入有效的電子信箱（Email）',
+      'EMPTY_PASSWORD': '請輸入密碼',
+      'EMPTY_ACCOUNT': '請輸入帳號',
+    }
   },
   'LIST': {
     'SEARCH': '搜尋',
@@ -43,7 +56,7 @@ export default {
     'PUBLISH_STATUS_PUBLISHED': '發布',
     'PUBLISH_STATUS_SCHEDULING': '排程',
     'PUBLISH_STATUS_NEVER': '不明',
-    'STATUS': '狀態',
+    'STATUS': '製作進度',
     'STATUS_CANDIDATE': '候選',
     'STATUS_WIP': '進行中',
     'STATUS_DONE': '完成',
@@ -151,6 +164,7 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
+    'PREVIEW': '預覽',
     'GROUPS': {
       'BASIC': '基本設定',
       'CONTENT': '內容設定',
@@ -184,6 +198,7 @@ export default {
       'SCHEDULE': '排程',
       'UNSCHEDULE': '取消排程',
       'SCHEDULE_CONFIRM': '確定',
+      'PENDING': '待處理'
     },
     'DROPDOWN_LIST': {
       'HINT': '請選擇',

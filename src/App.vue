@@ -67,8 +67,11 @@ button
     z-index 1
   &.login
     padding-left 0
+    padding-top 192px
     .app-aside
       display none
+    .view
+      min-height calc(100vh - 192px)  
 @media screen and (min-width: 1200px)
   .app
     padding-left 310px

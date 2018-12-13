@@ -1,5 +1,8 @@
 <template>
-  <div class="checkbox-wrapper" :class="{ editor: theme === 'editor' }">
+  <div class="checkbox-wrapper"
+    :class="{
+      editor: theme === 'editor',
+      login: theme === 'login' }">
     <label class="container">
       <input type="checkbox" v-model="checked">
       <span class="checkmark"></span>
@@ -39,6 +42,9 @@
   .checkbox-wrapper
     position relative
     &.editor
+      .checkmark
+        box-shadow 1.6px 1.2px 2px 0px rgba(0, 0, 0, 0.1)
+    &.editor, &.login
       .text
         margin-left 12px
       .container
@@ -53,7 +59,6 @@
         margin-top -10px
         width 20px
         height 20px
-        box-shadow 1.6px 1.2px 2px 0px rgba(0, 0, 0, 0.1)
         background-color #fff
         border none
         border-radius 2px
