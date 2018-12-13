@@ -5,6 +5,19 @@ export default {
     'PASSWORD': '密碼',
     'KEEP_ALIVE': '保持登入',
     'GO_LOGIN': '登入',
+    'INPUT_HINT': {
+      'ACCOUNT': '請輸入您的帳號',
+      'PASSWORD': '請輸入您的密碼',
+    },
+    'KEEP_ALIVE': '保持登入',
+    'RECOVER_PASSWORD': '找回密碼？',
+    'REGISTER': '註冊新帳號',
+    'HINT': {
+      'INCORRECT_CREDENTIAL': '帳號或密碼錯誤',
+      'INCORRECT_EMAIL_FORMAT': '請輸入有效的電子信箱（Email）',
+      'EMPTY_PASSWORD': '請輸入密碼',
+      'EMPTY_ACCOUNT': '請輸入帳號',
+    }
   },
   'LIST': {
     'SEARCH': '搜尋',

@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" :class="{ login: $store.getters.isLoginPage }">
     <div class="header__wrapper">
       <div class="left">
         <div class="logo">
@@ -44,6 +44,22 @@
     height 60px
     width 100%
     background-color #fff
+    &.login
+      height 192px
+      background-color rgba(229,229,229,0.3)
+      .right
+        display none
+      .left
+        flex 1
+        display flex
+        justify-content center
+        align-items center
+        .logo
+          width 230px
+          justify-content center
+          align-items center
+          img
+            width 100%
     &__wrapper
       background-color rgba(229,229,229,0.3)
       display flex
