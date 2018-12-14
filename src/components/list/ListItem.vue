@@ -135,10 +135,12 @@
       justify-content center
       height 32px
       width 32px
+      min-width 32px
 
     &__content
       display flex
-      align-items center
+      align-items flex-start
+      justify-content flex-start
     > div, > a
       &:not(:first-child)
         margin-left 20px
