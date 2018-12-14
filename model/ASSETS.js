@@ -25,9 +25,11 @@ const assets_options = map(ASSETS_TYPE, (s, k) => {
 })
 
 export const model = [
-  { name: 'id', type: 'TextInput', group: 'basic', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 } },
-  { name: 'assetType', type: 'RadioItem', group: 'basic', width: { list: '80', editor: '400' }, isEditable: false, isListable: true, options: assets_options, order: { editor: 0, list: 4 }, },
-  { name: 'url', type: 'TextInput', group: 'basic', width: { list: '250', editor: '200' }, isEditable: false, isListable: false, },
+  { name: 'id', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 } },
+  { name: 'assetType', type: 'RadioItem', group: 'info', width: { list: '80', editor: '400' }, isEditable: false, isListable: true,options: assets_options, order: { list: 4 }, },
   { name: 'title', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
+  { name: 'url', type: 'Uploader', group: 'basic', width: { list: '250', editor: '200' }, isEditable: true, isListable: false, },
   { name: 'copyright', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, options: copyright_options, fetchSource: copyRightOpts, required: true, order: { list: 2 }, },
 ]
+
+export const groups = [ 'info', 'basic' ]
