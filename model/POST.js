@@ -63,7 +63,7 @@ export const model = [
   { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', width: { list: '50', editor: '80' }, isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, },
+  { name: 'title', type: 'TextInput', group: 'content', width: { list: '300', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5 }, },
   { name: 'content', type: 'ContentEditor', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
 
   // For post.type === review

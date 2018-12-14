@@ -42,9 +42,9 @@ export const items = [
   },
   {
     nav: 'management',
-    name: 'poll',
-    type: 'wrapper',
-    active: false,
+    name: 'assets',
+    type: 'list',
+    active: true,
   },
   {
     nav: 'management',
