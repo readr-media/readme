@@ -289,7 +289,7 @@ export default {
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
-    'URL': '連結',
+    'URL': '素材',
     'COPYRIGHT': '財權聲明',
     'COPYRIGHT_CC_BY_SA_3': 'cc-by-sa3.0',
     'COPYRIGHT_CC': 'cc',
