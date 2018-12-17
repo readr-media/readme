@@ -57,13 +57,13 @@ export const model = [
   { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
   { name: 'updatedBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
 
-  { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
+  { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, isNumSentitive: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
   { name: 'projectId', type: 'Dropdownlist', group: 'basic', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
   { name: 'author', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: false, isListable: true, isHidden: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', width: { list: '50', editor: '80' }, isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isEditEntry: true, },
+  { name: 'title', type: 'TextInput', group: 'content', width: { list: '300', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5 }, },
   { name: 'content', type: 'ContentEditor', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
 
   // For post.type === review

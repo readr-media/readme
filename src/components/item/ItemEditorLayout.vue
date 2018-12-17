@@ -59,8 +59,11 @@
             margin-right 58px
             height 100%
             width 100px
+            min-width 100px
           .value
             font-size 1rem
+            word-wrap break-word
+            max-width calc(100% - 158px)
             flex 1
             >>> .warn
               border 1px solid #ddcf21                     

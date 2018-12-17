@@ -61,6 +61,15 @@ router.use('/enews-group-list/list', authVerify, (req, res) => {
     ]})
   }
 })
+router.use('/assets/list', authVerify, (req, res) => {
+  debug('Got id', req.query.id)
+  debug('Got id', req.body.id)
+
+  res.json({ _items: [
+    { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 0, title: 'Google 首圖', copyright: 1, },
+    { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 2, title: 'Google 圖', copyright: 2, },
+  ]})
+})
 
 
 

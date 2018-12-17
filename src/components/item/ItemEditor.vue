@@ -7,61 +7,15 @@
             <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.name.toUpperCase()}`)"></span></div>
             <template v-for="obj in group.objs">
               <div class="panel__content--item" :key="`panel__content--item-${obj.name}`">
-                <div class="title" :class="{ short: isShort($t(`${model}.${decamelize(obj.name).toUpperCase()}`)) }">
-                  <span v-text="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
+                <div class="title" :class="{ short: isShort($t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)) }">
+                  <span v-text="$t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
                 </div>
                 <div class="value">
-                  <template v-if="obj.isEditable || (obj.isInitiliazible && type === 'create')">
-                    <TextInput v-if="obj.type === 'TextInput'"
-                      backgroundColor="#fff"
-                      :placeHolder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                      :value.sync="formData[ obj.name ]"></TextInput>
-                    <DatetimeItem v-else-if="obj.type === 'Datetime'"
-                      :relativeToRef="obj.relativeToWatcher"
-                      :dateRef="formData[ obj.watcher ]"
-                      :value.sync="formData[ obj.name ]"></DatetimeItem>
-                    <TextareaInput v-else-if="obj.type === 'TextareaInput'"
-                      :autoHeightActive="obj.autoHeightActive"
-                      :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                      :value.sync="formData[ obj.name ]"></TextareaInput>
-                    <template v-else-if="obj.type === 'RadioItem'">
-                      <RadioItem v-for="opt in obj.options" :name="get(obj, 'name')"
-                        @updateForm="updateForm"
-                        :label="$t(`${model}.${decamelize(obj.name).toUpperCase()}_${opt.name}`)"
-                        :key="get(opt, 'name')"
-                        :value="get(opt, 'value')"
-                        :currSelected.sync="formData[ obj.name ]"></RadioItem>
-                    </template>
-                    <QuillEditor v-else-if="obj.type === 'ContentEditor'" :content.sync="formData[ obj.name ]" />
-                    <TextTagItem v-else-if="obj.type === 'TextTagItem'"
-                      :placeholder="$t(`${model}.${decamelize(obj.name).toUpperCase()}`)"
-                      :currTagValues.sync="formData[ obj.name ]"
-                      :currInput.sync="currTagInput[ obj.name ]"
-                      :autocomplete="autocompleteArr[ obj.name ]"></TextTagItem>
-                    <BooleanSwitcher v-else-if="obj.type === 'BooleanSwitcher'"
-                      :status.sync="formData[ obj.name ]"></BooleanSwitcher>
-                    <ImageUploader v-else-if="obj.type === 'Image'"
-                      :imageUrl.sync="formData[ obj.name ]"></ImageUploader>
-                    <Dropdownlist v-else-if="obj.type === 'Dropdownlist'"
-                      :name="obj.name"
-                      :defaultVal="obj.default"
-                      :defaultText="obj.defaultText"
-                      :fetchSource="obj.fetchSource"
-                      :selectedItem.sync="formData[ obj.name ]"></Dropdownlist>
-                    <MediaOptions v-else-if="obj.type === 'MediaOptions'"
-                      :fetchData="obj.fetchData"
-                      :id="formData[ 'id' ]"
-                      :options.sync="formData[ obj.name ]"></MediaOptions>
-                    <CheckboxItem v-else-if="obj.type === 'CheckboxItem'"
-                      theme="editor"
-                      :text="$t(`${model}.${obj.subText}`)"
-                      :value.sync="formData[ obj.name ]"></CheckboxItem>
-                  </template>
-                  <template v-else>
-                    <span v-if="obj.type === 'RadioItem'" v-text="mapValue(obj.name, obj.options, get(item, obj.name))"></span>
-                    <span v-else-if="obj.type === 'Datetime'" v-text="moment(get(item, obj.name)).format('YYYY-MM-DD HH:mm:ss')"></span>
-                    <span v-else v-text="get(item, obj.name)"></span>
-                  </template>
+                  <Item
+                    :editorMode="type"
+                    :refVals="formData"
+                    :itemVal.sync="formData[ obj.name ]"
+                    :itemObj="obj"></Item>
                 </div>
               </div>
             </template>
@@ -92,22 +46,11 @@
   </ItemEditorLayout>
 </template>
 <script>
-  import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
   import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
-  import CheckboxItem from 'src/components/form/CheckboxItem.vue'
-  import DatetimeItem from 'src/components/form/DatetimeItem.vue'
-  import Dropdownlist from 'src/components/form/Dropdownlist.vue'
-  import ImageUploader from 'src/components/form/ImageUploader.vue'
-  import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
-  import MediaOptions from 'src/components/form/MediaOptions.vue'
-  import RadioItem from 'src/components/form/RadioItem.vue'
-  import QuillEditor from 'src/components/form/Quill/QuillEditor.vue'
+  import ItemEditorLayout from './ItemEditorLayout.vue'
+  import Item from './Item.vue'
   import Spinner from 'src/components/Spinner.vue'
-  import TextInput from 'src/components/form/TextInput.vue'
-  import TextareaInput from 'src/components/form/TextareaInput.vue'
-  import TextTagItem from 'src/components/form/TextTagItem.vue'
   import WatchJS from 'melanke-watchjs'
-  import moment from 'moment'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -117,37 +60,19 @@
   export default {
     name: 'ItemEditor',
     components: {
-      BooleanSwitcher,
       ButtunizedItem,
-      CheckboxItem,
-      DatetimeItem,
-      Dropdownlist,
-      ImageUploader,
+      Item,
       ItemEditorLayout,
-      MediaOptions,
-      QuillEditor,
-      RadioItem,
       Spinner,
-      TextareaInput,
-      TextInput,
-      TextTagItem,
     },
     computed: {
       buttonizedItems () {
         return filter(this.$store.getters.structure, obj => obj.isButtonized)
       },
-      model () {
-        return get(this.$route, 'params.item', '').replace(/-/g, '_').toUpperCase()
-      },
-      structure () {
-        return this.$store.getters.structure
-      }
     },
     data () {
       return {
         actualGroups: [],
-        autocompleteArr: {},
-        currTagInput: {},
         formData: {},
         isProcessing: false,
         watchedItem: {},
@@ -160,7 +85,6 @@
       },
       decamelize,
       get,
-      moment,
       preview () {
         const host = get(this.$store, 'getters.modelData.previewHost')
         const id = get(this.item, 'id')
@@ -198,7 +122,6 @@
                     value: get(a, get(item, 'map.value')),
                   }))
                 ]
-                this.setupTagInputWatcher(item) 
                 break
               case 'BooleanSwitcher':
                 this.formData[ item.name ] = get(this.item, item.name) || false
@@ -221,7 +144,6 @@
                   break
                 case 'TextTagItem':
                   this.formData[ item.name ] = []
-                  this.setupTagInputWatcher(item) 
                   break
                 default:
                   this.formData[ item.name ] = null
@@ -232,10 +154,7 @@
         }
         this.reconstructGroups()
       },
-      isShort (str) { return str.length > 2 || false },
-      mapValue (name, options, value) {
-        return this.$t(`${this.model}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
-      },    
+      isShort (str) { return str.length > 2 || false },  
       save () {
         console.log('GO UPDATE.', this.formData)
         if (this.isProcessing) {
@@ -271,31 +190,6 @@
           this.watchedItem[ item.watcher ] = true
         }        
       },
-      setupTagInputWatcher (item) {
-        /**
-          * - Setup watchers for this item.
-          */
-        this.$watch(`currTagInput.${item.name}`, (newValue, oldValue) => {
-          debug(`Mutation detected: currTagInput.${item.name}`)
-          debug('Data changed from ', oldValue, ' to ', newValue, '!')
-          if (item.autocomplete && newValue) {
-            item.autocomplete(this.$store, newValue).then(({ items, }) => {
-              const obj = {}
-              obj[ item.name ] = [
-                ...map(items, a => ({
-                  name: get(a, get(item, 'map.name')),
-                  value: get(a, get(item, 'map.value')),
-                }))
-              ]
-              this.autocompleteArr = Object.assign({}, this.autocompleteArr, obj)
-            })
-          }
-        })                 
-        this.$watch(`autocompleteArr.${item.name}`, (newValue, oldValue) => {
-          debug(`Mutation detected: autocompleteArr.${item.name}`)
-          debug('Data changed from ' + oldValue + ' to ' + newValue + '!')
-        })       
-      },  
       updateForm () {
         this.$forceUpdate()
       }
@@ -335,7 +229,6 @@
     },
     watch: {
       item () { this.initValue() }, 
-      // structure () { this.initValue() },
     },
   }
 </script>

@@ -128,12 +128,12 @@ router.use(`/:id/choices`, (req, res) => {
 })
 router.post('/create', (req, res) => {
   debug('Got a post creating call.')
-  debug(req.body)
   // res.send('ok')
   const url = `${apiHost}/v2/polls`
   // const options = get(req, 'body.options', [])
   req.body.created_by = req.user.id
   req.body.updated_by = req.user.id
+  debug(req.body)
 
   const choices = get(req, 'body.choices', [])
   map(choices, (opt, index) => {

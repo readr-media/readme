@@ -25,10 +25,12 @@
         debug('source', source)
         this.source = source || []
         this.selected = `${this.selectedItem || this.selectedItem === 0 ? this.selectedItem : this.defaultVal}` 
+        debug('Go update selected', this.selected)
       }).catch(err => {
         console.error('Fetching projects list with error.', err)
-        this.selected = this.defaultVal
+        this.selected = `${this.defaultVal}`
         this.source = []
+        debug('Go update selected', this.selected)
       })
     },
     props: {
@@ -47,14 +49,15 @@
     },
     watch: {
       selected () {
-        debug('this.selectedItem', this.selectedItem)
-        debug('Mutation detected: selected.', this.selected)
-        debug(`this.selected !== '-1'`, this.selected !== '-1' && this.selected !== -1)
-        debug(`this.selected !== '-1' ? this.selected : undefined`, this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined)
-        this.$emit('update:selectedItem', this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined )
+        debug(this.name, 'this.selectedItem', this.selectedItem)
+        debug(this.name, 'Mutation detected: selected.', this.selected)
+        debug(this.name, `this.selected !== '-1'`, this.selected !== '-1' && this.selected !== -1)
+        debug(this.name, `this.selected !== '-1' ? this.selected : undefined`, this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined)
+        this.$emit('update:selectedItem', this.selected !== '-1'? `${this.selected}` : undefined )
       },
       selectedItem () {
-        !this.selected && (this.selected = this.selectedItem)
+        // !this.selected && (this.selected = this.selectedItem)
+        debug(this.name, `this.selectedItem`, this.selectedItem)
       },
     },
   }

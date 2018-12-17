@@ -167,7 +167,7 @@
 
               // item.isDatetimeSentitive && (preForm[ item.name ] = moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
             }
-          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist') && item.isNumSentitive) {
+          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist' || item.type === 'CheckboxItem') && item.isNumSentitive) {
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
             preForm[ item.name ] = preForm[ item.name ] && numeral(preForm[ item.name ]).value()
           }
