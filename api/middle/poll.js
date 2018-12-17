@@ -131,7 +131,9 @@ router.post('/create', (req, res) => {
   // res.send('ok')
   const url = `${apiHost}/v2/polls`
   // const options = get(req, 'body.options', [])
-  req.body.created_by = req.user.id
+  req.body.created_by = {
+    id: req.user.id
+  }
   req.body.updated_by = req.user.id
   debug(req.body)
 
@@ -225,11 +227,17 @@ router.delete('/', (req, res) => {
   const ids = get(req, 'body.ids', [])
 
   Promise.all(map(ids, id => new Promise(resolve => {
-    const url = `${apiHost}/v2/polls/${id}`
+    // const url = `${apiHost}/v2/polls/${id}`
+    const url = `${apiHost}/v2/polls`
     debug('POLL### DELETING poll:', id)
 
     superagent
-    .delete(url)
+    // .delete(url)
+    .put(url)
+    .send({
+      id: numeral(id).value(),
+      active: 0
+    })
     .end((error, response) => {
       if (error) {
         console.error('Error occurred during deleting poll', id)
