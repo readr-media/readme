@@ -44,7 +44,7 @@
       theme="editor"
       :text="$t(`${$store.getters.modelName}.${itemObj.subText}`)"
       :value.sync="value"></CheckboxItem>
-    <!--Uploader v-else-if="obj.type === 'Uploader'"></Uploader-->
+    <Uploader v-else-if="itemObj.type === 'Uploader'"></Uploader>
   </div>
   <div v-else>
     <span v-if="itemObj.type === 'RadioItem'" v-text="mapValue(itemObj.name, itemObj.options, itemVal)"></span>
