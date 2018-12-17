@@ -2874,6 +2874,18 @@ filename-regex@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
 
+filepond-plugin-file-validate-type@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-type/-/filepond-plugin-file-validate-type-1.2.0.tgz#5ab8d25cb21c8d632a10b4c1a008fb5c0b1ff73a"
+
+filepond-plugin-image-preview@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-3.1.4.tgz#5b40b0059844350490459f633feabbc51f3a54d8"
+
+filepond@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/filepond/-/filepond-3.5.1.tgz#727a5e0f71effa841ea4c78b9ae13edc2cfaf4b1"
+
 fill-range@^2.1.0:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-2.2.4.tgz#eb1e773abb056dcd8df2bfdf6af59b8b3a936565"
@@ -7230,6 +7242,10 @@ vue-eslint-parser@^2.0.3:
     espree "^3.5.2"
     esquery "^1.0.0"
     lodash "^4.17.4"
+
+vue-filepond@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/vue-filepond/-/vue-filepond-4.0.2.tgz#32c824c9a77cd9d230076feaf8dcdf21d0095cc6"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.0"

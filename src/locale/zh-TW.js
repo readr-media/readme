@@ -202,7 +202,12 @@ export default {
     },
     'DROPDOWN_LIST': {
       'HINT': '請選擇',
-      'NA': '無'
+      'NA': '無',
+      'NA_COPYRIGHT': '請選擇版權'
+    },
+    'UPLOADER': {
+      'TOOLTIP': '從電腦上傳檔案<br>或將檔案拖移至此上傳',
+      'SIZE_LIMIT': '(圖檔大小限制：3MB)',
     },
   },
   'POLL': {
