@@ -192,6 +192,7 @@
       padding-right 15px
       top 0
       width 40px
+      height 100%
       display none
       .tool
         width 25px
