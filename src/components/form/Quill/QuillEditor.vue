@@ -51,7 +51,7 @@ import {
 
 const debug = require('debug')('CLIENT:QuillEditor')
 const uploadImage = (store, file) => {
-  return 
+  return  store.dispatch('UPLOAD_IMAGE', { file, type: 'post', })
 }
 const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
 
