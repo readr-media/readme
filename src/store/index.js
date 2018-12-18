@@ -19,6 +19,7 @@ export function createStore () {
       list: [],
       listCurrent: '',
       listItemsCount: 0,
+      isClientSideMounted: false,
       isLoggedIn: false,
       profile: {},
       'register-token': '',

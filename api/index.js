@@ -61,22 +61,13 @@ router.use('/enews-group-list/list', authVerify, (req, res) => {
     ]})
   }
 })
-router.use('/assets/list', authVerify, (req, res) => {
-  debug('Got id', req.query.id)
-  debug('Got id', req.body.id)
-
-  res.json({ _items: [
-    { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 0, title: 'Google 首圖', copyright: 1, },
-    { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 2, title: 'Google 圖', copyright: 2, },
-  ]})
-})
-
 
 
 router.use('/', (req, res, next) => {
   req.url_origin = req.url
   next()
 })
+router.use('/assets', require('./middle/assets'))
 router.use('/login', authVerify, require('./middle/member/login'), )
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', authVerify, require('./middle/project'))
