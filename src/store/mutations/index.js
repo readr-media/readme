@@ -14,6 +14,9 @@ export default Object.assign({
     state[ 'alertFlag' ][ 'message' ] = message
     state[ 'alertFlag' ][ 'callback' ] = callback
   },
+  SET_CLIENT_SIDE_MOUNTED: (state, {}) => {
+    state['isClientSideMounted'] = true
+  },
   SET_LOGGEDIN_STATUS: (state, { status, body }) => {
     state['isLoggedIn'] = body
   },

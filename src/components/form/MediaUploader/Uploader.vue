@@ -1,25 +1,18 @@
 <template>
-  <div class="uploader">
-    <div class="uploader__container" :class="{ grey: theme === 'grey' }">
-      <!--div class="uploader__upload-button"></div>
-      <div class="uploader__name">
-        <!--div class="title" v-html="title || $t('EDITOR.UPLOADER.TOOLTIP')"></div>
-        <div class="desc">
-          <span v-text="$t('EDITOR.UPLOADER.SIZE_LIMIT')"></span>
-        </div>
-        <div class="alert"><span v-text="alert"></span></div>
-        <div class="filename"></div>
-      </div>      
-      <Spinner class="uploader__spinner" :show="isUploading"></Spinner-->
-      <div class="uploader__upload-button" v-show="filesUploaded.length === 0"></div>
-      <FilePond
-        ref="pond"
-        :name="name"
-        :allow-multiple="false"
-        :label-idle="$t('EDITOR.UPLOADER.TOOLTIP')"
-        @init="handleFilePondInit"
-        :files="filesUploaded"/>
-    </div>
+  <div class="uploader" :class="{ full: !isEmpty }">
+    <div class="uploader__item-remover" :class="{ full: !isEmpty }" @click="removeFile"></div>
+    <FilePond
+      v-if="$store.state.isClientSideMounted && isMounted"
+      ref="pond"
+      :server="server"
+      :class="{ full: !isEmpty }"
+      :allowMultiple="false"
+      :name="name"
+      :labelIdle="`${uploadButton}${$t('EDITOR.UPLOADER.TOOLTIP')}`"
+      :ignoredFiles="ignoredFiles"
+      :files="filesUploaded"
+      @updatefiles="onupdatefiles"
+      @init="init"/>
   </div>
 </template>
 <script>
@@ -40,26 +33,63 @@
       FilePond,
       Spinner
     },
+    computed: {
+      uploadButton () {
+        return '<div class="uploader__upload-button filepond--label-action"></div>'
+      }
+    },
     data () {
       return {
         alert: '',
         filesUploaded: [],
+        ignoredFiles: [ '.ds_store', 'thumbs.db', 'desktop.ini' ],
+        isEmpty: true,
+        isMounted: false,
         isUploading: false,
-        title: ''
+        server: {
+          url: '/',
+          process: null,
+          load: './api/assets/load?a=',
+          fetch: './api/assets/fetch?a=',       
+        },
+        title: '', 
       }
     },
     methods: {
-      handleFilePondInit () {
-        debug('Uploader inited!')
-      }
+      init () {
+        debug('inited!!!')
+        debug('existed url', this.url)
+        debug('files',  this.$refs.pond.getFiles())
+        this.url && this.$refs.pond.addFiles(this.url, {
+          type: this.url.indexOf('http') === 0 ? 'remote' : 'local'
+        }).catch(err => {
+          debug('Error occurred when fetching file from', this.url)
+        })
+      },
+      onupdatefiles (items) {
+        debug('done', this.$refs.pond.getFiles())
+        this.isEmpty = items.length === 0
+      },
+      removeFile () {
+        this.$refs.pond && this.$refs.pond.removeFile()
+      },
     },
-    mounted () {},
+    mounted () {
+      debug('height should be ', this.$el.clientHeight)
+      this.isMounted = true
+    },
     props: {
       name: {
         type: String,
         default: `uploader-${Date.now().toString()}`
       },
-      theme: {}
+      theme: {},
+      url: {},
+    },
+    watch: {
+      'isMounted': function () {
+        debug('isMounted = true!!!!')
+      }
     }
   }
 </script>
@@ -77,22 +107,25 @@
     display flex
     position relative
     min-height 185px
-    &__container
-      flex 1
-      background-color #fff
-      border-radius 4px    
-      &.grey
-        background-color #f7f7f7
-      // height 80px
-      display flex
-      align-items center
+    &.full
       justify-content center
-      flex-direction column
-      padding 10px
-      position relative
+      align-items center
+      background-color #eee
+    &__item-remover
+      position absolute
+      right -15px
+      top -15px
+      height 38px
+      width 38px
+      background-color #fff
+      border-radius 50%
+      box-shadow 2px 2px 10px rgba(0,0,0,0.1)
+      z-index 10
+      display none
       cursor pointer
-      z-index 1
-    &__upload-button
+      &.full
+        display block
+    >>> &__upload-button
       r = 38px
       width r
       height r
@@ -102,8 +135,8 @@
       border-radius r
       box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
       position relative
-      margin-top 30px
-      margin-bottom 3px
+      margin 30px auto 17px
+      outline none
       &.hidden
         opacity 0
       &:before
@@ -114,33 +147,6 @@
         @extends $plus-sign
         width 4px
         height 24px
-    &__name
-      background-color rgba(255,255,255,0.9)
-      padding 10px
-      border-radius 5px
-      position relative
-      z-index 1
-      margin-top 17px
-      margin-bottom 30px
-      font-size 1rem
-      font-weight normal
-      font-style normal
-      font-stretch normal
-      line-height 1.5
-      letter-spacing normal
-      text-align center
-      color #a0a0a0
-      .title
-        // font-size 1.25rem
-      .desc
-        margin 5px 0
-        // font-size 0.75rem
-      .alert
-        margin 5px 0
-        color #ff7979
-        font-size 0.75rem
-      // .filename
-      //   color
     &__spinner
       position absolute
       width 50px
@@ -152,17 +158,57 @@
   >>> .filepond
     &--wrapper
       width 100%
-      // height 100%
-    // &--root
-    //   height 100%!important
-    // &--drop-label
-    //   height 100%    
-    //   label
-    //     width 100%
-    //     min-height 100%
-    //     display flex
-    //     justify-content center
-    //     align-items center
+      &.full
+        .filepond--panel-root
+          background-color transparent!important
+
+        .filepond--root
+          min-height 185px
+          .filepond--list-scroller
+            position relative
+            width 100%
+            height 100%
+            display flex
+            align-items center
+            margin 0
+            .filepond--list
+              position relative
+            .filepond--item
+              position relative
+    &--root
+      min-height 100%
+      display flex
+      justify-content center
+      margin-bottom 0
+      overflow hidden
+    &--drop-label
+      margin 40px auto
+    &--action-remove-item
+      opacity 1
+      left auto
+      right -15px
+      top -15px
+      background-color #fff
+      width 38px
+      height 38px
+      box-shadow 2px 2px 10px rgba(0,0,0,0.1)
+      display none
+    &--file-info
+      transform none!important
+      // position absolute
+      // top 100%
+      // margin-top 10px
+      // &-main
+      //   color #000
+      //   font-size 0.875rem
+      // &-sub
+      //   font-size 0.75rem
+      //   color #5a5a5a
+    &--list
+      left 0
+      width 100%
+    &--image-preview-overlay-idle  
+      mix-blend-mode color
     &--panel-root
       background-color #fff!important
 </style>

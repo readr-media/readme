@@ -47,4 +47,8 @@ export default Object.assign({
   UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
     return uploadImage(file, type)
   },
+
+  UPDATE_CLIENT_SIDE_MOUNTED: ({ commit, dispatch }) => {
+    return commit('SET_CLIENT_SIDE_MOUNTED', {})
+  },
 }, actionsMember, actionsList, actionsItem)
