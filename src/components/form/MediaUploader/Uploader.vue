@@ -25,7 +25,6 @@
   import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
   import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
   const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview)
-  
   const debug = require('debug')('CLIENT:Uploader')
   export default {
     name: 'Uploader',
@@ -49,7 +48,7 @@
         server: {
           url: '/',
           process: null,
-          load: './api/assets/load?a=',
+          load: './api/assets/load?a=',      
           fetch: './api/assets/fetch?a=',       
         },
         title: '', 
@@ -62,8 +61,12 @@
         debug('files',  this.$refs.pond.getFiles())
         this.url && this.$refs.pond.addFiles(this.url, {
           type: this.url.indexOf('http') === 0 ? 'remote' : 'local'
+        }).then(() => {
+          const file = this.$refs.pond.getFile()
+          // file.source = file.file
+          debug('File metadata', file.getMetadata())
         }).catch(err => {
-          debug('Error occurred when fetching file from', this.url)
+          debug('Error occurred when fetching file from', this.url, err)
         })
       },
       onupdatefiles (items) {
