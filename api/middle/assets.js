@@ -5,7 +5,7 @@ const config = require('../config')
 const debug = require('debug')('README:api:project')
 const express = require('express')
 const router = express.Router()
-const superagent = require('superagent')
+const axios = require('axios')
 
 const jwtExpress = require('express-jwt')
 const authVerify = jwtExpress({ secret: config.JWT_SECRET })
@@ -29,7 +29,23 @@ router.get('/fetch', (req, res) => {
   debug('Got a /assets/fetch call:', asset)
 
   if (asset) {
-    res.redirect(decodeUriComponent(asset))
+    axios.get(asset, {
+      timeout: config.API_TIMEOUT,
+      responseType: 'arraybuffer',
+    }).then(response => {
+      debug('Fetch asset successfully.')
+      res.writeHead(200, response.headers)
+      res.end(response.data)
+    })
+    .catch(error => {
+      const errWrapped = handlerError(error)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetching data from : ${url}`)
+      console.error(error) 
+    })
   } else {
     res.status(404).send('Not Found.')
   }
