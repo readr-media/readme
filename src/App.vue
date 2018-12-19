@@ -22,7 +22,10 @@ export default {
     ReadMeHeader,
     ReadMeAside,
     SystemInfo,
-  }
+  },
+  mounted () {
+    this.$store.dispatch('UPDATE_CLIENT_SIDE_MOUNTED')
+  },
 }
 </script>
 
