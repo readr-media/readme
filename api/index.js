@@ -67,7 +67,7 @@ router.use('/', (req, res, next) => {
   req.url_origin = req.url
   next()
 })
-router.use('/assets', require('./middle/assets'))
+router.use('/asset', require('./middle/assets'))
 router.use('/login', authVerify, require('./middle/member/login'), )
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', authVerify, require('./middle/project'))

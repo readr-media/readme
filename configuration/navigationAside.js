@@ -42,7 +42,7 @@ export const items = [
   },
   {
     nav: 'management',
-    name: 'assets',
+    name: 'asset',
     type: 'list',
     active: true,
   },
