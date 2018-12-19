@@ -208,6 +208,8 @@ export default {
     'UPLOADER': {
       'TOOLTIP': '從電腦上傳檔案<br>或將檔案拖移至此上傳',
       'SIZE_LIMIT': '(圖檔大小限制：3MB)',
+      'INCORRECT_FILE_TYPE': '僅接受影片、圖檔與音檔素材',
+      'ERROR': '讀取檔案發生錯誤'
     },
   },
   'POLL': {
@@ -287,15 +289,16 @@ export default {
     'SLUG': 'SLUG',
     'POST_ORDER': '排序',
   },
-  'ASSETS': {
+  'ASSET': {
     'ID': 'ID',
     'TITLE': '名稱',
     'ASSET_TYPE': '類別',
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
-    'URL': '素材',
+    'FILEDATA': '素材',
     'COPYRIGHT': '財權聲明',
+    'COPYRIGHT_COPYRIGHT': 'copyright',
     'COPYRIGHT_CC_BY_SA_3': 'cc-by-sa3.0',
     'COPYRIGHT_CC': 'cc',
     'EDIT': '編輯素材',
@@ -321,7 +324,7 @@ export default {
     'ACCOUNT_PERMISSION': '使用者角色',
     'SHARE': '分享',
     'DOMAIN': '網域',
-    'ASSETS': '素材管理',
+    'ASSET': '素材管理',
 
     'ENEWS': '電子報管理',
     'ENEWS_EVENT_LIST': '活動列表',

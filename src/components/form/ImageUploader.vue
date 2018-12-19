@@ -94,7 +94,7 @@
             debug('Going to uppload image.')
             const targ = e.target || window.event.srcElement
             const files = targ.files
-
+            debug('files', targ.files)
             if (FileReader && files && files.length) {
               const fr = new FileReader()
               fr.onload = () => {

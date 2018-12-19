@@ -14,7 +14,7 @@
             <router-link v-if="get(item, 'type', 'list') === 'list'"
               :class="{ active: get($route, 'params.item') === get(item, 'name', '') }"
               :to="`/${get(item, 'name', '')}`">
-              <span v-text="$t(`NAVIGATION.${get(item, 'name', 'item').toUpperCase()}`)"></span>
+              <span v-text="$t(`NAVIGATION.${get(item, 'name', 'item').replace(/-/g, '_').toUpperCase()}`)"></span>
             </router-link>
             <span v-else v-text="$t(`NAVIGATION.${get(item, 'name', 'item').toUpperCase()}`)"></span>
           </div>

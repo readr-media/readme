@@ -22,6 +22,8 @@ router.use('/list', authVerify, (req, res) => {
     { asset_type: 1, url: '/public/tongwenceng.jpg', id: 2, title: 'Google 首圖', copyright: 1, },
     { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 3, title: 'Google 圖', copyright: 2, },
     { asset_type: 1, url: '/assets/images/posts/1543568254-23978884ad15c7d7473f46f66fe40535.jpg', id: 3, title: 'Google 圖', copyright: 2, },
+    { asset_type: 1, url: '/public/SampleVideo_1280x720_10mb.mp4', id: 4, title: 'vid', copyright: 1, },
+    { asset_type: 1, url: '/public/SampleAudio_0.7mb.mp3', id: 5, title: 'aud', copyright: 1, },
   ]})
 })
 
