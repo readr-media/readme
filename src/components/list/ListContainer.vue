@@ -169,7 +169,7 @@
             }
           } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist' || item.type === 'CheckboxItem') && item.isNumSentitive) {
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
-            preForm[ item.name ] = preForm[ item.name ] && numeral(preForm[ item.name ]).value()
+            preForm[ item.name ] = preForm[ item.name ] ? numeral(preForm[ item.name ]).value() : 0
           }
           if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible && !item.isButtonized && !item.isButtonizedWith) {
             debug('Going to delete item that is not editable!', item.name)

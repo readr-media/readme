@@ -30,6 +30,12 @@ export const items = [
   },
   {
     nav: 'management',
+    name: 'memo',
+    type: 'list',
+    active: true,
+  },  
+  {
+    nav: 'management',
     name: 'report',
     type: 'list',
     active: true,
