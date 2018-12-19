@@ -1,6 +1,7 @@
 <template>
   <div class="uploader" :class="{ full: !isEmpty }">
     <div class="uploader__item-remover" :class="{ full: !isEmpty }" @click="removeFile"></div>
+
     <FilePond
       v-if="$store.state.isClientSideMounted && isMounted"
       ref="pond"
@@ -25,6 +26,8 @@
   import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
   import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
   const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview)
+  // const FilePond = vueFilePond(FilePondPluginFileValidateType)
+
   const debug = require('debug')('CLIENT:Uploader')
   export default {
     name: 'Uploader',
@@ -174,6 +177,7 @@
             display flex
             align-items center
             margin 0
+            // display none
             .filepond--list
               position relative
             .filepond--item

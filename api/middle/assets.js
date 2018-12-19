@@ -21,6 +21,7 @@ router.use('/list', authVerify, (req, res) => {
     { asset_type: 1, url: '/public/favicon-50x50.png', id: 1, title: 'Google 首圖', copyright: 1, },
     { asset_type: 1, url: '/public/tongwenceng.jpg', id: 2, title: 'Google 首圖', copyright: 1, },
     { asset_type: 1, url: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png', id: 3, title: 'Google 圖', copyright: 2, },
+    { asset_type: 1, url: '/assets/images/posts/1543568254-23978884ad15c7d7473f46f66fe40535.jpg', id: 3, title: 'Google 圖', copyright: 2, },
   ]})
 })
 
