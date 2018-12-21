@@ -1,6 +1,5 @@
-const { camelizeKeys } = require('humps')
-const { find, get, last, map, mapKeys } = require('lodash')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('../gcs.js')
+const { constructFileInfo, transferFileToStorage } = require('./comm')
+const { get, last } = require('lodash')
 const { handlerError } = require('../../comm')
 const Cookies = require('cookies')
 const axios = require('axios')
@@ -18,17 +17,6 @@ const authVerify = jwtExpress({ secret: config.JWT_SECRET })
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 const decodeUriComponent = require('decode-uri-component')
 
-const ASSETS_GCS_PATH = {
-  IMAGE: '/assets/images',
-  VIDEO: '/assets/video',
-  AUDIO: '/assets/audio',
-}
-const ASSETS_TYPE = {
-  IMAGE: 1,
-  VIDEO: 2,
-  AUDIO: 3
-}
-
 const mock = [
   { asset_type: 2, destination: 'http://dev.readr.tw/assets/video/e0652038fc543d31a65eecaabcdd4bec/0', file_ext: 'mp4', id: 0, title: 'TEST VID', copyright: 2, file_name: 'SampleVideo_1280x720_10mb' },
   { asset_type: 3, destination: 'http://dev.readr.tw/assets/audio/51f9c647d7670e86df56433974fd5b51/1', file_ext: 'mp3', id: 1, title: 'TEST AUD', copyright: 1, file_name: 'SampleAudio_0.7mb.mp3' },
@@ -39,52 +27,20 @@ router.use('/list', authVerify, (req, res) => {
   res.json({ _items: mock})
 })
 
-const bucket = initBucket(config.GCP_FILE_BUCKET)
-const transferFileToStorage = async file => {
-  debug('Going to transfer file to storage.', file)
-
-  return uploadFileToBucket(bucket, file.path, {
-    destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_ext}`,
-    metadata: { contentType: file.mimetype }
-  }).then(bucketFile => {
-    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
-    fs.unlink(file.path, err => {
-      if (err) {
-        console.error(`Error: delete ${file.path} in fail.`, err)
-      }
-      console.info(`successfully deleted ${file.path}`)
-    })
-    makeFilePublic(bucketFile)
-  })
-}
 router.post('/create', authVerify, (req, res) => {
   debug('Got a asset create req.')
   debug(req.body)
-  const asset_type = get(ASSETS_TYPE, get(get(req, 'body.file.mimetype', '').split('/'), '0').toUpperCase())
-  const file_name = get(req, 'body.file.originalname', ``)
-  const file_ext = last(get(req, 'body.file.originalname', '').split('.'))
-  const temFileName = get(req, 'body.file.filename', `file-${Date.now().toString()}`)
-  
-  const destination = asset_type !== ASSETS_TYPE.IMAGE
-    ? asset_type !== ASSETS_TYPE.VIDEO
-    ? asset_type !== ASSETS_TYPE.AUDIO
-    ? null // unauthorized file type
-    : `${ASSETS_GCS_PATH.AUDIO}`
-    : `${ASSETS_GCS_PATH.VIDEO}`
-    : `${ASSETS_GCS_PATH.IMAGE}`
+  const fileInfo = constructFileInfo(get(req, 'body.file'))
 
-  mock.push({
-    asset_type,
-    destination: `http://dev.readr.tw${destination}/${temFileName}/${temFileName}`,
-    file_name,
-    file_ext,
+  mock.push(Object.assign({}, fileInfo, {
+    destination: fileInfo ? `http://dev.readr.tw${fileInfo.destination}/${fileInfo.temFileName}/${fileInfo.temFileName}` : '',
     id: mock.length,
     title: get(req, 'body.title'),
     copyright: get(req, 'body.copyright'),
-  })
+  }))
   res.send('Done.')
 
-  const file = Object.assign({}, get(req, 'body.file'), { asset_type, destination, file_ext })
+  const file = Object.assign({}, get(req, 'body.file'), fileInfo)
   transferFileToStorage(file)
 })
 

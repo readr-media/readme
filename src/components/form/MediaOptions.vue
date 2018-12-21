@@ -110,7 +110,6 @@
     props: {
       id: {},
       options: {
-        type: Array,
         default: () => ([])
       },
       fetchData: {

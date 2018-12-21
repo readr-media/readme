@@ -45,6 +45,7 @@
       :text="$t(`${$store.getters.modelName}.${itemObj.subText}`)"
       :value.sync="value"></CheckboxItem>
     <Uploader v-else-if="itemObj.type === 'Uploader'"
+      :acceptedFileTypes="itemObj.acceptedFileTypes"
       :destination="refVals[ 'destination' ]"
       :fileExt="refVals[ 'fileExt' ]"
       :fileObj.sync="value"></Uploader>
