@@ -65,6 +65,10 @@
         box-shadow 2px 2px 10px rgba(0,0,0,0.1)
         z-index 10
         cursor pointer
+        background-image url(/public/icons/icon_close.png)
+        background-position center center
+        background-size contain
+        background-repeat no-repeat
     >>> &__upload-button
       r = 38px
       width r
@@ -95,6 +99,7 @@
       top 50%
       margin-left -25px
       margin-top -25px
+      z-index 999
     >>> .filepond
       &--wrapper
         width 100%

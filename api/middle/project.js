@@ -1,4 +1,5 @@
 const { camelizeKeys } = require('humps')
+const { constructFileInfo, transferFileToStorage } = require('./assets/comm')
 const { find, get, map, mapKeys } = require('lodash')
 const { handlerError } = require('../comm')
 const config = require('../config')
@@ -40,14 +41,23 @@ router.get('/list', (req, res) => {
 router.post('/create', (req, res) => {
   debug('Got a project creating call.')
   debug(req.body)
-  // res.send('ok')
+
+  const heroimageFile = get(req, 'body.hero_image')
+  const heroimgInfo = constructFileInfo(heroimageFile)
+  const payload = Object.assign({}, req.body)
+  if (heroimageFile) {
+    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
+  }
+
   const url = `${apiHost}/project`
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Create a new project successfully.' })
+      const file = Object.assign({}, heroimageFile, heroimgInfo)
+      transferFileToStorage(file)      
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({
@@ -64,12 +74,22 @@ router.put('/update', (req, res) => {
   debug('Got a project updating call.')
   const url = `${apiHost}/project`
   debug(req.body)
+
+  const heroimageFile = get(req, 'body.hero_image')
+  const heroimgInfo = constructFileInfo(heroimageFile)
+  const payload = Object.assign({}, req.body)
+  if (heroimageFile) {
+    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
+  }
+
   superagent
   .put(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Updating a project successfully.' })
+      const file = Object.assign({}, heroimageFile, heroimgInfo)
+      transferFileToStorage(file)
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({

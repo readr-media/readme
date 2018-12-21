@@ -125,8 +125,13 @@
       margin-top -30px
       margin-left -30px
       background-color #fff
+      background-image url(/public/icons/icon_play-video.png)
+      background-position center center
+      background-size contain
+      background-repeat no-repeat
       z-index 1
       border-radius 50%
+      cursor pointer
     &::before
       content ''
       display block

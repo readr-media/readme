@@ -1,4 +1,5 @@
 const { camelizeKeys } = require('humps')
+const { constructFileInfo, transferFileToStorage } = require('./assets/comm')
 const { handlerError } = require('../comm')
 const { get, map } = require('lodash')
 const config = require('../config')
@@ -38,12 +39,31 @@ router.post('/create', (req, res) => {
   const url = `${apiHost}/post`
   req.body.author = req.user.id
 
+  const heroimageFile = get(req, 'body.hero_image')
+  const ogimageFile = get(req, 'body.og_image')
+  
+  const heroimgInfo = constructFileInfo(heroimageFile)
+  const ogimageInfo = constructFileInfo(ogimageFile)
+  const payload = Object.assign({}, req.body)
+  if (heroimageFile) {
+    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
+  }
+  if (ogimageInfo) {
+    payload.og_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${ogimageInfo.destination}/${ogimageInfo.temFileName}/${ogimageInfo.temFileName}.${ogimageInfo.file_ext}`
+  }
+
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Create a new post successfully.' })
+      const file_heroimage = Object.assign({}, heroimageFile, heroimgInfo)
+      const file_ogimage = Object.assign({}, ogimageFile, ogimageInfo)
+      Promise.all([
+        transferFileToStorage(file_heroimage),  
+        transferFileToStorage(file_ogimage)   
+      ])
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({
@@ -60,12 +80,30 @@ router.put('/update', (req, res) => {
   debug('Got a post updating call.')
   debug('req.body', req.body)
 
+  const heroimageFile = get(req, 'body.hero_image')
+  const ogimageFile = get(req, 'body.og_image')
+  const heroimgInfo = constructFileInfo(heroimageFile)
+  const ogimageInfo = constructFileInfo(ogimageFile)
+  const payload = Object.assign({}, req.body)
+  if (heroimageFile) {
+    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
+  }
+  if (ogimageInfo) {
+    payload.og_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${ogimageInfo.destination}/${ogimageInfo.temFileName}/${ogimageInfo.temFileName}.${ogimageInfo.file_ext}`
+  }
+
   superagent
   .put(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Updating a post successfully.' })
+      const file_heroimage = Object.assign({}, heroimageFile, heroimgInfo)
+      const file_ogimage = Object.assign({}, ogimageFile, ogimageInfo)
+      Promise.all([
+        transferFileToStorage(file_heroimage),  
+        transferFileToStorage(file_ogimage)   
+      ])      
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({

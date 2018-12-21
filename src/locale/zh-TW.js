@@ -296,6 +296,7 @@ export default {
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
+    'ASSET_TYPE_NEVER': '不明',
     'FILE': '素材',
     'COPYRIGHT': '財權聲明',
     'COPYRIGHT_COPYRIGHT': 'copyright',
@@ -305,6 +306,8 @@ export default {
     'NEW': '新增素材',
     'DESTINATION': '目錄',
     'FILE_NAME': '檔名',
+    'FILE_EXT': '副檔名',
+    'FILE_TYPE': '檔案類型',
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',

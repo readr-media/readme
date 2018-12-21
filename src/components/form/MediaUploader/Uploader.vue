@@ -22,6 +22,7 @@
       @updatefiles="onupdatefiles"
       @addfile="addfile"
       @init="init"/>
+      <div class="uploader__spinner"><Spinner :show="isLoading"></Spinner></div>
   </UploaderLayout>
 </template>
 <script>
@@ -56,10 +57,10 @@
     data () {
       return {
         alert: '',
-        acceptedFileTypes: [ 'image/*', 'video/*', 'audio/*'  ],
         file: undefined,
         filesUploaded: [],
         isEmpty: true,
+        isLoading: false,
         isMounted: false,
         isUploading: false,
         itemName: '', 
@@ -70,7 +71,11 @@
             const formData = new FormData()
             formData.append('filepond-file', file, file.name)
 
+            const CancelToken = axios.CancelToken
+            const source = CancelToken.source()
+
             axios.post(`/api/asset/process/${this.location}`, formData, {
+              cancelToken: source.token,
               onUploadProgress: e => {
                 progress(e.lengthComputable, e.loaded, e.total)
               }
@@ -81,12 +86,17 @@
               load(res.request.responseText)
             })
             .catch(err => {
+              if (axios.isCancel(err)) {
+                console.error('Request canceled', err.message)
+              } else {
+                // handle error
+              }              
               error('Processing temp asset in fail.', err)
             })
             
             return {
               abort: () => {
-                request.abort()
+                source.cancel('Due to some problems, peration canceled.')
                 abort()
               }
             }
@@ -97,6 +107,7 @@
               data: JSON.parse(uniqueFileId)
             }).then(response => {
               debug('Deleting temp asset successfully.')
+              this.$emit('update:fileObj', '')
               load()
             }).catch(err => {
               error('Deleting temp asset in fail.', err)
@@ -115,8 +126,8 @@
     methods: {
       init () {
         debug('inited!!!')
-        debug('existed url', `${this.destination}.${this.fileId}`)
         debug('files',  this.$refs.pond.getFiles())
+        get(this.$refs.pond.getFiles(), 'length', 0) > 0 && (this.isLoading = true)
       },
       calcSize (bytes) {
         return numeral(bytes).format('0 b')
@@ -128,48 +139,54 @@
           this.file = file
           this.itemName = get(file, 'file.name')
           this.itemSize = get(file, 'file.size')
+          this.isEmpty = false
+          debug('file should be added!', this.itemName, this.$refs.pond.getFiles())
         } else {
           // this.isEmpty = false
           this.file = null
           this.itemName = ''
           this.itemSize = 0
+          this.isEmpty = true
           debug('message', error)
           if (get(file, 'main') === 'File is of invalid type') {
             switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
           } else {
-            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
+            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.ERROR'), () => {})
           }
           this.$refs.pond.removeFile()
           console.error(file)
         }
+        this.isLoading = false
       },
       onupdatefiles (items) {
-        debug('done', this.$refs.pond.getFiles(), items)
-        if (items.length === 0) {
-          this.isEmpty = true
-          this.file = null
-          this.itemName = ''
-          this.itemSize = 0  
-        } else {
-          this.isEmpty = false
-        }
+        debug('onupdatefiles', this.$refs.pond.getFiles(), items)
       },
       removeFile () {
         this.fileObj && axios.delete('/api/asset/revert', {
           data: this.fileObj
         }).then(response => {
           debug('Deleting temp asset successfully.')
+          this.$emit('update:fileObj', '')
         }).catch(err => {
           debug('Deleting temp asset in fail.', err)
         })         
         this.$refs.pond && this.$refs.pond.removeFile()
+        this.isEmpty = true
       },
     },
     mounted () {
       debug('height should be ', this.$el.clientHeight)
-      debug('${this.destination}.${this.fileId}', `${this.destination}.${this.fileId}`)
-      this.destination && this.filesUploaded.push({
-        source: `${this.destination}${this.fileExt ? `.${this.fileExt}` : ''}`,
+      debug('${this.destination}.${this.fileExt}', `${this.destination}.${this.fileExt}`)
+      debug('typeof(this.fileObj)', typeof(this.fileObj), this.fileObj)
+      const originAsset = typeof(this.fileObj) !== 'string' || !this.fileObj 
+        ? this.destination
+        ? `${this.destination}${this.fileExt ? `.${this.fileExt}` : ''}`
+        : null
+        : this.fileObj
+
+      debug('originAsset', originAsset)
+      originAsset && this.filesUploaded.push({
+        source: originAsset,
         options: {
           /**
            *  type:
@@ -177,12 +194,15 @@
            *  - local: file would be loaded by load
            *  - limbo: file would be loaded by restore(means this file is a temp file)
            */
-          type: `${this.destination}${this.fileId}`.indexOf('http') === 0 ? 'remote' : 'local'
+          type: originAsset.indexOf('http') === 0 ? 'remote' : 'local'
         }
       })
       this.isMounted = true
     },
     props: {
+      acceptedFileTypes: {
+        default: () => [ 'image/*', 'video/*', 'audio/*' ]
+      },      
       destination: {},
       fileObj: {},
       fileExt: {},
