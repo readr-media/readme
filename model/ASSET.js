@@ -32,6 +32,8 @@ export const model = [
   { name: 'title', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
   
   { name: 'fileName', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
+  { name: 'fileExt', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
+  { name: 'fileType', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
   { name: 'file', type: 'Uploader', group: 'basic', width: { list: '250', editor: '200' }, isEditable: true, isListable: false, location: 'assets' },
 
   { name: 'copyright', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, isNumSentitive: true, options: copyright_options, fetchSource: copyRightOpts, required: true, order: { list: 2 }, default: '-1', defaultText: 'NA_COPYRIGHT' },

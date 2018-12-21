@@ -1,4 +1,4 @@
-const { GCP_KEYFILE, GCP_PROJECT_ID, GCP_PUBSUB_TOPIC_NAME } = require('../../config')
+const { GCP_KEYFILE, GCP_PROJECT_ID, GCP_PUBSUB_TOPIC_NAME } = require('../config')
 const debug = require('debug')('README:api:middle:gcs')
 const storage = require('@google-cloud/storage')
 const PubSub = require('@google-cloud/pubsub')

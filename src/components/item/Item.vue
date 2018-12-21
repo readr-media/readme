@@ -46,7 +46,7 @@
       :value.sync="value"></CheckboxItem>
     <Uploader v-else-if="itemObj.type === 'Uploader'"
       :destination="refVals[ 'destination' ]"
-      :fileId="refVals[ 'fileName' ] || refVals[ 'id' ]"
+      :fileExt="refVals[ 'fileExt' ]"
       :fileObj.sync="value"></Uploader>
   </div>
   <div v-else>
