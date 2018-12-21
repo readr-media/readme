@@ -36,6 +36,8 @@ const fetchSource = (store, { vueInstance }) => new Promise(resolve => resolve([
   { id: 7, text: vueInstance.$t('POLL.FREQUENCY_OPTION.WEEKLY'), },
 ]))
 
+const isSupposedToShowedWithFrequency = data => get(data, 'frequency') === '0' || get(data, 'frequency') === 0
+
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, order: { editor: 0 }, },
   { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
@@ -54,7 +56,7 @@ export const model = [
   { name: 'totalVote', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isNumSentitive: true, order: { editor: 1, }, },
   { name: 'frequency', type: 'Dropdownlist', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 2 }, fetchSource, required: true },
   { name: 'maxChoice', type: 'TextInput', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, required: true },
-  { name: 'changeable', type: 'CheckboxItem', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, hideTitle: true, subText: 'CHANGEABLE'},
+  { name: 'changeable', type: 'CheckboxItem', group: 'basic', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 3, }, hideTitle: true, subText: 'CHANGEABLE', watcher: 'frequency', showWith: isSupposedToShowedWithFrequency,},
 ]
 export const filter = [ 'custom_editor' ]
 export const groups = [ 'info', 'basic', 'content', ]
