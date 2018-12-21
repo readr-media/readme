@@ -133,6 +133,7 @@
           this.file = null
           this.itemName = ''
           this.itemSize = 0
+          debug('message', error)
           if (get(file, 'main') === 'File is of invalid type') {
             switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
           } else {
@@ -167,8 +168,8 @@
     mounted () {
       debug('height should be ', this.$el.clientHeight)
       debug('${this.destination}.${this.fileId}', `${this.destination}.${this.fileId}`)
-      this.destination && this.fileId && this.filesUploaded.push({
-        source: `${this.destination}${this.fileId}`,
+      this.destination && this.filesUploaded.push({
+        source: `${this.destination}${this.fileExt ? `.${this.fileExt}` : ''}`,
         options: {
           /**
            *  type:
@@ -184,7 +185,7 @@
     props: {
       destination: {},
       fileObj: {},
-      fileId: {},
+      fileExt: {},
       location: {
         default: 'tmp'
       },

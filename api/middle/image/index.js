@@ -1,7 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { find, trim } = require('lodash')
 const { handlerError } = require('../../comm')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
+const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('../gcs.js')
 const { processImage } = require('./sharp.js')
 const config = require('../../config')
 const debug = require('debug')('README:api:image')
