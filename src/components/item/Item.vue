@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitiliazible && editorMode === 'create'))">
+  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
-      :placeHolder="$t(`${$store.getters.modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :value.sync="value"></TextInput>
     <DatetimeItem v-else-if="itemObj.type === 'Datetime'"
       :relativeToRef="itemObj.relativeToWatcher"
@@ -10,19 +10,19 @@
       :value.sync="value"></DatetimeItem>
     <TextareaInput v-else-if="itemObj.type === 'TextareaInput'"
       :autoHeightActive="itemObj.autoHeightActive"
-      :placeholder="$t(`${$store.getters.modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :value.sync="value"></TextareaInput>
     <template v-else-if="itemObj.type === 'RadioItem'">
       <RadioItem v-for="opt in itemObj.options" :name="get(itemObj, 'name')"
         @updateForm="updateForm"
-        :label="$t(`${$store.getters.modelName}.${decamelize(itemObj.name).toUpperCase()}_${opt.name}`)"
+        :label="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}_${opt.name}`)"
         :key="get(opt, 'name')"
         :value="get(opt, 'value')"
         :currSelected.sync="value"></RadioItem>
     </template>
     <QuillEditor v-else-if="itemObj.type === 'ContentEditor'" :content.sync="value" />
     <TextTagItem v-else-if="itemObj.type === 'TextTagItem'"
-      :placeholder="$t(`${$store.getters.modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currTagValues.sync="value"
       :currInput.sync="currTagInput"
       :autocomplete="autocompleteArr"></TextTagItem>
@@ -42,13 +42,15 @@
       :options.sync="value"></MediaOptions>
     <CheckboxItem v-else-if="itemObj.type === 'CheckboxItem'"
       theme="editor"
-      :text="$t(`${$store.getters.modelName}.${itemObj.subText}`)"
+      :text="$t(`${modelName}.${itemObj.subText}`)"
       :value.sync="value"></CheckboxItem>
     <Uploader v-else-if="itemObj.type === 'Uploader'"
       :acceptedFileTypes="itemObj.acceptedFileTypes"
       :destination="refVals[ 'destination' ]"
       :fileExt="refVals[ 'fileExt' ]"
       :fileObj.sync="value"></Uploader>
+    <AssetPicker v-else-if="itemObj.type === 'AssetPicker'"
+      :value.sync="value"></AssetPicker>
   </div>
   <div v-else>
     <span v-if="itemObj.type === 'RadioItem'" v-text="mapValue(itemObj.name, itemObj.options, itemVal)"></span>
@@ -57,6 +59,7 @@
   </div>
 </template>
 <script>
+  import AssetPicker from 'src/components/form/AssetPicker/AssetPicker.vue'
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
   import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
@@ -79,6 +82,7 @@
   export default {
     name: 'Item',
     components: {
+      AssetPicker,
       BooleanSwitcher,
       ButtunizedItem,
       CheckboxItem,
@@ -108,7 +112,7 @@
       get,
       moment,
       mapValue (name, options, value) {
-        return this.$t(`${this.$store.getters.modelName}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+        return this.$t(`${this.modelName}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
       },      
       updateForm () {
         this.$emit('updateForm')
@@ -130,6 +134,9 @@
       refVals: {
         type: Object,
         default: () => ({})         
+      },
+      modelName: {
+        required: true
       },
       editorMode: {
         type: String,

@@ -16,7 +16,7 @@ const UPDATE_ITEM = ({ commit, }, { params, endpoint, }) => {
 const POST_ITEM = ({ commit, }, { params, endpoint, }) => {
   return itemFunc.postItem({ params, endpoint, }).then(({ status, body, }) => {
     debug('{ params, endpoint }', { params, endpoint })
-    return { status, }
+    return { status, body }
   }).catch(err => {
     debug('Error ocurred!', err)
     return Promise.reject(err)

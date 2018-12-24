@@ -1,5 +1,5 @@
 const { constructFileInfo, transferFileToStorage } = require('./comm')
-const { get, last } = require('lodash')
+const { find, filter, get } = require('lodash')
 const { handlerError } = require('../../comm')
 const Cookies = require('cookies')
 const axios = require('axios')
@@ -18,31 +18,9 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 const decodeUriComponent = require('decode-uri-component')
 
 const mock = [
-  { asset_type: 2, destination: 'http://dev.readr.tw/assets/video/e0652038fc543d31a65eecaabcdd4bec/0', file_ext: 'mp4', id: 0, title: 'TEST VID', copyright: 2, file_name: 'SampleVideo_1280x720_10mb' },
-  { asset_type: 3, destination: 'http://dev.readr.tw/assets/audio/51f9c647d7670e86df56433974fd5b51/1', file_ext: 'mp3', id: 1, title: 'TEST AUD', copyright: 1, file_name: 'SampleAudio_0.7mb.mp3' },
+  { asset_type: 2, destination: 'http://www.readr.tw/assets/video/e0652038fc543d31a65eecaabcdd4bec/0', file_type: 'video/mpeg',file_ext: 'mp4', id: 0, title: 'TEST VID', copyright: 2, file_name: 'SampleVideo_1280x720_10mb' },
+  { asset_type: 3, destination: 'http://www.readr.tw/assets/audio/51f9c647d7670e86df56433974fd5b51/1', file_type: 'audio/mpeg',file_ext: 'mp3', id: 1, title: 'TEST AUD', copyright: 1, file_name: 'SampleAudio_0.7mb.mp3' },
 ]
-router.use('/list', authVerify, (req, res) => {
-  debug('Got id', req.query.id)
-  debug('Got id', req.body.id)
-  res.json({ _items: mock})
-})
-
-router.post('/create', authVerify, (req, res) => {
-  debug('Got a asset create req.')
-  debug(req.body)
-  const fileInfo = constructFileInfo(get(req, 'body.file'))
-
-  mock.push(Object.assign({}, fileInfo, {
-    destination: fileInfo ? `http://dev.readr.tw${fileInfo.destination}/${fileInfo.temFileName}/${fileInfo.temFileName}` : '',
-    id: mock.length,
-    title: get(req, 'body.title'),
-    copyright: get(req, 'body.copyright'),
-  }))
-  res.send('Done.')
-
-  const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file)
-})
 
 const checkPermission = (req, res, next) => {
   const cookies = new Cookies( req, res, {} )
@@ -56,6 +34,61 @@ const checkPermission = (req, res, next) => {
     }
   })
 }
+router.use('/list', checkPermission, (req, res) => {
+  debug('Got a req for assets list.')
+  debug('req.query.type', req.query.type)
+  const assetType = req.query.type || 'all'
+  if (assetType !== 'all') {
+    res.json({ _items: filter(mock, a => {
+      return get(get(a, 'file_type', '').split('/'), '0') === assetType
+    })})
+  } else {
+    res.json({ _items: mock })
+  }
+})
+
+router.post('/create', authVerify, (req, res) => {
+  debug('Got a asset create req.')
+  debug(req.body)
+  const fileInfo = constructFileInfo(get(req, 'body.file'))
+
+  mock.push(Object.assign({}, fileInfo, {
+    destination: fileInfo.fileDestinations.basic,
+    id: mock.length,
+    title: get(req, 'body.title'),
+    copyright: get(req, 'body.copyright'),
+  }))
+  res.send({
+    message: 'Done.',
+    url: fileInfo.fileDestinations
+  })
+
+  const file = Object.assign({}, get(req, 'body.file'), fileInfo)
+  transferFileToStorage(file)
+})
+
+router.put('/update', authVerify, (req, res) => {
+  debug('Got a asset create req.')
+  debug(req.body)
+  const fileInfo = constructFileInfo(get(req, 'body.file'))
+
+  let mockItem = find(mock, { id: get(req.body, 'id') })
+  mockItem = Object.assign(mockItem, fileInfo, {
+    destination: get(fileInfo, 'fileDestinations.basic', get(req, 'body.destination')),
+    id: mock.length,
+    title: get(req, 'body.title'),
+    copyright: get(req, 'body.copyright'),
+  })
+
+  res.send({
+    message: 'Done.',
+    url: fileInfo.fileDestinations
+  })
+
+  const file = Object.assign({}, get(req, 'body.file'), fileInfo)
+  transferFileToStorage(file)
+})
+
 router.post('/process/:owner', checkPermission, upload.single('filepond-file'), (req, res) => {
   const type = get(req, 'params.owner')
   const file = req.file
@@ -107,7 +140,7 @@ router.get('/fetch', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetching data from : ${url}`)
+      console.error(`Error occurred during fetching data from : ${asset}`)
       console.error(error) 
     })
   } else {

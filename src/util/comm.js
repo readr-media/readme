@@ -1,4 +1,5 @@
 import moment from 'moment'
+import numeral from 'numeral'
 const STATIC_ASSETS_HOST = 'www.readr.tw'
 
 // const debug = require('debug')('CLIENT:comm')
@@ -39,4 +40,8 @@ export function isDescendant (child, { parentClassname = 'none', parant }) {
     node = node.parentNode
   }
   return false
+}
+
+export function calcFileSize (bytes) {
+  return numeral(bytes).format('0 b')
 }

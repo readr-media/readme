@@ -22,11 +22,12 @@
     display flex
     position relative
     min-height 185px
+    max-width 340px
     &.full
       justify-content center
       align-items center
       background-color #eee
-      margin-bottom 40px
+      margin-bottom 50px
     &__item
       &--previewer
         position absolute
@@ -50,6 +51,9 @@
         .name
           font-size 0.875rem
           color #000
+          overflow hidden
+          white-space nowrap
+          text-overflow ellipsis
         .size
           font-size 0.75rem
           color #3f3f3f

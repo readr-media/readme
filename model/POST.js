@@ -70,8 +70,7 @@ export const model = [
   { name: 'link', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
 
   // For post.type === report
-  // { name: 'heroImage', type: 'Image', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
-  { name: 'heroImage', type: 'Uploader', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, acceptedFileTypes: [ 'image/*' ], },
+  { name: 'heroImage', type: 'AssetPicker', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, acceptedFileTypes: [ 'image/*' ], },
   { name: 'slug', type: 'TextInput', group: 'content', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
 
 
@@ -81,8 +80,7 @@ export const model = [
   // For post.type === news
   { name: 'ogTitle', type: 'TextInput', group: 'share', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
   { name: 'ogDescription', type: 'TextareaInput', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
-  // { name: 'ogImage', type: 'Image', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
-  { name: 'ogImage', type: 'Uploader', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, acceptedFileTypes: [ 'image/*' ], },
+  { name: 'ogImage', type: 'AssetPicker', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, acceptedFileTypes: [ 'image/*' ], },
 
 ]
 

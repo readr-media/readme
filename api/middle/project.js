@@ -1,6 +1,5 @@
 const { camelizeKeys } = require('humps')
-const { constructFileInfo, transferFileToStorage } = require('./assets/comm')
-const { find, get, map, mapKeys } = require('lodash')
+const { get, map } = require('lodash')
 const { handlerError } = require('../comm')
 const config = require('../config')
 const debug = require('debug')('README:api:project')
@@ -8,8 +7,6 @@ const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
 
-const jwtExpress = require('express-jwt')
-const authVerify = jwtExpress({ secret: config.JWT_SECRET })
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.get('/list', (req, res) => {
@@ -42,22 +39,16 @@ router.post('/create', (req, res) => {
   debug('Got a project creating call.')
   debug(req.body)
 
-  const heroimageFile = get(req, 'body.hero_image')
-  const heroimgInfo = constructFileInfo(heroimageFile)
   const payload = Object.assign({}, req.body)
-  if (heroimageFile) {
-    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
-  }
-
   const url = `${apiHost}/project`
+  delete payload.id
+
   superagent
   .post(url)
   .send(payload)
   .end((error, response) => {
     if (!error && response) {
-      res.send({ status: 200, text: 'Create a new project successfully.' })
-      const file = Object.assign({}, heroimageFile, heroimgInfo)
-      transferFileToStorage(file)      
+      res.send({ status: 200, text: 'Create a new project successfully.' }) 
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({
@@ -74,22 +65,14 @@ router.put('/update', (req, res) => {
   debug('Got a project updating call.')
   const url = `${apiHost}/project`
   debug(req.body)
-
-  const heroimageFile = get(req, 'body.hero_image')
-  const heroimgInfo = constructFileInfo(heroimageFile)
+  
   const payload = Object.assign({}, req.body)
-  if (heroimageFile) {
-    payload.hero_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${heroimgInfo.destination}/${heroimgInfo.temFileName}/${heroimgInfo.temFileName}.${heroimgInfo.file_ext}`
-  }
-
   superagent
   .put(url)
   .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Updating a project successfully.' })
-      const file = Object.assign({}, heroimageFile, heroimgInfo)
-      transferFileToStorage(file)
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({
