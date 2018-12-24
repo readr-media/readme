@@ -67,8 +67,8 @@
     methods: {
       assetGened (res) {
         debug('Got a new asset!!!!!', res)
-        const assetDestination = get(res, 'body.url.desktop')
-        setTimeout(() => this.callback(assetDestination).then(() => switchOff(this.$store) ), 1000)
+        const assetDestinations = get(res, 'body.url')
+        setTimeout(() => this.callback(assetDestinations).then(() => switchOff(this.$store) ), 1000)
       },
       choose (index) {
         debug('select!', index)
@@ -76,8 +76,9 @@
       },
       confirm () {
         debug('Going to call back!', `${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`)
-        this.callback(`${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`)
-          .then(() => switchOff(this.$store) )
+        this.callback({
+          desktop: `${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`
+        }).then(() => switchOff(this.$store) )
       },
     },
     mounted () {

@@ -130,7 +130,8 @@ export default {
     },
     preparePreviewData (value) {
       debug('value', value)
-      this.$_quillEditor_insertToEditor(value)
+      const assetUrl = get(value, 'desktop')
+      this.$_quillEditor_insertToEditor(assetUrl)
       return Promise.resolve()
     },    
     valueSetUpEmbed () {

@@ -55,14 +55,16 @@
       preparePreviewData (value) {
         this.file = undefined
         this.isLoading = true
-        debug('value', value) 
-        if (value) {
-          return axios.get('/api/asset/fetch?a=' + value, {
+        const assetUrl = get(value, 'desktop')
+        debug('value', value)
+        debug('assetUrl', assetUrl) 
+        if (assetUrl) {
+          return axios.get('/api/asset/fetch?a=' + assetUrl, {
             responseType: 'arraybuffer',
           }).then(response => {
             debug('response', response)
             this.isLoading = false
-            this.filename = last(value.split('/'))
+            this.filename = last(assetUrl.split('/'))
             this.filesize = numeral(get(response, 'headers.content-length')).value()
             
             const file = new Blob([response.data], {
@@ -70,8 +72,8 @@
               type: get(response, 'headers.content-type'),
               size: this.filesize,
             })
-            this.file = { file, source: value }
-            this.$emit('update:value', value)
+            this.file = { file, source: assetUrl }
+            this.$emit('update:value', assetUrl)
           })
           .catch(error => {
             this.isLoading = false
@@ -94,7 +96,9 @@
       }
     },
     mounted () {
-      this.value && this.preparePreviewData(this.value)
+      this.value && this.preparePreviewData({
+        desktop: this.value
+      })
     },
     props: {
       value: {}
