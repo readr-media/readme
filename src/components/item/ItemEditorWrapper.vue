@@ -8,12 +8,13 @@
               <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.name.toUpperCase()}`)"></span></div>
               <template v-for="obj in group.objs">
                 <div class="panel__content--item" :key="`panel__content--item-${obj.name}`">
-                  <div class="title" :class="{ short: isShort($t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)) }">
-                    <span v-text="$t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
+                  <div class="title" :class="{ short: isShort($t(`${modelName}.${decamelize(obj.name).toUpperCase()}`)) }">
+                    <span v-text="$t(`${modelName}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
                   </div>
                   <div class="value">
                     <Item
                       :editorMode="type"
+                      :modelName="modelName"
                       :refVals="formData"
                       :itemVal.sync="formData[ obj.name ]"
                       :itemObj="obj"></Item>
@@ -56,7 +57,8 @@
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
-  const debug = require('debug')('CLIENT:ItemEditor')
+  const debug = require('debug')('CLIENT:ItemEditorWrapper')
+  const debugAdd = require('debug')('CLIENT:ItemEditorWrapper:add')
   const watcher = WatchJS.watch
   const callOffWatcher = WatchJS.unwatch
   export default {
@@ -67,13 +69,8 @@
       ItemEditorLayout,
       Spinner,
     },
-    computed: {
-      buttonizedItems () {
-        return filter(this.$store.getters.structure, obj => obj.isButtonized)
-      },
-      groups () {
-        return get(this.$store, 'getters.modelData.groups', [ 'none' ])
-      },      
+    computed: {      
+      buttonizedItems () { return filter(this.structure, obj => obj.isButtonized) },     
     },
     data () {
       return {
@@ -91,16 +88,22 @@
       decamelize,
       get,
       preview () {
-        const host = get(this.$store, 'getters.modelData.previewHost')
+        const host = get(this.modelData, 'previewHost')
         const id = get(this.item, 'id')
         debug('Go preview', [ host, id ])
         host && id && window.open(`${host}/${id}?preview=true`, '_blank')
       },
       reconstructGroups () {
+        debug('reconstructGroups!', this.structure)
         const gps = []
-        const sortedStructure = sortBy(this.$store.getters.structure, [ obj => get(obj, 'order.editor') ])
-        map(this.groups, g => {
+        const sortedStructure = sortBy(this.structure, [ obj => get(obj, 'order.editor') ])
+        const groups = get(this.modelData, 'groups', [ 'none' ])
+        debug(`get(this.modelData, 'groups', [ 'none' ]) }`, get(this.modelData, 'groups', [ 'none' ]))
+        debug('sortedStructure', sortedStructure)
+        map(groups, g => {
           const includedObj = filter(sortedStructure, obj => {
+            debug('obj.name', obj.name)
+            debug('obj.group', obj.group, g)
             if (!obj.isHidden && (obj.group === g || g === 'none')) {
               return obj.showWith ? obj.showWith(this.formData) : true
             } else {
@@ -111,14 +114,16 @@
             gps.push({ name: g, objs: includedObj })
           }
         })
-        this.actualGroups = gps     
+        this.actualGroups = gps 
+        debug('this.actualGroups', this.actualGroups)    
       },
       initValue () {
+        debug('init!')
         map(this.formData, item => this.callOffWatcher(this.formData, item.name, this.callForActionByWatcher))
         this.watchedItem = {}
         this.formData = {}
         if (this.type === 'update') {
-          map(this.$store.getters.structure, item => {
+          map(this.structure, item => {
             switch (item.type) {
               case 'TextTagItem':
                 this.formData[ item.name ] = [
@@ -137,7 +142,7 @@
             } 
           })
         } else if (this.type === 'create') {
-          map(this.$store.getters.structure, item => {
+          map(this.structure, item => {
             if (item.isEditable || item.isInitialiazible) {
               switch (item.type) {
                 case 'BooleanSwitcher':
@@ -168,20 +173,19 @@
           this.isProcessing = true
         }
         if (this.type === 'update') {
-          return this.update(this.formData).then(() => {
-            // this.$emit('update:isActive', false)
+          return this.update(this.formData).then(res => {
             this.isProcessing = false
-            return this.$emit('saved') && true
+            return this.$emit('saved', res) && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
             return Promise.reject()
           })
         } else if (this.type === 'create') {
-          return this.add(this.formData).then(() => {
-            // this.$emit('update:isActive', false)
+          return this.add(this.formData).then(res => {
             this.isProcessing = false
-            return this.$emit('saved') && true
+            debugAdd('res',  res)
+            return this.$emit('saved', res) && true
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
@@ -214,6 +218,15 @@
       item: {
         type: Object,
         default: () => {},
+      },
+      modelName: {
+        required: true,
+      },
+      modelData: {
+        required: true,
+      },
+      structure: {
+        required: true,
       },
       update: {
         type: Function,

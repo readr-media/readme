@@ -56,29 +56,32 @@
         this.file = undefined
         this.isLoading = true
         debug('value', value) 
-        value && axios.get('/api/asset/fetch?a=' + value, {
-          responseType: 'arraybuffer',
-        }).then(response => {
-          debug('response', response)
-          this.isLoading = false
-          this.filename = last(value.split('/'))
-          this.filesize = numeral(get(response, 'headers.content-length')).value()
-          
-          const file = new Blob([response.data], {
-            name: this.filename,
-            type: get(response, 'headers.content-type'),
-            size: this.filesize,
+        if (value) {
+          return axios.get('/api/asset/fetch?a=' + value, {
+            responseType: 'arraybuffer',
+          }).then(response => {
+            debug('response', response)
+            this.isLoading = false
+            this.filename = last(value.split('/'))
+            this.filesize = numeral(get(response, 'headers.content-length')).value()
+            
+            const file = new Blob([response.data], {
+              name: this.filename,
+              type: get(response, 'headers.content-type'),
+              size: this.filesize,
+            })
+            this.file = { file, source: value }
+            this.$emit('update:value', value)
           })
-          this.file = { file, source: value }
-          this.$emit('update:value', value)
-        })
-        .catch(error => {
-          this.isLoading = false
-          this.filename = ''
-          this.filesize = 0
-          this.$emit('update:value', '')
-          console.error(error) 
-        })          
+          .catch(error => {
+            this.isLoading = false
+            this.filename = ''
+            this.filesize = 0
+            this.$emit('update:value', '')
+            console.error(error) 
+          })          
+        }
+        return   
       },
       openPicker () {
         openPicker(this.$store, this.preparePreviewData)

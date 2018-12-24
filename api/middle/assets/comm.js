@@ -1,4 +1,4 @@
-const { get, last } = require('lodash')
+const { get, map, last } = require('lodash')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('../gcs.js')
 const config = require('../../config')
 const debug = require('debug')('README:api:assets:comm')
@@ -14,12 +14,14 @@ const ASSETS_TYPE = {
   VIDEO: 2,
   AUDIO: 3
 }
+const IMAGE_SIZE = [ 'desktop', 'mobile', 'tablet', 'tiny' ]
 
 const constructFileInfo = file => {
   if (!get(file, 'filename')) { return {} }
   const asset_type = get(ASSETS_TYPE, get(get(file, 'mimetype', '').split('/'), '0').toUpperCase())
   const file_name = get(file, 'originalname', ``)
   const file_ext = last(get(file, 'originalname', '').split('.'))
+  const file_type = get(file, 'mimetype', '')
   const temFileName = get(file, 'filename', `file-${Date.now().toString()}`)  
 
   const destination = asset_type !== ASSETS_TYPE.IMAGE
@@ -30,11 +32,21 @@ const constructFileInfo = file => {
     : `${ASSETS_GCS_PATH.VIDEO}`
     : `${ASSETS_GCS_PATH.IMAGE}`
 
+  const fileBasicDestination = `http://www.readr.tw${destination}/${temFileName}/${temFileName}`
+  const fileDestinations = { basic: fileBasicDestination }
+  if (asset_type === ASSETS_TYPE.IMAGE) {
+    map(IMAGE_SIZE, f => {
+      fileDestinations[ f ] = `${fileBasicDestination}.${file_ext}`
+    })
+  }    
+
   return {
     asset_type,
     destination,
+    fileDestinations,
     file_name,
     file_ext,
+    file_type,
     temFileName,
   }
 }

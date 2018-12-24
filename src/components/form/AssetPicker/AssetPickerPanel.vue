@@ -14,20 +14,20 @@
       </div>
     </div>
     <div class="asset-picker-panel uploader" slot="1">
-      <ItemEditor></ItemEditor>
+      <div v-if="isLoading"><Spinner :show="true"></Spinner></div>
+      <div v-else><ItemEditor type="create" @saved="assetGened" modelName="ASSET"></ItemEditor></div>
     </div>
   </Tab>
 </template>
 <script>
   import Tab from 'src/components/common/Tab.vue'
-  import ItemEditor from 'src/components/item/ItemEditor.vue'
   import ListFilter from 'src/components/list/ListFilter.vue'
   import ListItemIcon from 'src/components/list/ListItemIcon.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import axios from 'axios'
   import { camelizeKeys, } from 'humps'
   import { get } from 'lodash'
 
-  const ASSETS_ENDPOINT = '/api/asset/list'
   const debug = require('debug')('CLIENT:AssetPickerPanel')
   const fetchAsset = assets_endpoint => axios.get(assets_endpoint)
   const switchOff = store => store.dispatch('COMMON_LIGHTBOX_SWITCH', { active: false })
@@ -35,19 +35,41 @@
   export default {
     name: 'AssetPickerPanel',
     components: {
-      ItemEditor,
+      // Have to dynamic import component ItemEditor 'cause recursive components issue.
+      ItemEditor: () => import('src/components/item/ItemEditor.vue'),
       ListFilter,
       ListItemIcon,
+      Spinner,
       Tab
+    },
+    computed: {
+      modelData () {
+        let model
+        try {
+          model = require(`model/ASSET`)
+        } catch (error) {
+          console.log(`There's no model found: ASSET`)
+        }
+        return model        
+      },
+      endpointOfList () {
+        return get(this.modelData, 'assetsEndpoint')
+      }
     },
     data () {
       return {
         assets: [],
+        isLoading: false,
         selectedItem: -1,
         tabs: [ this.$t('EDITOR.ASSET_PICKER.PICK'), this.$t('EDITOR.ASSET_PICKER.GENERATE') ]
       }
     },
     methods: {
+      assetGened (res) {
+        debug('Got a new asset!!!!!', res)
+        const assetDestination = get(res, 'body.url.desktop')
+        setTimeout(() => this.callback(assetDestination).then(() => switchOff(this.$store) ), 1000)
+      },
       choose (index) {
         debug('select!', index)
         this.selectedItem = index
@@ -55,12 +77,12 @@
       confirm () {
         debug('Going to call back!', `${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`)
         this.callback(`${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`)
-        switchOff(this.$store)
+          .then(() => switchOff(this.$store) )
       },
     },
     mounted () {
       debug('Going to fetch assets list.')
-      ASSETS_ENDPOINT && fetchAsset(ASSETS_ENDPOINT)
+      this.endpointOfList && fetchAsset(this.endpointOfList)
         .then(res => {
           debug('Assets Get!', res.data)
           const data = camelizeKeys(res.data)
@@ -87,6 +109,10 @@
     padding 30px 80px
     display flex
     flex-direction column
+    overflow auto
+    .uploader
+      > div
+        height 100%
     &__list
       flex 1
       display flex

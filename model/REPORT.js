@@ -37,7 +37,7 @@ export const model = [
   { name: 'publishedAt', type: 'Datetime', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
   { name: 'description', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, autoHeightActive: true, },
   { name: 'ogDescription', type: 'TextareaInput', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, autoHeightActive: true, },
-  { name: 'heroImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, },
-  { name: 'ogImage', type: 'Image', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, },
+  { name: 'heroImage', type: 'AssetPicker', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, },
+  { name: 'ogImage', type: 'AssetPicker', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, },
   // { name: 'updatedBy', type: 'TextInput', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
 ]

@@ -40,3 +40,4 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic' ]
+export const assetsEndpoint = '/api/asset/list?type=image'
