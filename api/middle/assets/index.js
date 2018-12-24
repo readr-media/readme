@@ -21,7 +21,20 @@ const mock = [
   { asset_type: 2, destination: 'http://dev.readr.tw/assets/video/e0652038fc543d31a65eecaabcdd4bec/0', file_ext: 'mp4', id: 0, title: 'TEST VID', copyright: 2, file_name: 'SampleVideo_1280x720_10mb' },
   { asset_type: 3, destination: 'http://dev.readr.tw/assets/audio/51f9c647d7670e86df56433974fd5b51/1', file_ext: 'mp3', id: 1, title: 'TEST AUD', copyright: 1, file_name: 'SampleAudio_0.7mb.mp3' },
 ]
-router.use('/list', authVerify, (req, res) => {
+
+const checkPermission = (req, res, next) => {
+  const cookies = new Cookies( req, res, {} )
+  const token = cookies.get('csrf')
+  jwtService.verifyToken(token, (err, decoded) => {
+    if (err) {
+      res.status(403).send(`Invalid token.`)
+    } else {
+      req.decoded = decoded
+      next()
+    }
+  })
+}
+router.use('/list', checkPermission, (req, res) => {
   debug('Got id', req.query.id)
   debug('Got id', req.body.id)
   res.json({ _items: mock})
@@ -44,18 +57,6 @@ router.post('/create', authVerify, (req, res) => {
   transferFileToStorage(file)
 })
 
-const checkPermission = (req, res, next) => {
-  const cookies = new Cookies( req, res, {} )
-  const token = cookies.get('csrf')
-  jwtService.verifyToken(token, (err, decoded) => {
-    if (err) {
-      res.status(403).send(`Invalid token.`)
-    } else {
-      req.decoded = decoded
-      next()
-    }
-  })
-}
 router.post('/process/:owner', checkPermission, upload.single('filepond-file'), (req, res) => {
   const type = get(req, 'params.owner')
   const file = req.file

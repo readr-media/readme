@@ -91,6 +91,7 @@ router.put('/update', (req, res) => {
   if (ogimageInfo) {
     payload.og_image = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${ogimageInfo.destination}/${ogimageInfo.temFileName}/${ogimageInfo.temFileName}.${ogimageInfo.file_ext}`
   }
+  payload.updated_by = req.user.id
 
   superagent
   .put(url)

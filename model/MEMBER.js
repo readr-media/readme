@@ -15,8 +15,8 @@ const active_options = [
 
 export const model = [
   { name: 'id', type: 'TextInput', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, },
-  { name: 'nickname', type: 'TextInput', width: { list: '200', editor: '500' }, isEditable: false, isListable: true, isInitiliazible: true, isEditEntry: true, },
-  { name: 'mail', type: 'TextInput', width: { list: '250', editor: '200' }, isEditable: false, isListable: true, isInitiliazible: true, isEditEntry: true, },
+  { name: 'nickname', type: 'TextInput', width: { list: '200', editor: '500' }, isEditable: false, isListable: true, isInitialiazible: true, isEditEntry: true, },
+  { name: 'mail', type: 'TextInput', width: { list: '250', editor: '200' }, isEditable: false, isListable: true, isInitialiazible: true, isEditEntry: true, },
   { name: 'role', type: 'RadioItem', width: { list: '110', editor: '400' }, isEditable: true, isListable: true, options: role_options, },
   { name: 'active', type: 'RadioItem', width: { list: '80', editor: '400' }, isEditable: false, isListable: true, options: active_options, },
   { name: 'customEditor', type: 'BooleanSwitcher', width: { list: '80', editor: '400' }, isEditable: true, isListable: true, options: custom_editor_options, },

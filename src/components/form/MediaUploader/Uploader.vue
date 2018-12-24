@@ -6,7 +6,7 @@
         :file="file"></MidiaPreviewer>
       <div class="uploader__item--info">
         <div class="name"><span v-text="itemName"></span></div>
-        <div class="size"><span v-text="calcSize(itemSize)"></span></div>
+        <div class="size"><span v-text="calcFileSize(itemSize)"></span></div>
       </div>
     </template>
     <FilePond
@@ -22,14 +22,14 @@
       @updatefiles="onupdatefiles"
       @addfile="addfile"
       @init="init"/>
-      <div class="uploader__spinner"><Spinner :show="isLoading"></Spinner></div>
+    <div class="uploader__spinner"><Spinner :show="isLoading"></Spinner></div>
   </UploaderLayout>
 </template>
 <script>
-  import MidiaPreviewer from './MidiaPreviewer.vue'
+  import MidiaPreviewer from 'src/components/common/MidiaPreviewer.vue'
   import Spinner from 'src/components/Spinner.vue'
   import UploaderLayout from './UploaderLayout.vue'
-  import numeral from 'numeral'
+  import { calcFileSize } from 'src/util/comm'
   import { get } from 'lodash'
 
   /** import file uploader lib */
@@ -129,9 +129,7 @@
         debug('files',  this.$refs.pond.getFiles())
         get(this.$refs.pond.getFiles(), 'length', 0) > 0 && (this.isLoading = true)
       },
-      calcSize (bytes) {
-        return numeral(bytes).format('0 b')
-      },
+      calcFileSize,
       addfile(error, file) {
         debug('file loaded', error, file)
         if (!error) {

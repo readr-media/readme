@@ -16,6 +16,11 @@ export function createStore () {
       },
       asideItems: [],
       asideNav: [],
+      commonLightboxFlag: {
+        active: false,
+        component: {},
+        props: {},
+      },
       list: [],
       listCurrent: '',
       listItemsCount: 0,

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitiliazible && editorMode === 'create'))">
+  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
       :placeHolder="$t(`${$store.getters.modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
@@ -49,6 +49,8 @@
       :destination="refVals[ 'destination' ]"
       :fileExt="refVals[ 'fileExt' ]"
       :fileObj.sync="value"></Uploader>
+    <AssetPicker v-else-if="itemObj.type === 'AssetPicker'"
+      :value.sync="value"></AssetPicker>
   </div>
   <div v-else>
     <span v-if="itemObj.type === 'RadioItem'" v-text="mapValue(itemObj.name, itemObj.options, itemVal)"></span>
@@ -57,6 +59,7 @@
   </div>
 </template>
 <script>
+  import AssetPicker from 'src/components/form/AssetPicker/AssetPicker.vue'
   import BooleanSwitcher from 'src/components/form/BooleanSwitcher.vue'
   import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
@@ -79,6 +82,7 @@
   export default {
     name: 'Item',
     components: {
+      AssetPicker,
       BooleanSwitcher,
       ButtunizedItem,
       CheckboxItem,

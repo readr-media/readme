@@ -211,6 +211,12 @@ export default {
       'INCORRECT_FILE_TYPE': '僅接受影片、圖檔與音檔素材',
       'ERROR': '讀取檔案發生錯誤'
     },
+    'ASSET_PICKER': {
+      'DESCRIPTION': '選擇素材',
+      'PICK': '選擇素材',
+      'GENERATE': '新增素材',
+      'TAKE_UP': '使用此素材',
+    },
   },
   'POLL': {
     'NEW': '新增投票',
