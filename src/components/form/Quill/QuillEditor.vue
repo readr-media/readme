@@ -193,7 +193,7 @@ export default {
       &:after
         content 'More'
     >>> .ql-embed
-      width 54px
+      width 70px
       &:after
         content 'Embed'
     >>> hr

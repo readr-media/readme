@@ -1,5 +1,5 @@
 <template>
-  <Tab :tabs="tabs">
+  <Tab :tabs="tabs" :defaultIndex="1">
     <div class="asset-picker-panel picker" slot="0">
       <div class="asset-picker-panel__search"><ListFilter></ListFilter></div>
       <div class="asset-picker-panel__list">
@@ -110,7 +110,7 @@
     display flex
     flex-direction column
     overflow auto
-    .uploader
+    &.uploader
       > div
         height 100%
     &__list

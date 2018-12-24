@@ -29,7 +29,7 @@ export const model = [
   { name: 'id', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 } },
   { name: 'destination', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
   { name: 'assetType', type: 'RadioItem', group: 'info', width: { list: '80', editor: '400' }, isEditable: false, isListable: true,options: assets_options, order: { list: 4 }, },
-  { name: 'title', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, },
+  { name: 'title', type: 'TextInput', group: 'basic', width: { list: '400', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, required: true },
   
   { name: 'fileName', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
   { name: 'fileExt', type: 'TextInput', group: 'info', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true },
