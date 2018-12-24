@@ -33,7 +33,6 @@
         @change="$_quillEditor_onEditorChange($event)">
       </div>
       <div class="editor__html" v-text="content"></div>
-      <input ref="uploadImg" type="file" accept="image/*" @change="$_quillEditor_uploadImg">
     </section>
   </QuillEditorWrapper>
 </template>
@@ -42,7 +41,9 @@
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import AssetPickerPanel from 'src/components/form/AssetPicker/AssetPickerPanel.vue'
 import QuillEditorWrapper from './QuillEditorWrapper.vue'
+import axios from 'axios'
 import { get, } from 'lodash'
 import {
   registerEmbed,
@@ -50,9 +51,11 @@ import {
   registerFigcaption, } from './custom.js'
 
 const debug = require('debug')('CLIENT:QuillEditor')
-const uploadImage = (store, file) => {
-  return  store.dispatch('UPLOAD_IMAGE', { file, type: 'post', })
-}
+const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
+  active: true,
+  component: AssetPickerPanel,
+  callback,
+})
 const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
 
 export default {
@@ -85,6 +88,8 @@ export default {
           },
         },
       },
+      file: undefined,
+      isLoading: false,
       isInitialized: false,
     }
   },
@@ -106,9 +111,10 @@ export default {
       // }
     },
     $_quillEditor_imageHandler () {
-      this.$refs.uploadImg.click()
+      openPicker(this.$store, this.preparePreviewData)
     },
     $_quillEditor_insertToEditor (url) {
+      this.quillEditor.focus()
       const range = this.quillEditor.getSelection()
       this.quillEditor.insertEmbed(range.index, 'image', url)
       this.quillEditor.insertEmbed(range.index + 1, 'figcaption', 'null')
@@ -122,20 +128,12 @@ export default {
     $_quillEditor_toggleHtml (event) {
       event.target.parentNode.parentNode.classList.toggle('showHtml')
     },
-    $_quillEditor_uploadImg () {
-      const file = this.$refs.uploadImg.files[0]
-      if (/^image\//.test(file.type)) {
-        const fd = new FormData()
-        fd.append('image', file)
-        uploadImage(this.$store, fd)
-          .then((res) => {
-            this.$_quillEditor_insertToEditor(res.body.url)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      }
-    },
+    preparePreviewData (value) {
+      debug('value', value)
+      const assetUrl = get(value, 'desktop')
+      this.$_quillEditor_insertToEditor(assetUrl)
+      return Promise.resolve()
+    },    
     valueSetUpEmbed () {
       debug('call valueSetter')
       setUpValue(this.$store, { active: true, type: 'embed', value: '' })
@@ -193,7 +191,7 @@ export default {
       &:after
         content 'More'
     >>> .ql-embed
-      width 54px
+      width 70px
       &:after
         content 'Embed'
     >>> hr

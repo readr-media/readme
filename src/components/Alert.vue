@@ -63,7 +63,7 @@
     height 100vh
     width 100vw
     background-color rgba(0,0,0,0.8)
-    z-index 99999
+    z-index 9999999
     display flex
     justify-content center
     align-items center

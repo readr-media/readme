@@ -26,9 +26,14 @@
         this.activeItem = index
       }
     },
-    mounted () {},
+    mounted () {
+      this.activeItem = this.defaultIndex
+    },
     props: {
-      tabs: {}
+      tabs: {},
+      defaultIndex: {
+        default: 0
+      }
     },
   }
 </script>
