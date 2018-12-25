@@ -257,7 +257,7 @@ export default {
   'POST': {
     'NEW': '新增貼文',
     'EDIT': '編輯貼文',
-    'ID': 'ID',
+    'ID': '編號',
     'TITLE': '標題',
     'UPDATED_AT': '更新時間',
     'CREATED_AT': '建立時間',

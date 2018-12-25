@@ -50,37 +50,37 @@ const isSupposedToShowWithTypeReview = data => { return get(data, 'type') == POS
 const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW }
 
 export const model = [
-  { name: 'id', type: 'TextInput', group: 'info', width: { list: '70', editor: '500' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
-  { name: 'publishStatus', type: 'RadioItem', group: 'info', width: { list: '70', editor: '400' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true, isSchedulable: true, order: { list: 3 },  },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 4 }, },
-  { name: 'createdAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, },
-  { name: 'publishedAt', type: 'Datetime', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
-  { name: 'updatedBy', type: 'TextInput', group: 'info', width: { list: '180', editor: '200' }, isEditable: false, isListable: false, isHidden: true, },
+  { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '100', }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
+  { name: 'publishStatus', type: 'RadioItem', group: 'info', listWidth: { min: '94' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true, isSchedulable: true, order: { list: 3 },  },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 4 }, },
+  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, },
+  { name: 'publishedAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
+  { name: 'updatedBy', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true, },
 
-  { name: 'type', type: 'Dropdownlist', group: 'basic', width: { list: '70', editor: '400' }, isEditable: true, isListable: true, isNumSentitive: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
-  { name: 'projectId', type: 'Dropdownlist', group: 'basic', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
-  { name: 'author', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: false, isListable: true, isHidden: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
-  { name: 'authors', type: 'TextTagItem', group: 'basic', width: { list: '120', editor: '400' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
-  { name: 'postOrder', type: 'TextInput', group: 'basic', width: { list: '50', editor: '80' }, isEditable: true, isListable: false, isNumSentitive: true, },
+  { name: 'type', type: 'Dropdownlist', group: 'basic', listWidth: { min: '60' }, isEditable: true, isListable: true, isNumSentitive: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
+  { name: 'projectId', type: 'Dropdownlist', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
+  { name: 'author', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: false, isListable: true, isHidden: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
+  { name: 'authors', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
+  { name: 'postOrder', type: 'TextInput', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', width: { list: '300', editor: '500' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5 }, },
-  { name: 'content', type: 'ContentEditor', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, },
+  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '600' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5 }, },
+  { name: 'content', type: 'ContentEditor', group: 'content', isEditable: true, isListable: false, },
 
   // For post.type === review
-  { name: 'link', type: 'TextInput', group: 'content', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
+  { name: 'link', type: 'TextInput', group: 'content', isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
 
   // For post.type === report
-  { name: 'heroImage', type: 'AssetPicker', group: 'content', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, acceptedFileTypes: [ 'image/*' ], },
-  { name: 'slug', type: 'TextInput', group: 'content', width: { list: '110', editor: '400' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
+  { name: 'heroImage', type: 'AssetPicker', group: 'content', listWidth: { min: '180', max: '180' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, acceptedFileTypes: [ 'image/*' ], },
+  { name: 'slug', type: 'TextInput', group: 'content', isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
 
 
   // For post.type === news || review
-  { name: 'tags', type: 'TextTagItem', group: 'content', width: { list: '80', editor: '400' }, isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
+  { name: 'tags', type: 'TextTagItem', group: 'content', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
   
   // For post.type === news
-  { name: 'ogTitle', type: 'TextInput', group: 'share', width: { list: '400', editor: '500' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
-  { name: 'ogDescription', type: 'TextareaInput', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
-  { name: 'ogImage', type: 'AssetPicker', group: 'share', width: { list: '180', editor: '200' }, isEditable: true, isListable: false, acceptedFileTypes: [ 'image/*' ], },
+  { name: 'ogTitle', type: 'TextInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
+  { name: 'ogDescription', type: 'TextareaInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
+  { name: 'ogImage', type: 'AssetPicker', group: 'share', isEditable: true, isListable: false, acceptedFileTypes: [ 'image/*' ], },
 
 ]
 

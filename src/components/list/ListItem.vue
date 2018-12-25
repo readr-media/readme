@@ -8,7 +8,11 @@
         @click="clickHandler(obj.isEditEntry)"
         :key="`list-item__content-${obj.name}-${Date.now()}`"
         :class="`list-item__content ${obj.name}`"
-        :style="{ width: get(obj, 'width.list') && `${get(obj, 'width.list')}px`, flex: !get(obj, 'width.list') ? '1' : 'none' }">
+        :style="{
+          minWidth: get(calcWidth(obj), 'minWidth'),
+          maxWidth: get(calcWidth(obj), 'maxWidth'),
+          flex: 1,
+        }">
         <template v-if="!obj.isAnchoric || type === 'header'">
           <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
@@ -53,6 +57,18 @@
       }
     },
     methods: {
+      calcWidth (obj) {
+        const setting = get(obj, 'listWidth')
+        if (setting) {
+          const minWidth = obj.listWidth.min && `${obj.listWidth.min}px`
+          const maxWidth = obj.listWidth.max ? `${obj.listWidth.max}px` : minWidth
+          return { minWidth, maxWidth, flex: 1 }
+        } else {
+          return {
+            flex: 1
+          }
+        }
+      },
       clickHandler (isEditEntry) {
         isEditEntry && this.$emit('edit', this.item)
       },
@@ -120,9 +136,9 @@
     justify-content flex-start
     &.header
       font-weight 800
-      border-bottom 1px solid #940606
-      padding-bottom 10px
-      margin-bottom 15px
+      margin-bottom 8px
+      .list-item__content
+        align-items center
       
     &:not(.header)
       :focus, &:hover
