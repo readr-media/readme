@@ -25,7 +25,7 @@ export const model = [
   { name: 'ogTitle', type: 'TextInput', isEditable: true, isListable: false, isHidden: false, order: { editor: 2.5 }, },
   { name: 'progress', type: 'TextInput', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
   { name: 'memoPoints', type: 'TextInput', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
-  { name: 'slug', type: 'TextInput', listWidth: { min: '110' }, isEditable: true, isListable: true, order: { editor: 1.5, list: 3 }, },
+  { name: 'slug', type: 'TextInput', listWidth: { min: '110', max: '200' }, isEditable: true, isListable: true, order: { editor: 1.5, list: 3 }, },
   { name: 'status', type: 'RadioItem', listWidth: { min: '80' }, isEditable: true, isListable: true, options: status_options, order: { editor: 0, list: 4 }, },
   { name: 'publishStatus', type: 'RadioItem', listWidth: { min: '80' }, isEditable: true, isListable: true, options: publish_status_options, order: { editor: 0, list: 5 }, },
   { name: 'projectOrder', type: 'TextInput', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 6 }, },
