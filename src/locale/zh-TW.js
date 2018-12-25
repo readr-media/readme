@@ -124,9 +124,15 @@ export default {
     'CUSTOM_EDITOR_NEVER': '-',    
     'MAIL': '信箱',
     'ACTIVE': '狀態',
-    'ACTIVE_0': '未啟用',
-    'ACTIVE_1': '啟用',
+    'ACTIVE_INACTIVE': '未啟用',
+    'ACTIVE_ACTIVATED': '啟用',
     'ACTIVE_NEVER': '-',
+    'UPDATED_AT': '更新時間',    
+    'CREATED_AT': '建立時間',    
+    'BIRTHDAY': '生日',
+    'WORK': '職業',
+    'PHONE': '電話',
+    'NAME': '姓名'
   },
   'MEMO': {
     'NEW': '新增筆記',
@@ -166,6 +172,7 @@ export default {
     'CANCEL': '取消',  
     'PREVIEW': '預覽',
     'GROUPS': {
+      'ADVANCED': '進階設定',
       'BASIC': '基本設定',
       'CONTENT': '內容設定',
       'EMBED': '嵌入設定',
@@ -198,7 +205,9 @@ export default {
       'SCHEDULE': '排程',
       'UNSCHEDULE': '取消排程',
       'SCHEDULE_CONFIRM': '確定',
-      'PENDING': '待處理'
+      'PENDING': '待處理',
+      'ACTIVATE': '啟用',
+      'DEACTIVATE': '停用'
     },
     'DROPDOWN_LIST': {
       'HINT': '請選擇',
