@@ -28,8 +28,6 @@
       :autocomplete="autocompleteArr"></TextTagItem>
     <BooleanSwitcher v-else-if="itemObj.type === 'BooleanSwitcher'"
       :status.sync="value"></BooleanSwitcher>
-    <ImageUploader v-else-if="itemObj.type === 'Image'"
-      :imageUrl.sync="value"></ImageUploader>
     <Dropdownlist v-else-if="itemObj.type === 'Dropdownlist'"
       :name="itemObj.name"
       :defaultVal="itemObj.default"
@@ -65,7 +63,6 @@
   import CheckboxItem from 'src/components/form/CheckboxItem.vue'
   import DatetimeItem from 'src/components/form/DatetimeItem.vue'
   import Dropdownlist from 'src/components/form/Dropdownlist.vue'
-  import ImageUploader from 'src/components/form/ImageUploader.vue'
   import ItemEditorLayout from 'src/components/item/ItemEditorLayout.vue'
   import MediaOptions from 'src/components/form/MediaOptions.vue'
   import RadioItem from 'src/components/form/RadioItem.vue'
@@ -88,7 +85,6 @@
       CheckboxItem,
       DatetimeItem,
       Dropdownlist,
-      ImageUploader,
       ItemEditorLayout,
       MediaOptions,
       QuillEditor,

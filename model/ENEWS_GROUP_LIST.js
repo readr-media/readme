@@ -5,20 +5,20 @@ const active_options = [
 ]
 
 export const model = [
-  { name: 'id', type: 'TextInput', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true, },
+  { name: 'id', type: 'TextInput', listWidth: { min: '50', max: '500' }, isEditable: false, isListable: false, isHidden: true, },
   { name: 'groupName', type: 'TextInput', isEditable: true, isListable: true, isAnchoric: true, },
-  { name: 'count', type: 'TextInput', width: { list: '90', editor: '90', }, isEditable: false, isListable: true, isHidden: true, },
-  { name: 'updatedAt', type: 'Datetime', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
-  { name: 'createdAt', type: 'Datetime', width: { list: '180', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
+  { name: 'count', type: 'TextInput', listWidth: { min: '90', max: '90', }, isEditable: false, isListable: true, isHidden: true, },
+  { name: 'updatedAt', type: 'Datetime', listWidth: { min: '180', max: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
+  { name: 'createdAt', type: 'Datetime', listWidth: { min: '180', max: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
 ]
 
 export const subModel = [
-  { name: 'id', type: 'TextInput', width: { list: '50', editor: '500' }, isEditable: false, isListable: false, isHidden: true, isHidden: true, },
-  { name: 'mail', type: 'TextInput', width: { list: '250', editor: '200' }, isEditable: true, isListable: true, isInitialiazible: true, isEditEntry: true, },
-  { name: 'nickname', type: 'TextInput', width: { list: '200', editor: '500' }, isEditable: true, isListable: true, isInitialiazible: true, },
-  { name: 'active', type: 'RadioItem', width: { list: '50', editor: '400' }, isEditable: false, isListable: true, options: active_options, isHidden: true, },
-  { name: 'updatedAt', type: 'Datetime', width: { list: '150', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
-  { name: 'createdAt', type: 'Datetime', width: { list: '150', editor: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
+  { name: 'id', type: 'TextInput', listWidth: { min: '50', max: '500' }, isEditable: false, isListable: false, isHidden: true, isHidden: true, },
+  { name: 'mail', type: 'TextInput', listWidth: { min: '250', max: '200' }, isEditable: true, isListable: true, isInitialiazible: true, isEditEntry: true, },
+  { name: 'nickname', type: 'TextInput', listWidth: { min: '200', max: '500' }, isEditable: true, isListable: true, isInitialiazible: true, },
+  { name: 'active', type: 'RadioItem', listWidth: { min: '50', max: '400' }, isEditable: false, isListable: true, options: active_options, isHidden: true, },
+  { name: 'updatedAt', type: 'Datetime', listWidth: { min: '150', max: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
+  { name: 'createdAt', type: 'Datetime', listWidth: { min: '150', max: '200' }, isEditable: false, isListable: true, isDatetimeSentitive: true, isHidden: true, },
 ]
 
 export const LIST_MAXRESULT = 15

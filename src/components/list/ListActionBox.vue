@@ -51,7 +51,6 @@
     outline none
     &__switcher
       display block
-      background-color #eeeeee
       background-image url(/public/icons/icon-more.png)
       background-position center center
       background-size auto 20px
@@ -61,7 +60,7 @@
       width 32px
       height 32px
       &:hover
-        background-color #e1e1e1
+        background-color #eeeeee
     &__actions
       position absolute
       top 100%

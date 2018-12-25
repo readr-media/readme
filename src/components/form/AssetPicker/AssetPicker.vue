@@ -10,7 +10,7 @@
         <div class="size"><span v-text="calcFileSize(filesize)"></span></div>
       </div>
     </div>
-    <div class="asset-picker__wrapper" v-else>
+    <div class="asset-picker__wrapper" :class="{ grey: theme === 'grey' }" v-else>
       <template v-if="!isLoading">
         <div class="asset-picker__upload-button"></div>
         <div class="asset-picker__desc"><span v-text="$t('EDITOR.ASSET_PICKER.DESCRIPTION')"></span></div>
@@ -101,6 +101,7 @@
       })
     },
     props: {
+      theme: {},
       value: {}
     }
   }
@@ -127,6 +128,8 @@
       align-items center
       flex-direction column
       cursor pointer
+      &.grey
+        background-color #f7f7f7      
     &__preview
       .content
         height 185px

@@ -3,7 +3,6 @@ import {
   fetchAsideNav,
   checkLoginStatus,
   fetchProfile,
-  uploadImage,
 } from 'src/api'
 import * as actionsMember from 'src/store/actions/member'
 import * as actionsList from 'src/store/actions/list'
@@ -46,10 +45,6 @@ export default Object.assign({
 
   SET_VALUE: ({ commit, dispatch }, { active, type, value }) => {
     return commit('SET_VALUE', { active, type, value })
-  },
-
-  UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
-    return uploadImage(file, type)
   },
 
   UPDATE_CLIENT_SIDE_MOUNTED: ({ commit, dispatch }) => {
