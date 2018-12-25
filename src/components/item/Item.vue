@@ -115,7 +115,8 @@
       },
     },
     mounted () {
-      this.value = get(this, 'itemVal', this.itemObj.default)
+      debug('this.itemObj.default', this.itemObj.default)
+      this.value = get(this, 'itemVal') || this.itemObj.default
       this.isMounted = true
       // this.$forceUpdate()
     },

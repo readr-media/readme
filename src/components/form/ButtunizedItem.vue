@@ -53,6 +53,12 @@
           case 'DRAFT': {
             return 'PUBLISH'
           }
+          case 'ACTIVATED': {
+            return 'DEACTIVATE'
+          }
+          case 'INACTIVE': {
+            return 'ACTIVATE'
+          }          
           case 'SCHEDULING': {
             return 'UNSCHEDULE'
           }
@@ -83,6 +89,14 @@
             valSet = find(this.options, opt => opt.name === 'UNPUBLISHED')
             break
           }
+          case 'ACTIVATE': {
+            valSet = find(this.options, opt => opt.name === 'ACTIVATED')
+            break
+          }
+          case 'INACTIVE': {
+            valSet = find(this.options, opt => opt.name === 'INACTIVE')
+            break
+          }          
         }        
         debug('go update value', valSet, get(valSet, 'name', 0))
         if (get(valSet, 'name', 0) === 'PUBLISHED') {

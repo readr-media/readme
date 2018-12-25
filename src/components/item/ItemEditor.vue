@@ -110,7 +110,7 @@
           if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
             preForm[ item.name ] = this.me
           }
-          if (item.required && (!preForm[ item.name ] && preForm[ item.name ] !== 0)) {
+          if (item.required&& ((!preForm[ item.name ] && preForm[ item.name ] !== 0) || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
             debug(item.name, item.required, preForm[ item.name ])
             this.isAllowedToSave = false
           }
