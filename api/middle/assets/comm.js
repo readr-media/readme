@@ -1,5 +1,6 @@
-const { get, map, last } = require('lodash')
+const { get, map, last, trim } = require('lodash')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('../gcs.js')
+const { processImage } = require('../sharp.js')
 const config = require('../../config')
 const debug = require('debug')('README:api:assets:comm')
 const fs = require('fs')
@@ -32,7 +33,7 @@ const constructFileInfo = file => {
     : `${ASSETS_GCS_PATH.VIDEO}`
     : `${ASSETS_GCS_PATH.IMAGE}`
 
-  const fileBasicDestination = `http://www.readr.tw${destination}/${temFileName}/${temFileName}`
+  const fileBasicDestination = `${config.SERVER_PROTOCOL}:${config.SERVER_HOST}/${destination}/${temFileName}/${temFileName}`
   const fileDestinations = { basic: fileBasicDestination }
   if (asset_type === ASSETS_TYPE.IMAGE) {
     map(IMAGE_SIZE, f => {
@@ -51,23 +52,50 @@ const constructFileInfo = file => {
   }
 }
 
+const removeTmpFile = file => {
+  fs.unlink(file.path, err => {
+    if (err) {
+      console.error(`Error: delete ${file.path} in fail.`, err)
+    }
+    console.info(`successfully deleted ${file.path}`)
+  })  
+}
 const bucket = initBucket(config.GCP_FILE_BUCKET)
 const transferFileToStorage = async file => {
   debug('Going to transfer file to storage.', file)
   if (!get(file, 'filename')) { return Promise.resolve() }
-  return uploadFileToBucket(bucket, file.path, {
-    destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_ext}`,
-    metadata: { contentType: file.mimetype }
-  }).then(bucketFile => {
-    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
-    fs.unlink(file.path, err => {
-      if (err) {
-        console.error(`Error: delete ${file.path} in fail.`, err)
-      }
-      console.info(`successfully deleted ${file.path}`)
-    })
-    makeFilePublic(bucketFile)
-  })
+
+  const fileType = get(file, 'asset_type')
+  switch (fileType) {
+    case ASSETS_TYPE.IMAGE:
+      processImage(file).then(images => {
+        Promise.all(images.map(path => {
+          const fileName = trim(path, 'tmp/')
+          return uploadFileToBucket(bucket, path, {
+            destination: `${file.destination}/${file.filename}/${fileName}.${file.file_ext}`,
+            metadata: { contentType: file.mimetype }
+          }).then(bucketFile => {
+            console.info(`file ${fileName}(${path}) completed uploading to bucket `)
+            removeTmpFile({ path })
+            makeFilePublic(bucketFile)
+          })
+        }))
+      }).catch(err => {
+        console.error(`Error occurred process file: ${file.originalname}`)
+        console.error(err)
+      })
+      // Then, dont break, and go next to upload main file.
+    case ASSETS_TYPE.VIDEO:
+    case ASSETS_TYPE.AUDIO:
+      return uploadFileToBucket(bucket, file.path, {
+        destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_ext}`,
+        metadata: { contentType: file.mimetype }
+      }).then(bucketFile => {
+        console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
+        removeTmpFile(file)
+        makeFilePublic(bucketFile)
+      })
+  }
 }
 
 module.exports = {

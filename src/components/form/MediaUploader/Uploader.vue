@@ -22,7 +22,7 @@
       @updatefiles="onupdatefiles"
       @addfile="addfile"
       @init="init"/>
-    <div class="uploader__spinner"><Spinner :show="isLoading"></Spinner></div>
+    <div class="uploader__spinner" v-show="isLoading"><Spinner :show="isLoading"></Spinner></div>
   </UploaderLayout>
 </template>
 <script>
