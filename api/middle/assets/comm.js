@@ -15,7 +15,7 @@ const ASSETS_TYPE = {
   VIDEO: 2,
   AUDIO: 3
 }
-const IMAGE_SIZE = [ 'desktop', 'mobile', 'tablet', 'tiny' ]
+const IMAGE_SIZE = [ 'desktop', 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
 
 const constructFileInfo = file => {
   if (!get(file, 'filename')) { return {} }
@@ -37,7 +37,7 @@ const constructFileInfo = file => {
   const fileDestinations = { basic: fileBasicDestination }
   if (asset_type === ASSETS_TYPE.IMAGE) {
     map(IMAGE_SIZE, f => {
-      fileDestinations[ f ] = `${fileBasicDestination}.${file_ext}`
+      fileDestinations[ f ] = `${fileBasicDestination}-${f}.${file_ext}`
     })
   }    
 
