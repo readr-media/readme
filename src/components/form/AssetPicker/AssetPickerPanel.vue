@@ -26,8 +26,14 @@
   import Spinner from 'src/components/Spinner.vue'
   import axios from 'axios'
   import { camelizeKeys, } from 'humps'
-  import { get } from 'lodash'
+  import { get, map } from 'lodash'
 
+  const ASSETS_TYPE = {
+    IMAGE: 1,
+    VIDEO: 2,
+    AUDIO: 3
+  }
+  const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
   const debug = require('debug')('CLIENT:AssetPickerPanel')
   const fetchAsset = assets_endpoint => axios.get(assets_endpoint)
   const switchOff = store => store.dispatch('COMMON_LIGHTBOX_SWITCH', { active: false })
@@ -75,10 +81,18 @@
         this.selectedItem = index
       },
       confirm () {
-        debug('Going to call back!', `${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`)
-        this.callback({
-          desktop: `${get(this.assets, `${this.selectedItem}.destination`)}.${get(this.assets, `${this.selectedItem}.fileExt`)}`
-        }).then(() => switchOff(this.$store) )
+        const fileBasicDestination = get(this.assets, `${this.selectedItem}.destination`)
+        const fileDestinations = {}
+        const file = get(this.assets, this.selectedItem)
+        debug('Going to call back!', file)
+        if (get(file, 'assetType') === ASSETS_TYPE.IMAGE) {
+          map(IMAGE_SIZE, f => {
+            fileDestinations[ f ] = `${fileBasicDestination}-${f}.${get(file, 'fileExt')}`
+          })
+        }     
+        fileDestinations.desktop = `${fileBasicDestination}.${get(file, 'fileExt')}`
+        debug('fileDestinations', fileDestinations)
+        this.callback(fileDestinations).then(() => switchOff(this.$store) )
       },
     },
     mounted () {
