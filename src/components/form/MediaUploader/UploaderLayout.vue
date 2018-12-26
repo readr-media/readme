@@ -135,6 +135,8 @@
         display none
       &--drop-label
         margin 40px auto
+        label
+          cursor pointer     
       &--action-remove-item
         opacity 1
         left auto
@@ -147,15 +149,6 @@
         display none
       &--file-info
         transform none!important
-        // position absolute
-        // top 100%
-        // margin-top 10px
-        // &-main
-        //   color #000
-        //   font-size 0.875rem
-        // &-sub
-        //   font-size 0.75rem
-        //   color #5a5a5a
       &--list
         left 0
         width 100%

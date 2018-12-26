@@ -96,6 +96,8 @@
       }
     },
     mounted () {
+      this.$el.ondragstart = function () { return false }
+      this.$el.onselectstart = function () { return false }      
       this.value && this.preparePreviewData({
         desktop: this.value
       })
