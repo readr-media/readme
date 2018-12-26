@@ -27,9 +27,9 @@ const processImage = file => {
           .resize(opt.width)
           .min()
           .withoutEnlargement()
-          .toFile(`tmp/${fileName}-${opt.target}-${opt.width}`)
+          .toFile(`tmp/${fileName}-${opt.target}`)
           .then(() => {
-            outputPaths.push(`tmp/${fileName}-${opt.target}-${opt.width}`)
+            outputPaths.push(`tmp/${fileName}-${opt.target}`)
           })
       }))
       .then(() => {
