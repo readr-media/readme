@@ -33,7 +33,7 @@ const constructFileInfo = file => {
     : `${ASSETS_GCS_PATH.VIDEO}`
     : `${ASSETS_GCS_PATH.IMAGE}`
 
-  const fileBasicDestination = `${config.SERVER_PROTOCOL}:${config.SERVER_HOST}/${destination}/${temFileName}/${temFileName}`
+  const fileBasicDestination = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${destination}/${temFileName}/${temFileName}`
   const fileDestinations = { basic: fileBasicDestination }
   if (asset_type === ASSETS_TYPE.IMAGE) {
     map(IMAGE_SIZE, f => {

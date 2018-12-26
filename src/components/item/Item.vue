@@ -116,7 +116,7 @@
     },
     mounted () {
       debug('this.itemObj.default', this.itemObj.default)
-      this.value = get(this, 'itemVal') || this.itemObj.default
+      this.value = get(this, 'itemVal') || get(this, 'itemVal') === 0 ? get(this, 'itemVal') : this.itemObj.default
       this.isMounted = true
       // this.$forceUpdate()
     },
