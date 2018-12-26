@@ -48,6 +48,7 @@ import { get, } from 'lodash'
 import {
   registerEmbed,
   registerHr,
+  registerImageSrcSet,
   registerFigcaption, } from './custom.js'
 
 const debug = require('debug')('CLIENT:QuillEditor')
@@ -98,7 +99,8 @@ export default {
     Promise.all([
       registerEmbed(),
       registerHr(),
-      registerFigcaption(descImageHint)
+      registerFigcaption(descImageHint),
+      registerImageSrcSet()
     ]).then(() => {
       this.isInitialized = true
     })
@@ -113,12 +115,7 @@ export default {
     $_quillEditor_imageHandler () {
       openPicker(this.$store, this.preparePreviewData)
     },
-    $_quillEditor_insertToEditor (url) {
-      this.quillEditor.focus()
-      const range = this.quillEditor.getSelection()
-      this.quillEditor.insertEmbed(range.index, 'image', url)
-      this.quillEditor.insertEmbed(range.index + 1, 'figcaption', 'null')
-    },
+
     $_quillEditor_onEditorChange (event) {
       debug('change', event.html)
       if (event.html) {
@@ -130,8 +127,10 @@ export default {
     },
     preparePreviewData (value) {
       debug('value', value)
-      const assetUrl = get(value, 'desktop')
-      this.$_quillEditor_insertToEditor(assetUrl)
+      this.quillEditor.focus()
+      const range = this.quillEditor.getSelection()
+      this.quillEditor.insertEmbed(range.index, 'imageSrcSet', value)
+      this.quillEditor.insertEmbed(range.index + 1, 'figcaption', 'null')
       return Promise.resolve()
     },    
     valueSetUpEmbed () {
