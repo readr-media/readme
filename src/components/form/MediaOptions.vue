@@ -24,7 +24,7 @@
               </div>
             </div>
             <div class="right">
-              <ImageUploader :imageUrl.sync="opt.image" theme="grey"></ImageUploader>
+              <AssetPicker theme="grey" :value.sync="opt.image"></AssetPicker>
             </div>
             <div class="option-tools">
               <div class="tool del" @click="del(opt)">
@@ -42,7 +42,7 @@
 </template>
 <script>
   import draggable from 'vuedraggable'
-  import ImageUploader from 'src/components/form/ImageUploader.vue'
+  import AssetPicker from 'src/components/form/AssetPicker/AssetPicker.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import { filter, findIndex, get, map, remove, } from 'lodash'
@@ -52,7 +52,7 @@
   export default {
     name: 'MediaOptions',
     components: {
-      ImageUploader,
+      AssetPicker,
       TextInput,
       TextareaInput,
       draggable,
@@ -110,13 +110,12 @@
     props: {
       id: {},
       options: {
-        type: Array,
         default: () => ([])
       },
       fetchData: {
         type: Function,
         default: () => Promise.resolve(),
-      },      
+      }
     },
     watch: {
       opts: {

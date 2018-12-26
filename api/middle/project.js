@@ -1,5 +1,5 @@
 const { camelizeKeys } = require('humps')
-const { find, get, map, mapKeys } = require('lodash')
+const { get, map } = require('lodash')
 const { handlerError } = require('../comm')
 const config = require('../config')
 const debug = require('debug')('README:api:project')
@@ -7,8 +7,6 @@ const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
 
-const jwtExpress = require('express-jwt')
-const authVerify = jwtExpress({ secret: config.JWT_SECRET })
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.get('/list', (req, res) => {
@@ -40,14 +38,17 @@ router.get('/list', (req, res) => {
 router.post('/create', (req, res) => {
   debug('Got a project creating call.')
   debug(req.body)
-  // res.send('ok')
+
+  const payload = Object.assign({}, req.body)
   const url = `${apiHost}/project`
+  delete payload.id
+
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
-      res.send({ status: 200, text: 'Create a new project successfully.' })
+      res.send({ status: 200, text: 'Create a new project successfully.' }) 
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({
@@ -64,9 +65,11 @@ router.put('/update', (req, res) => {
   debug('Got a project updating call.')
   const url = `${apiHost}/project`
   debug(req.body)
+  
+  const payload = Object.assign({}, req.body)
   superagent
   .put(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Updating a project successfully.' })

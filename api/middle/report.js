@@ -70,6 +70,7 @@ router.post('/create', (req, res, next) => {
   debug(req.body)
 
   const url = `${apiHost}/report`
+  delete req.body.id
   superagent
   .post(url)
   .send(req.body)

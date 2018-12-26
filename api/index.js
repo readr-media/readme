@@ -67,7 +67,7 @@ router.use('/', (req, res, next) => {
   req.url_origin = req.url
   next()
 })
-router.use('/assets', require('./middle/assets'))
+router.use('/asset', require('./middle/assets'))
 router.use('/login', authVerify, require('./middle/member/login'), )
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/project', authVerify, require('./middle/project'))
@@ -77,7 +77,6 @@ router.use('/member', authVerify, require('./middle/member'))
 router.use('/members', authVerify, require('./middle/member'))
 router.use('/post', [ authVerify, authorize ], require('./middle/post'))
 router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
-router.use('/image-post', authVerify, require('./middle/image'))
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
 

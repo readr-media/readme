@@ -172,7 +172,7 @@
         })
         debug('params.maxResult', params.maxResult)
         debug('this.model', this.modelRaw)
-        fetchList(this.$store, params, this.modelRaw).then(() => {
+        return fetchList(this.$store, params, this.modelRaw).then(() => {
           this.isSpinnerActive = false
         })
       },

@@ -3,6 +3,7 @@
     <ReadMeHeader class="app-header"></ReadMeHeader>
     <ReadMeAside class="app-aside"></ReadMeAside>
     <Alert></Alert>
+    <LightBox></LightBox>
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
@@ -12,6 +13,7 @@
 
 <script>
 import Alert from 'src/components/Alert.vue'
+import LightBox from 'src/components/common/LightBox.vue'
 import ReadMeHeader from 'src/components/header/ReadMeHeader.vue'
 import ReadMeAside from 'src/components/aside/ReadMeAside.vue'
 import SystemInfo from 'src/components/SystemInfo.vue'
@@ -19,6 +21,7 @@ import SystemInfo from 'src/components/SystemInfo.vue'
 export default {
   components: {
     Alert,
+    LightBox,
     ReadMeHeader,
     ReadMeAside,
     SystemInfo,

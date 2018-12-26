@@ -1,7 +1,14 @@
 <template>
-  <div class="uploader" :class="{ full: !isEmpty }">
-    <div class="uploader__item-remover" :class="{ full: !isEmpty }" @click="removeFile"></div>
-
+  <UploaderLayout :class="{ full: !isEmpty }">
+    <template v-if="!isEmpty">
+      <div class="uploader__item--remover" @click="removeFile"></div>
+      <MidiaPreviewer class="uploader__item--previewer"
+        :file="file"></MidiaPreviewer>
+      <div class="uploader__item--info">
+        <div class="name"><span v-text="itemName"></span></div>
+        <div class="size"><span v-text="calcFileSize(itemSize)"></span></div>
+      </div>
+    </template>
     <FilePond
       v-if="$store.state.isClientSideMounted && isMounted"
       ref="pond"
@@ -10,30 +17,37 @@
       :allowMultiple="false"
       :name="name"
       :labelIdle="`${uploadButton}${$t('EDITOR.UPLOADER.TOOLTIP')}`"
-      :ignoredFiles="ignoredFiles"
+      :acceptedFileTypes="acceptedFileTypes"
       :files="filesUploaded"
       @updatefiles="onupdatefiles"
+      @addfile="addfile"
       @init="init"/>
-  </div>
+    <div class="uploader__spinner" v-show="isLoading"><Spinner :show="isLoading"></Spinner></div>
+  </UploaderLayout>
 </template>
 <script>
+  import MidiaPreviewer from 'src/components/common/MidiaPreviewer.vue'
   import Spinner from 'src/components/Spinner.vue'
+  import UploaderLayout from './UploaderLayout.vue'
+  import { calcFileSize } from 'src/util/comm'
+  import { get } from 'lodash'
 
   /** import file uploader lib */
   import vueFilePond from 'vue-filepond'
   import 'filepond/dist/filepond.min.css'
-  import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'
   import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
-  import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-  const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview)
-  // const FilePond = vueFilePond(FilePondPluginFileValidateType)
+  const FilePond = vueFilePond(FilePondPluginFileValidateType)
 
+  const axios = require('axios')
   const debug = require('debug')('CLIENT:Uploader')
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'info' })
   export default {
     name: 'Uploader',
     components: {
       FilePond,
-      Spinner
+      MidiaPreviewer,
+      Spinner,
+      UploaderLayout
     },
     computed: {
       uploadButton () {
@@ -43,179 +57,162 @@
     data () {
       return {
         alert: '',
+        file: undefined,
         filesUploaded: [],
-        ignoredFiles: [ '.ds_store', 'thumbs.db', 'desktop.ini' ],
         isEmpty: true,
+        isLoading: false,
         isMounted: false,
         isUploading: false,
+        itemName: '', 
+        itemSize: 0,
         server: {
           url: '/',
-          process: null,
-          load: './api/assets/load?a=',      
-          fetch: './api/assets/fetch?a=',       
+          process: (fieldName, file, metadata, load, error, progress, abort) => {
+            const formData = new FormData()
+            formData.append('filepond-file', file, file.name)
+
+            const CancelToken = axios.CancelToken
+            const source = CancelToken.source()
+
+            axios.post(`/api/asset/process/${this.location}`, formData, {
+              cancelToken: source.token,
+              onUploadProgress: e => {
+                progress(e.lengthComputable, e.loaded, e.total)
+              }
+            })
+            .then(res => {
+              debug('Processing temp file successfully.', res)
+              this.$emit('update:fileObj', res.data)
+              load(res.request.responseText)
+            })
+            .catch(err => {
+              if (axios.isCancel(err)) {
+                console.error('Request canceled', err.message)
+              } else {
+                // handle error
+              }              
+              error('Processing temp asset in fail.', err)
+            })
+            
+            return {
+              abort: () => {
+                source.cancel('Due to some problems, peration canceled.')
+                abort()
+              }
+            }
+          },          
+          revert: (uniqueFileId, load, error) => {
+            debug('Going to rever tmp file:', uniqueFileId)
+            axios.delete('/api/asset/revert', {
+              data: JSON.parse(uniqueFileId)
+            }).then(response => {
+              debug('Deleting temp asset successfully.')
+              this.$emit('update:fileObj', '')
+              load()
+            }).catch(err => {
+              error('Deleting temp asset in fail.', err)
+            })            
+          },          
+          remove: (source, load, error) => {
+            debug('Local file gets replaced.', source)
+            load()
+          },
+          restore: null,
+          load: './api/asset/load?a=',      
+          fetch: './api/asset/fetch?a=',       
         },
-        title: '', 
       }
     },
     methods: {
       init () {
         debug('inited!!!')
-        debug('existed url', this.url)
         debug('files',  this.$refs.pond.getFiles())
-        this.url && this.$refs.pond.addFiles(this.url, {
-          type: this.url.indexOf('http') === 0 ? 'remote' : 'local'
-        }).then(() => {
-          const file = this.$refs.pond.getFile()
-          // file.source = file.file
-          debug('File metadata', file.getMetadata())
-        }).catch(err => {
-          debug('Error occurred when fetching file from', this.url, err)
-        })
+        get(this.$refs.pond.getFiles(), 'length', 0) > 0 && (this.isLoading = true)
+      },
+      calcFileSize,
+      addfile(error, file) {
+        debug('file loaded', error, file)
+        if (!error) {
+          // this.isEmpty = true
+          this.file = file
+          this.itemName = get(file, 'file.name')
+          this.itemSize = get(file, 'file.size')
+          this.isEmpty = false
+          debug('file should be added!', this.itemName, this.$refs.pond.getFiles())
+        } else {
+          // this.isEmpty = false
+          this.file = null
+          this.itemName = ''
+          this.itemSize = 0
+          this.isEmpty = true
+          debug('message', error)
+          if (get(file, 'main') === 'File is of invalid type') {
+            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
+          } else {
+            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.ERROR'), () => {})
+          }
+          this.$refs.pond.removeFile()
+          console.error(file)
+        }
+        this.isLoading = false
       },
       onupdatefiles (items) {
-        debug('done', this.$refs.pond.getFiles())
-        this.isEmpty = items.length === 0
+        debug('onupdatefiles', this.$refs.pond.getFiles(), items)
       },
       removeFile () {
+        this.fileObj && axios.delete('/api/asset/revert', {
+          data: this.fileObj
+        }).then(response => {
+          debug('Deleting temp asset successfully.')
+          this.$emit('update:fileObj', '')
+        }).catch(err => {
+          debug('Deleting temp asset in fail.', err)
+        })         
         this.$refs.pond && this.$refs.pond.removeFile()
+        this.isEmpty = true
       },
     },
     mounted () {
       debug('height should be ', this.$el.clientHeight)
+      debug('${this.destination}.${this.fileExt}', `${this.destination}.${this.fileExt}`)
+      debug('typeof(this.fileObj)', typeof(this.fileObj), this.fileObj)
+      const originAsset = typeof(this.fileObj) !== 'string' || !this.fileObj 
+        ? this.destination
+        ? `${this.destination}${this.fileExt ? `.${this.fileExt}` : ''}`
+        : null
+        : this.fileObj
+
+      debug('originAsset', originAsset)
+      originAsset && this.filesUploaded.push({
+        source: originAsset,
+        options: {
+          /**
+           *  type:
+           *  - remote: file would be loaded by fetch
+           *  - local: file would be loaded by load
+           *  - limbo: file would be loaded by restore(means this file is a temp file)
+           */
+          type: originAsset.indexOf('http') === 0 ? 'remote' : 'local'
+        }
+      })
       this.isMounted = true
     },
     props: {
+      acceptedFileTypes: {
+        default: () => [ 'image/*', 'video/*', 'audio/*' ]
+      },      
+      destination: {},
+      fileObj: {},
+      fileExt: {},
+      location: {
+        default: 'tmp'
+      },
       name: {
         type: String,
         default: `uploader-${Date.now().toString()}`
       },
       theme: {},
-      url: {},
     },
-    watch: {
-      'isMounted': function () {
-        debug('isMounted = true!!!!')
-      }
-    }
   }
 </script>
-<style lang="stylus" scoped>
-  $plus-sign
-    content ''
-    background-color white
-    position absolute
-    top 0
-    bottom 0
-    left 0
-    right 0
-    margin auto
-  .uploader
-    display flex
-    position relative
-    min-height 185px
-    &.full
-      justify-content center
-      align-items center
-      background-color #eee
-    &__item-remover
-      position absolute
-      right -15px
-      top -15px
-      height 38px
-      width 38px
-      background-color #fff
-      border-radius 50%
-      box-shadow 2px 2px 10px rgba(0,0,0,0.1)
-      z-index 10
-      display none
-      cursor pointer
-      &.full
-        display block
-    >>> &__upload-button
-      r = 38px
-      width r
-      height r
-      min-width r
-      min-height r      
-      background-color #808080
-      border-radius r
-      box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
-      position relative
-      margin 30px auto 17px
-      outline none
-      &.hidden
-        opacity 0
-      &:before
-        @extends $plus-sign
-        width 24px
-        height 4px
-      &:after
-        @extends $plus-sign
-        width 4px
-        height 24px
-    &__spinner
-      position absolute
-      width 50px
-      height 50px
-      left 50%
-      top 50%
-      margin-left -25px
-      margin-top -25px
-  >>> .filepond
-    &--wrapper
-      width 100%
-      &.full
-        .filepond--panel-root
-          background-color transparent!important
-
-        .filepond--root
-          min-height 185px
-          .filepond--list-scroller
-            position relative
-            width 100%
-            height 100%
-            display flex
-            align-items center
-            margin 0
-            // display none
-            .filepond--list
-              position relative
-            .filepond--item
-              position relative
-    &--root
-      min-height 100%
-      display flex
-      justify-content center
-      margin-bottom 0
-      overflow hidden
-    &--drop-label
-      margin 40px auto
-    &--action-remove-item
-      opacity 1
-      left auto
-      right -15px
-      top -15px
-      background-color #fff
-      width 38px
-      height 38px
-      box-shadow 2px 2px 10px rgba(0,0,0,0.1)
-      display none
-    &--file-info
-      transform none!important
-      // position absolute
-      // top 100%
-      // margin-top 10px
-      // &-main
-      //   color #000
-      //   font-size 0.875rem
-      // &-sub
-      //   font-size 0.75rem
-      //   color #5a5a5a
-    &--list
-      left 0
-      width 100%
-    &--image-preview-overlay-idle  
-      mix-blend-mode color
-    &--panel-root
-      background-color #fff!important
-</style>
+<style lang="stylus" scoped></style>

@@ -3,7 +3,6 @@ import {
   fetchAsideNav,
   checkLoginStatus,
   fetchProfile,
-  uploadImage,
 } from 'src/api'
 import * as actionsMember from 'src/store/actions/member'
 import * as actionsList from 'src/store/actions/list'
@@ -18,6 +17,10 @@ export default Object.assign({
     return checkLoginStatus({ params }).then(({ status, body }) => {
       commit('SET_LOGGEDIN_STATUS', { status, body })
     })
+  },
+
+  COMMON_LIGHTBOX_SWITCH: ({ commit, }, { active, callback, component, props, }) => {
+    commit('SET_COMMON_LIGHTBOX_FLAG', { active, callback, component, props })
   },
 
   FETCH_ASIDE_ITEMS: ({ commit, dispatch, state, }, { params, }) => {
@@ -42,10 +45,6 @@ export default Object.assign({
 
   SET_VALUE: ({ commit, dispatch }, { active, type, value }) => {
     return commit('SET_VALUE', { active, type, value })
-  },
-
-  UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
-    return uploadImage(file, type)
   },
 
   UPDATE_CLIENT_SIDE_MOUNTED: ({ commit, dispatch }) => {

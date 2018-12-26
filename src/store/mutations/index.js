@@ -17,6 +17,12 @@ export default Object.assign({
   SET_CLIENT_SIDE_MOUNTED: (state, {}) => {
     state['isClientSideMounted'] = true
   },
+  SET_COMMON_LIGHTBOX_FLAG: (state, { active, callback, component, props, }) => {
+    state[ 'commonLightboxFlag' ][ 'active' ] = active
+    state[ 'commonLightboxFlag' ][ 'callback' ] = callback
+    state[ 'commonLightboxFlag' ][ 'component' ] = component
+    state[ 'commonLightboxFlag' ][ 'props' ] = props
+  },
   SET_LOGGEDIN_STATUS: (state, { status, body }) => {
     state['isLoggedIn'] = body
   },

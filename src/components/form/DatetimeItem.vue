@@ -4,7 +4,7 @@
     v-model="current"
     input-format="YYYY/MM/DD HH:mm"
     input-class="datepicker__input"
-    type="datetime"></Datetime>
+    :type="datetimeType"></Datetime>
 </template>
 <script>
   import moment from 'moment'
@@ -49,6 +49,9 @@
     props: {
       value: {},
       dateRef: {},
+      datetimeType: {
+        default: 'datetime'
+      },
       relativeToRef: {},
       theme: {},
     },

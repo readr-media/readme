@@ -1,4 +1,5 @@
 const { camelizeKeys } = require('humps')
+const { constructFileInfo, transferFileToStorage } = require('./assets/comm')
 const { handlerError } = require('../comm')
 const { get, map } = require('lodash')
 const config = require('../config')
@@ -37,10 +38,11 @@ router.post('/create', (req, res) => {
   // res.send('ok')
   const url = `${apiHost}/post`
   req.body.author = req.user.id
+  const payload = Object.assign({}, req.body)
 
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
       res.send({ status: 200, text: 'Create a new post successfully.' })
@@ -59,13 +61,15 @@ router.put('/update', (req, res) => {
   const url = `${apiHost}/post`
   debug('Got a post updating call.')
   debug('req.body', req.body)
+  const payload = Object.assign({}, req.body)
+  payload.updated_by = req.user.id
 
   superagent
   .put(url)
-  .send(req.body)
+  .send(payload)
   .end((error, response) => {
     if (!error && response) {
-      res.send({ status: 200, text: 'Updating a post successfully.' })
+      res.send({ status: 200, text: 'Updating a post successfully.' }) 
     } else {
       const errWrapped = handlerError(error, response)
       res.status(errWrapped.status).send({

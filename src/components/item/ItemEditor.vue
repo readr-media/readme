@@ -1,234 +1,163 @@
 <template>
-  <ItemEditorLayout>
-    <div class="panel">
-      <div class="panel__content">
-        <template v-for="group in actualGroups">
-          <div class="panel__group" v-if="!(type === 'create' && group.name === 'info')">
-            <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.name.toUpperCase()}`)"></span></div>
-            <template v-for="obj in group.objs">
-              <div class="panel__content--item" :key="`panel__content--item-${obj.name}`">
-                <div class="title" :class="{ short: isShort($t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)) }">
-                  <span v-text="$t(`${$store.getters.modelName}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
-                </div>
-                <div class="value">
-                  <Item
-                    :editorMode="type"
-                    :refVals="formData"
-                    :itemVal.sync="formData[ obj.name ]"
-                    :itemObj="obj"></Item>
-                </div>
-              </div>
-            </template>
-          </div>
-        </template>
-      </div>
-      <div class="panel__actions">
-        <div class="preview btn" :class="{ block: isProcessing }"
-          v-if="$store.getters.isPreviewable && get(item, 'id')"
-          @click="preview">
-          <span v-text="$t('EDITOR.PREVIEW')" v-show="!isProcessing"></span>
-          <Spinner class="spinner" :show="isProcessing"></Spinner>
-        </div>
-        <template v-for="btn in buttonizedItems">
-          <ButtunizedItem
-            :isProcessing="isProcessing"
-            :item="btn"
-            :value.sync="formData[ btn.name ]"
-            :publishDate.sync="formData[ 'publishedAt' ]"
-            :clickHandler="save"></ButtunizedItem>
-        </template>
-        <div class="save btn" :class="{ block: isProcessing }" @click="save">
-          <span v-text="$t('EDITOR.SAVE')" v-show="!isProcessing"></span>
-          <Spinner class="spinner" :show="isProcessing"></Spinner>
-        </div>
-      </div>
-    </div>
-  </ItemEditorLayout>
+  <ItemEditorWrapper
+    @saved="saved"
+    :modelName="modelname"
+    :modelData="modelData"
+    :structure="structure"
+    :type="type"
+    :item="item"
+    :add="add"
+    :update="update"></ItemEditorWrapper>
 </template>
 <script>
-  import ButtunizedItem from 'src/components/form/ButtunizedItem.vue'
-  import ItemEditorLayout from './ItemEditorLayout.vue'
-  import Item from './Item.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import WatchJS from 'melanke-watchjs'
-  import { decamelize, } from 'humps'
-  import { find, filter, get, map, sortBy, } from 'lodash'
-  import 'vue-datetime/dist/vue-datetime.css'
+  import ItemEditorWrapper from './ItemEditorWrapper.vue'
+  import moment from 'moment'
+  import numeral from 'numeral'
+  import { decamelize, decamelizeKeys, } from 'humps'
+  import { get, map } from 'lodash'
   const debug = require('debug')('CLIENT:ItemEditor')
-  const watcher = WatchJS.watch
-  const callOffWatcher = WatchJS.unwatch
+  const update = (store, params, endpoint) => store.dispatch('UPDATE_ITEM', { params, endpoint, })
+  const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })  
+  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
   export default {
     name: 'ItemEditor',
     components: {
-      ButtunizedItem,
-      Item,
-      ItemEditorLayout,
-      Spinner,
+      ItemEditorWrapper,
     },
     computed: {
-      buttonizedItems () {
-        return filter(this.$store.getters.structure, obj => obj.isButtonized)
+      endpoint () {
+        return  this.modelname ? this.modelname.toLowerCase() : ''
       },
+      modelname () { return this.modelName || this.$store.getters.modelName },
+      modelData () {
+        let model
+        try {
+          model = require(`model/${this.modelname}`)
+        } catch (error) {
+          console.log(`There's no model found:`, this.modelname)
+        }
+        return model
+      },     
+      structure () {
+        if (this.modelName) {
+          return this.modelData.model || []
+        } else {
+          return this.modelData
+            ? this.$store.getters.isSubItem
+            ? this.modelData.subModel
+            : this.modelData.model
+            : []
+        }
+      }
     },
     data () {
       return {
-        actualGroups: [],
-        formData: {},
-        isProcessing: false,
-        watchedItem: {},
+        isAllowedToSave: true,
       }
     },
     methods: {
-      callForActionByWatcher (prop, action, newvalue, oldvalue) {
-        debug(`Mutation detected: formData.${prop}`, newvalue)
-        this.reconstructGroups()
-      },
-      decamelize,
-      get,
-      preview () {
-        const host = get(this.$store, 'getters.modelData.previewHost')
-        const id = get(this.item, 'id')
-        debug('Go preview', [ host, id ])
-        host && id && window.open(`${host}/${id}?preview=true`, '_blank')
-      },
-      reconstructGroups () {
-        const gps = []
-        const sortedStructure = sortBy(this.$store.getters.structure, [ obj => get(obj, 'order.editor') ])
-        map(this.groups, g => {
-          const includedObj = filter(sortedStructure, obj => {
-            if (!obj.isHidden && (obj.group === g || g === 'none')) {
-              return obj.showWith ? obj.showWith(this.formData) : true
-            } else {
-              return false
-            }
-          })
-          if (includedObj.length) {
-            gps.push({ name: g, objs: includedObj })
-          }
-        })
-        this.actualGroups = gps     
-      },
-      initValue () {
-        map(this.formData, item => this.callOffWatcher(this.formData, item.name, this.callForActionByWatcher))
-        this.watchedItem = {}
-        this.formData = {}
-        if (this.type === 'update') {
-          map(this.$store.getters.structure, item => {
-            switch (item.type) {
-              case 'TextTagItem':
-                this.formData[ item.name ] = [
-                  ...map(get(this.item, item.name), a => ({
-                    name: get(a, get(item, 'map.name')),
-                    value: get(a, get(item, 'map.value')),
-                  }))
-                ]
-                break
-              case 'BooleanSwitcher':
-                this.formData[ item.name ] = get(this.item, item.name) || false
-                break
-              default:
-                this.formData[ item.name ] = get(this.item, item.name)
-                this.setUpWatcher(item)
-            } 
-          })
-        } else if (this.type === 'create') {
-          map(this.$store.getters.structure, item => {
-            if (item.isEditable || item.isInitiliazible) {
-              switch (item.type) {
-                case 'BooleanSwitcher':
-                  this.formData[ item.name ] = false   
-                  break             
-                case 'TextInput':
-                case 'TextareaInput':
-                  this.formData[ item.name ] = ''
-                  break
-                case 'TextTagItem':
-                  this.formData[ item.name ] = []
-                  break
-                default:
-                  this.formData[ item.name ] = null
-                  this.setUpWatcher(item)
-              }
-            }
-          })
-        }
-        this.reconstructGroups()
-      },
-      isShort (str) { return str.length > 2 || false },  
-      save () {
-        console.log('GO UPDATE.', this.formData)
-        if (this.isProcessing) {
+      add (form) {
+        const normalizedForm = this.normalizeData(form)
+        if (!this.isAllowedToSave) {
+          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          this.isAllowedToSave = true
           return Promise.reject()
         } else {
-          this.isProcessing = true
-        }
-        if (this.type === 'update') {
-          return this.update(this.formData).then(() => {
-            // this.$emit('update:isActive', false)
-            this.isProcessing = false
-            return this.$emit('saved') && true
-          }).catch(err => {
-            this.isProcessing = false
-            debug('err', err)
-            return Promise.reject()
+          normalizedForm.updatedAt = moment().toISOString(true)
+          return post(this.$store, decamelizeKeys(normalizedForm), this.endpoint).then(res => {
+            /**
+            * Go refresh item-list.
+            */
+            debug('res', res)
+            return this.refresh({}) && res
           })
-        } else if (this.type === 'create') {
-          return this.add(this.formData).then(() => {
-            // this.$emit('update:isActive', false)
-            this.isProcessing = false
-            return this.$emit('saved') && true
-          }).catch(err => {
-            this.isProcessing = false
-            debug('err', err)
-            return Promise.reject()
-          })          
-        }
-      },
-      setUpWatcher (item) {
-        if (item.watcher && !this.watchedItem[ item.watcher ]) {
-          watcher(this.formData, item.watcher, this.callForActionByWatcher)
-          this.watchedItem[ item.watcher ] = true
         }        
-      },
-      updateForm () {
-        this.$forceUpdate()
-      }
+      },      
+      normalizeData (form) {
+        const preForm = form
+        /**
+         * Have to normalize any datetime type data before send put request.
+         * And remove those data which's not editable(excluding 'ID').
+         */
+        map(this.structure, item => {
+          if (item.type === 'Datetime') {
+            if (!preForm[ item.name ]) {
+              debug('item.name', item.name, preForm[ item.name ] )
+              preForm[ item.name ] = null
+            } else {
+              if (item.watcher) {
+                const ref = moment(preForm[ item.watcher ])
+                const curr = moment(preForm[ item.name ])
+                const diff = curr.diff(ref) / (60 * 60 * 1000)
+                if ((item.relativeToWatcher === 'after' && diff <= 0) || (item.relativeToWatcher === 'before' && diff >= 0)) {
+                  this.isAllowedToSave = false
+                }                
+              }
+
+              // item.isDatetimeSentitive && (preForm[ item.name ] = moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
+            }
+          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist' || item.type === 'CheckboxItem') && item.isNumSentitive) {
+            // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
+            preForm[ item.name ] = preForm[ item.name ] ? numeral(preForm[ item.name ]).value() : 0
+          } else if (item.type === 'TextInput' && preForm[ item.name ] === 'undefined') {
+            preForm[ item.name ] = ''
+          }
+          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitialiazible && !item.isButtonized && !item.isButtonizedWith) {
+            debug('Going to delete item that is not editable!', item.name)
+            delete preForm[ item.name ]
+          }
+          if (item.type === 'TextTagItem' && get(item, 'map.isValArraySensitive')) {
+            preForm[ item.name ] = map(get(preForm, item.name, []), tag => tag.value)
+          }
+          if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
+            preForm[ item.name ] = this.me
+          }
+          if (item.required&& ((!preForm[ item.name ] && preForm[ item.name ] !== 0) || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
+            debug(item.name, item.required, preForm[ item.name ])
+            this.isAllowedToSave = false
+          }
+        })
+        debug('preForm', preForm)
+        return preForm
+      },  
+      saved (res) {
+        this.$emit('saved', res)
+      },    
+      update (form) {
+        const normalizedForm = this.normalizeData(form)
+        if (!this.isAllowedToSave) {
+          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          this.isAllowedToSave = true
+          return Promise.reject()
+        } else {
+          normalizedForm.updatedAt = moment().toISOString(true)
+          return update(this.$store, decamelizeKeys(normalizedForm), this.endpoint).then(res => {
+            /**
+            * Go refresh item-list.
+            */
+            return this.refresh({}) && res
+          })
+        }
+      },      
     },
-    beforeMount () {
-      this.initValue()
-    },
+    mounted () {},
     props: {
-      add: {
-        type: Function,
-        default: (form) => new Promise(resolve => {
-          debug('Run add default.') 
-          debug('form:', form)
-          resolve(true)
-        }),
-      },
-      groups: {
-        type: Array,
-        default: () => [ 'none' ]
-      },
+      type: {
+        type: String,
+        defualt: 'create'
+      },     
       item: {
         type: Object,
         default: () => {},
-      },
-      update: {
-        type: Function,
-        default: (form) => new Promise(resolve => {
-          debug('Run update default.') 
-          debug('form:', form)
-          resolve(true)
-        }),
-      },
-      type: {
+      },  
+      modelName: {
         type: String,
-        required: true,
       },
-    },
-    watch: {
-      item () { this.initValue() }, 
+      refresh: {
+        type: Function,
+        default: () => Promise.resolve()
+      },
     },
   }
 </script>
+<style lang="stylus" scoped></style>

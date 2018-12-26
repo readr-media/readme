@@ -18,13 +18,11 @@
     <template v-else>
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
         @saved="itemSaved"
-        :groups="groups"
-        :add="add"></ItemEditor>
+        :refresh="refresh"></ItemEditor>
       <ItemEditor type="update" slot="editor" v-else-if="activeEditor === 'edit'"
         @saved="itemSaved"
-        :groups="groups"
-        :item="editorItem"
-        :update="update"></ItemEditor>
+        :refresh="refresh"
+        :item="editorItem"></ItemEditor>
     </template>
   </div>
 </template>
@@ -33,14 +31,10 @@
   import ListItem from 'src/components/list/ListItem.vue'
   import PaginationNav from 'src/components/list/PaginationNav.vue'
   import RecordCount from 'src/components/list/RecordCount.vue'
-  import moment from 'moment'
-  import numeral from 'numeral'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
   import { decamelize, decamelizeKeys, } from 'humps'
   import { filter, get, isEmpty, map, } from 'lodash'
   const debug = require('debug')('CLIENT:ListContainer')
-  const update = (store, params, endpoint) => store.dispatch('UPDATE_ITEM', { params, endpoint, })
-  const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })
   // const del = (store, params, endpoint) => store.dispatch('DEL_ITEM', { params, endpoint, })
   const delItems = (store, params, endpoint) => store.dispatch('DEL_ITEMS', { params, endpoint, })
   const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
@@ -52,10 +46,7 @@
       PaginationNav,
       RecordCount,
     },
-    computed: {
-      Editor () {
-        return ItemEditor
-      },      
+    computed: {     
       activeEditor () {
         return get(this.$route, 'params.subItem') === 'new' || get(this.$route, 'params.action') === 'new'
           ? 'new'
@@ -69,9 +60,6 @@
           item[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
         })
         return item
-      },
-      groups () {
-        return this.$store.getters.modelData ? this.$store.getters.modelData.groups : [ 'none' ]
       },
       items () {
         return get(this.$store, 'state.list', [])
@@ -98,22 +86,6 @@
       }
     },
     methods: {
-      add (form) {
-        const normalizedForm = this.normalizeData(form)
-        if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, 'Incorrect value', () => {})            
-          this.isAllowedToSave = true
-          return Promise.reject()
-        } else {
-          normalizedForm.updatedAt = moment().toISOString(true)
-          return post(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
-            /**
-            * Go refresh item-list.
-            */
-            return this.refresh({}) && true
-          })
-        }        
-      },
       checkup ({ id, value }) {
         this.checkedItems[ id ] = value
       },
@@ -143,67 +115,6 @@
       get,
       itemSaved () {
         this.$router.go(-1)
-      },
-      normalizeData (form) {
-        const preForm = form
-        /**
-         * Have to normalize any datetime type data before send put request.
-         * And remove those data which's not editable(excluding 'ID').
-         */
-        map(this.$store.getters.structure, item => {
-          if (item.type === 'Datetime') {
-            if (!preForm[ item.name ]) {
-              debug('item.name', item.name, preForm[ item.name ] )
-              preForm[ item.name ] = null
-            } else {
-              if (item.watcher) {
-                const ref = moment(preForm[ item.watcher ])
-                const curr = moment(preForm[ item.name ])
-                const diff = curr.diff(ref) / (60 * 60 * 1000)
-                if ((item.relativeToWatcher === 'after' && diff <= 0) || (item.relativeToWatcher === 'before' && diff >= 0)) {
-                  this.isAllowedToSave = false
-                }                
-              }
-
-              // item.isDatetimeSentitive && (preForm[ item.name ] = moment(new Date(get(preForm, item.name, Date.now() + 600000))).format('YYYY-MM-DD hh:mm:ss'))
-            }
-          } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist' || item.type === 'CheckboxItem') && item.isNumSentitive) {
-            // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
-            preForm[ item.name ] = preForm[ item.name ] ? numeral(preForm[ item.name ]).value() : 0
-          }
-          if (!item.isEditable && item.name.toUpperCase() !== 'ID' && !item.isInitiliazible && !item.isButtonized && !item.isButtonizedWith) {
-            debug('Going to delete item that is not editable!', item.name)
-            delete preForm[ item.name ]
-          }
-          if (item.type === 'TextTagItem' && get(item, 'map.isValArraySensitive')) {
-            preForm[ item.name ] = map(get(preForm, item.name, []), tag => tag.value)
-          }
-          if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
-            preForm[ item.name ] = this.me
-          }
-          if (item.required && (!preForm[ item.name ] && preForm[ item.name ] !== 0)) {
-            debug(item.name, item.required, preForm[ item.name ])
-            this.isAllowedToSave = false
-          }
-        })
-        debug('preForm', preForm)
-        return preForm
-      },
-      update (form) {
-        const normalizedForm = this.normalizeData(form)
-        if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, 'Incorrect value', () => {})            
-          this.isAllowedToSave = true
-          return Promise.reject()
-        } else {
-          normalizedForm.updatedAt = moment().toISOString(true)
-          return update(this.$store, decamelizeKeys(normalizedForm), this.flag).then(() => {
-            /**
-            * Go refresh item-list.
-            */
-            return this.refresh({}) && true
-          })
-        }
       },
     },
     mounted () {

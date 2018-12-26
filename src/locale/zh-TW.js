@@ -124,9 +124,15 @@ export default {
     'CUSTOM_EDITOR_NEVER': '-',    
     'MAIL': '信箱',
     'ACTIVE': '狀態',
-    'ACTIVE_0': '未啟用',
-    'ACTIVE_1': '啟用',
+    'ACTIVE_INACTIVE': '未啟用',
+    'ACTIVE_ACTIVATED': '啟用',
     'ACTIVE_NEVER': '-',
+    'UPDATED_AT': '更新時間',    
+    'CREATED_AT': '建立時間',    
+    'BIRTHDAY': '生日',
+    'WORK': '職業',
+    'PHONE': '電話',
+    'NAME': '姓名'
   },
   'MEMO': {
     'NEW': '新增筆記',
@@ -166,6 +172,7 @@ export default {
     'CANCEL': '取消',  
     'PREVIEW': '預覽',
     'GROUPS': {
+      'ADVANCED': '進階設定',
       'BASIC': '基本設定',
       'CONTENT': '內容設定',
       'EMBED': '嵌入設定',
@@ -198,7 +205,9 @@ export default {
       'SCHEDULE': '排程',
       'UNSCHEDULE': '取消排程',
       'SCHEDULE_CONFIRM': '確定',
-      'PENDING': '待處理'
+      'PENDING': '待處理',
+      'ACTIVATE': '啟用',
+      'DEACTIVATE': '停用'
     },
     'DROPDOWN_LIST': {
       'HINT': '請選擇',
@@ -208,6 +217,14 @@ export default {
     'UPLOADER': {
       'TOOLTIP': '從電腦上傳檔案<br>或將檔案拖移至此上傳',
       'SIZE_LIMIT': '(圖檔大小限制：3MB)',
+      'INCORRECT_FILE_TYPE': '僅接受影片、圖檔與音檔素材',
+      'ERROR': '讀取檔案發生錯誤'
+    },
+    'ASSET_PICKER': {
+      'DESCRIPTION': '選擇素材',
+      'PICK': '選擇素材',
+      'GENERATE': '新增素材',
+      'TAKE_UP': '使用此素材',
     },
   },
   'POLL': {
@@ -249,7 +266,7 @@ export default {
   'POST': {
     'NEW': '新增貼文',
     'EDIT': '編輯貼文',
-    'ID': 'ID',
+    'ID': '編號',
     'TITLE': '標題',
     'UPDATED_AT': '更新時間',
     'CREATED_AT': '建立時間',
@@ -287,19 +304,25 @@ export default {
     'SLUG': 'SLUG',
     'POST_ORDER': '排序',
   },
-  'ASSETS': {
+  'ASSET': {
     'ID': 'ID',
-    'TITLE': '名稱',
+    'TITLE': '檔名',
     'ASSET_TYPE': '類別',
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
-    'URL': '素材',
+    'ASSET_TYPE_NEVER': '不明',
+    'FILE': '素材',
     'COPYRIGHT': '財權聲明',
+    'COPYRIGHT_COPYRIGHT': 'copyright',
     'COPYRIGHT_CC_BY_SA_3': 'cc-by-sa3.0',
     'COPYRIGHT_CC': 'cc',
     'EDIT': '編輯素材',
     'NEW': '新增素材',
+    'DESTINATION': '目錄',
+    'FILE_NAME': '檔名',
+    'FILE_EXT': '副檔名',
+    'FILE_TYPE': '檔案類型',
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',
@@ -321,7 +344,7 @@ export default {
     'ACCOUNT_PERMISSION': '使用者角色',
     'SHARE': '分享',
     'DOMAIN': '網域',
-    'ASSETS': '素材管理',
+    'ASSET': '素材管理',
 
     'ENEWS': '電子報管理',
     'ENEWS_EVENT_LIST': '活動列表',
