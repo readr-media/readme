@@ -24,14 +24,14 @@ export const model = [
   { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
 
   { name: 'nickname', group: 'basic', type: 'TextInput', listWidth: { min: '200' }, isEditable: true, isListable: true, isInitialiazible: true, isEditEntry: true, order: { list: 1 } },
-  { name: 'mail', group: 'basic', type: 'TextInput', listWidth: { min: '250', max: '600' }, isEditable: false, isListable: true, isInitialiazible: true, isEditEntry: true, order: { list: 2 } },
+  { name: 'mail', group: 'basic', type: 'TextInput', listWidth: { min: '250', max: '10000' }, isEditable: false, isListable: true, isInitialiazible: true, isEditEntry: true, order: { list: 2 } },
   { name: 'role', type: 'Dropdownlist', group: 'basic', listWidth: { min: '60' }, isEditable: true, isListable: true, isNumSentitive: true, options: role_options, fetchSource: roleOpts, required: true, order: { list: 2.5 }, },
   { name: 'customEditor', group: 'basic', type: 'BooleanSwitcher', listWidth: { min: '80' }, isEditable: true, isListable: true, options: custom_editor_options, order: { list: 4 } },
 
   { name: 'name', group: 'advanced', type: 'TextInput', isEditable: true, isListable: false, isInitialiazible: true },
   { name: 'phone', group: 'advanced', type: 'TextInput', isEditable: true, isListable: false, isInitialiazible: true },
   { name: 'work', group: 'advanced', type: 'TextInput', isEditable: true, isListable: false, isInitialiazible: true },
-  { name: 'birthday', type: 'Datetime', group: 'advanced', isEditable: true, isListable: false, isDatetimeSentitive: true, default: '1970-01-01T00:00:00Z' },
+  { name: 'birthday', type: 'Datetime', group: 'advanced', isEditable: true, isListable: false, isDatetimeSentitive: true, default: '1970-01-01T00:00:00Z', datetimeType: 'date', },
 
 ]
 
