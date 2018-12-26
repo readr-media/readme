@@ -7,6 +7,7 @@
     <DatetimeItem v-else-if="itemObj.type === 'Datetime'"
       :relativeToRef="itemObj.relativeToWatcher"
       :dateRef="refVals[ itemObj.watcher ]"
+      :datetimeType="itemObj.datetimeType"
       :value.sync="value"></DatetimeItem>
     <TextareaInput v-else-if="itemObj.type === 'TextareaInput'"
       :autoHeightActive="itemObj.autoHeightActive"

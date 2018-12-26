@@ -16,7 +16,7 @@ const fetchSource = store => {
 }
 export const model = [
   { name: 'id', type: 'TextInput', listWidth: { min: '60' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, },
-  { name: 'title', type: 'TextInput', listWidth: { min: '340', max: '600' }, isEditable: true, isListable: true, isEditEntry: true, },
+  { name: 'title', type: 'TextInput', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, },
   { name: 'projectId', type: 'Dropdownlist', listWidth: { min: '110' }, isEditable: true, isListable: true, isNumSentitive: true, fetchSource, },
   { name: 'publishStatus', type: 'RadioItem', listWidth: { min: '80' }, isEditable: true, isListable: true, options: publish_status_options, },
   { name: 'memoOrder', type: 'TextInput', listWidth: { min: '50' }, isEditable: true, isListable: true, isNumSentitive: true, },

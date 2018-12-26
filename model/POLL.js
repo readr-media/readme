@@ -48,7 +48,7 @@ export const model = [
   
   { name: 'startAt', type: 'Datetime', group: 'basic', isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, },
   { name: 'endAt', type: 'Datetime', group: 'basic', isEditable: true, isListable: false, isDatetimeSentitive: true, order: { editor: 0 }, watcher: 'startAt', relativeToWatcher: 'after' },
-  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '600' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2 }, },
+  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2 }, },
   { name: 'description', type: 'TextareaInput', group: 'content', isEditable: true, isListable: false, order: { editor: 2 }, autoHeightActive: true, },
   { name: 'tags', type: 'TextTagItem', group: 'content', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
   // { name: 'image', type: 'AssetPicker', isEditable: true, isListable: false, order: { editor: 4 }, acceptedFileTypes: [ 'image/*' ], },

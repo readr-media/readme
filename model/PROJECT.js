@@ -21,7 +21,7 @@ const tagsAutoComplete = (store, keyword) => {
 
 export const model = [
   { name: 'id', type: 'TextInput', listWidth: { min: '100' }, isEditable: false, isListable: true, isEditEntry: true, order: { editor: 0, list: 0 }, },
-  { name: 'title', type: 'TextInput', listWidth: { min: '340', max: '600' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2, list: 1 }, },
+  { name: 'title', type: 'TextInput', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { editor: 2, list: 1 }, },
   { name: 'ogTitle', type: 'TextInput', isEditable: true, isListable: false, isHidden: false, order: { editor: 2.5 }, },
   { name: 'progress', type: 'TextInput', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
   { name: 'memoPoints', type: 'TextInput', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, },
