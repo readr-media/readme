@@ -23,6 +23,9 @@ export default Object.assign({
     state[ 'commonLightboxFlag' ][ 'component' ] = component
     state[ 'commonLightboxFlag' ][ 'props' ] = props
   },
+  SET_MODEL_DATA: (state, { modelData }) => {
+    state['modelData'] = modelData
+  },
   SET_LOGGEDIN_STATUS: (state, { status, body }) => {
     state['isLoggedIn'] = body
   },

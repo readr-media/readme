@@ -21,6 +21,7 @@ export function createStore () {
         component: {},
         props: {},
       },
+      modelData: {},
       list: [],
       listCurrent: '',
       listItemsCount: 0,

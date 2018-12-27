@@ -1,3 +1,4 @@
+import { get, find, map } from 'lodash'
 import {
   fetchAsideItems,
   fetchAsideNav,
@@ -7,6 +8,9 @@ import {
 import * as actionsMember from 'src/store/actions/member'
 import * as actionsList from 'src/store/actions/list'
 import * as actionsItem from 'src/store/actions/item'
+
+import { availableModels } from 'configuration/navigationAside'
+const models = map(availableModels, (m, k) => ({ name: m, modelFetcher: () => import(`model/${m}`) }))
 
 export default Object.assign({
   ALERT_SWITCH: ({ commit, }, { active, message, callback, }) => {
@@ -33,6 +37,11 @@ export default Object.assign({
     return fetchAsideNav().then(({ items, }) => {
       commit('SET_ASIDE_NAV', { items })
     })
+  },
+
+  FETCH_MODEL_DATA: ({ commit, dispatch, state, getters }) => {
+    const fetchModel = get(find(models, { name: get(getters, 'modelName', '') }), 'modelFetcher')
+    return fetchModel ? fetchModel().then(m => commit('SET_MODEL_DATA', { modelData: m })) : Promise.resolve()
   },
 
   FETCH_PROFILE: ({ commit, dispatch, state }, { params }) => {
