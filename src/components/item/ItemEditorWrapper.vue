@@ -243,6 +243,7 @@
     },
     watch: {
       item () { this.initValue() }, 
+      modelData () { this.initValue() }, 
     },
   }
 </script>
