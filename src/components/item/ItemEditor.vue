@@ -29,15 +29,11 @@
         return  this.modelname ? this.modelname.toLowerCase() : ''
       },
       modelname () { return this.modelName || this.$store.getters.modelName },
-      modelData () {
-        let model
-        try {
-          model = require(`model/${this.modelname}`)
-        } catch (error) {
-          console.log(`There's no model found:`, this.modelname)
-        }
-        return model
-      },     
+      fetchModel () {
+        return this.modelName !== this.$store.getters.modelName
+          ? () => import(`model/${this.modelname}`)
+          : Promise.resolve(this.$store.getters.modelData)
+      },
       structure () {
         if (this.modelName) {
           return this.modelData.model || []
@@ -53,6 +49,7 @@
     data () {
       return {
         isAllowedToSave: true,
+        modelData: {}
       }
     },
     methods: {
@@ -140,7 +137,20 @@
         }
       },      
     },
-    mounted () {},
+    mounted () {
+      this.fetchModel().then(m => {
+        console.log('m', m)
+        this.modelData = m
+      })
+    },
+    watch: {
+      modelname () {
+        this.fetchModel().then(m => {
+          console.log('mm', m)
+          this.modelData = m
+        })        
+      }
+    },
     props: {
       type: {
         type: String,
