@@ -3,6 +3,17 @@ export const nav = [
   { name: 'plugin', },
   { name: 'configure', },
 ]
+export const availableModels = [
+  'POST',
+  'PROJECT',
+  'ASSET',
+  'MEMBER',
+  'MEMO',
+  'POLL',
+  'POST',
+  'REPORT',
+  'ENEWS_GROUP_LIST',
+]
 export const items = [
   {
     nav: 'management',

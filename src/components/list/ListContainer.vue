@@ -1,12 +1,18 @@
 <template>
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
-      <div class="list-container__header"><ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem></div>
+      <div class="list-container__header">
+        <transition name="fade" mode="out-in">
+          <ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem>
+        </transition>
+      </div>
       <div class="list-container__items">
         <template v-for="(item, index) in items">
-          <ListItem @edit="editItem" @checkup="checkup"
-            :item="item"
-            :key="`list-container__items-${index}`"></ListItem>
+          <transition name="fade" mode="out-in">
+            <ListItem @edit="editItem" @checkup="checkup"
+              :item="item"
+              :key="`list-container__items-${index}`"></ListItem>
+          </transition>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -54,13 +60,6 @@
           ? 'edit'
           : ''
       },
-      header () {
-        const item = {}
-        map(this.$store.getters.structure, i => { 
-          item[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
-        })
-        return item
-      },
       items () {
         return get(this.$store, 'state.list', [])
       },
@@ -82,7 +81,8 @@
         curr_page: this.currPage,
         checkedItems: {},
         editorItem: {},
-        isAllowedToSave: true
+        header: {},
+        isAllowedToSave: true,
       }
     },
     methods: {
@@ -119,6 +119,9 @@
     },
     mounted () {
       this.activeEditor === 'edit' && isEmpty(this.editorItem) && this.backToParent()
+      map(this.$store.getters.structure, i => { 
+        this.header[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
+      })
     },
     props: {
       backToParent: {
@@ -149,10 +152,20 @@
           },
         })
       },
+      '$store.getters.structure': function (newVals, oldVals) {
+        newVals !== oldVals && map(this.$store.getters.structure, i => { 
+          this.header[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
+        })
+      }
     },
   }
 </script>
 <style lang="stylus" scoped>
+  .fade-enter-active, .fade-leave-active
+    transition all .2s ease
+
+  .fade-enter, .fade-leave-active
+    opacity 0
   .list-container
     padding 30px 0 70px
     position relative

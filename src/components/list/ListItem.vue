@@ -54,6 +54,7 @@
     data () {
       return {
         checked: false,
+        modelName: this.$store.getters.modelName
       }
     },
     methods: {
@@ -98,7 +99,7 @@
       },
       mapValue (name, options, value) {
         if (options) {
-          return this.$t(`${this.$store.getters.modelName.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
+          return this.$t(`${this.modelName.toUpperCase()}.${decamelize(name).toUpperCase()}_${get(filter(options, { value, }), '0.name', 'NEVER').toUpperCase()}`, '')
         }
         return value
       },
@@ -120,6 +121,9 @@
       checked () {
         this.$emit('checkup', { id: get(this.item, 'id'), value: this.checked, })
       },
+      '$store.getters.structure': function (newVals, oldVals) {
+        newVals !== oldVals && (this.modelName = this.$store.getters.modelName)
+      }
     },
   }
 </script>
