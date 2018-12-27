@@ -52,7 +52,7 @@
       modelData () {
         let model
         try {
-          model = require(`model/ASSET`)
+          model = () => import(`model/ASSET`)
         } catch (error) {
           console.log(`There's no model found: ASSET`)
         }
