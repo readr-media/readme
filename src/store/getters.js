@@ -21,7 +21,8 @@ export default {
     debug('getters', getters)
     let model
     try {
-      model = require(`model/${get(getters, 'modelName')}`)
+      // model = require(`model/${get(getters, 'modelName')}`)
+      model = () => import(`model/${get(getters, 'modelName')}`)
     } catch (error) {
       console.log(`There's no model found:`, get(getters, 'modelName'))
     }
