@@ -16,6 +16,8 @@ const ASSETS_TYPE = {
   AUDIO: 3
 }
 const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
+const SERVER_PROTOCOL = config.SERVER_PROTOCOL
+const SERVER_HOST = 'www.readr.tw'
 
 const constructFileInfo = file => {
   if (!get(file, 'filename')) { return {} }
@@ -33,7 +35,7 @@ const constructFileInfo = file => {
     : `${ASSETS_GCS_PATH.VIDEO}`
     : `${ASSETS_GCS_PATH.IMAGE}`
 
-  const fileBasicDestination = `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}${destination}/${temFileName}/${temFileName}`
+  const fileBasicDestination = `${SERVER_PROTOCOL}://${SERVER_HOST}${destination}/${temFileName}/${temFileName}`
   const fileDestinations = { basic: fileBasicDestination }
   if (asset_type === ASSETS_TYPE.IMAGE) {
     map(IMAGE_SIZE, f => {
