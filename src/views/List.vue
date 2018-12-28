@@ -54,6 +54,7 @@
   const DEFAULT_SORT = '-updated_at'
 
   const debug = require('debug')('CLIENT:List')
+  const fetchModelData = store => store.dispatch('FETCH_MODEL_DATA')
   const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
   const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
     params: Object.assign({
@@ -99,13 +100,7 @@
         return get(this.$route, 'params.item')
       },
       modelData () {
-        let model
-        try {
-          model = require(`model/${this.model.toUpperCase()}`)
-        } catch (error) {
-          console.log(`There's no model found:`, this.model.toUpperCase())
-        }
-        return model
+        return this.$store.getters.modelData
       },
       maxResult () {
         return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
@@ -201,24 +196,28 @@
       },
     },
     beforeMount () {
-      Promise.all([
-        this.refresh({}),
-        this.refreshItemsCount({})
-      ])
-    },
+      fetchModelData(this.$store).then(() => {
+        return Promise.all([
+          this.refresh({}),
+          this.refreshItemsCount({})
+        ])
+      })
+    },   
     mounted () {
       this.isFilterActive = true
     },
     watch: {
       '$route': function () {
         Promise.all([
+          fetchModelData(this.$store),
           this.refresh({}),
           this.refreshItemsCount({})
-        ])        
+        ])         
       },
       model () {
         this.isSpinnerActive = true
         Promise.all([
+          fetchModelData(this.$store),
           this.refresh({}),
           this.refreshItemsCount({})
         ])
