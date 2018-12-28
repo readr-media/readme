@@ -117,6 +117,9 @@ router.put('/update', (req, res) => {
   debug('Got a memo updating call.')
   debug(req.body)
   const url = `${apiHost}/memo`
+
+  req.body.updated_by = req.user.id
+
   superagent
   .put(url)
   .send(req.body)
