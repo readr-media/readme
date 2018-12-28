@@ -2,17 +2,13 @@
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
       <div class="list-container__header">
-        <transition name="fade" mode="out-in">
-          <ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem>
-        </transition>
+        <ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem>
       </div>
       <div class="list-container__items">
         <template v-for="(item, index) in items">
-          <transition name="fade" mode="out-in">
-            <ListItem @edit="editItem" @checkup="checkup"
-              :item="item"
-              :key="`list-container__items-${index}`"></ListItem>
-          </transition>
+          <ListItem @edit="editItem" @checkup="checkup"
+            :item="item"
+            :key="`list-container__items-${index}`"></ListItem>
         </template>
         <slot name="spinner"></slot>
       </div>
@@ -161,11 +157,6 @@
   }
 </script>
 <style lang="stylus" scoped>
-  .fade-enter-active, .fade-leave-active
-    transition all .2s ease
-
-  .fade-enter, .fade-leave-active
-    opacity 0
   .list-container
     padding 30px 0 70px
     position relative
