@@ -20,7 +20,7 @@ export function createRouter () {
       { path: '/', component: Index, meta: { permission: 'admin', }, },
       { path: '/login', component: Login, },
       { path: '/setup/:type?', component: SetUp, meta: { permission: 'admin', }, },
-      { path: '/:item/:subItem?/:action?', component: List, meta: { permission: 'admin', }, },
+      { path: '/list/:item/:subItem?/:action?', component: List, meta: { permission: 'admin', }, },
     ]
   })
 }
