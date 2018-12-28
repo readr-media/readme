@@ -86,4 +86,4 @@ export const model = [
 
 export const groups = [ 'info', 'basic', 'content', 'share' ]
 export const isPreviewable = true
-export const previewHost = 'http://dev.readr.tw/post'
+export const previewHost = 'https://www.readr.tw/post'
