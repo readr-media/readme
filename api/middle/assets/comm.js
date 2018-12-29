@@ -69,35 +69,38 @@ const transferFileToStorage = async file => {
   if (!get(file, 'filename')) { return Promise.resolve() }
 
   const fileType = get(file, 'asset_type')
+  const uploadBasicFile = uploadFileToBucket(bucket, file.path, {
+    destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_ext}`,
+    metadata: { contentType: file.mimetype }
+  }).then(bucketFile => {
+    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
+    removeTmpFile(file)
+    return makeFilePublic(bucketFile)
+  })
   switch (fileType) {
     case ASSETS_TYPE.IMAGE:
-      processImage(file).then(images => {
-        Promise.all(images.map(path => {
-          const fileName = trim(path, 'tmp/')
-          return uploadFileToBucket(bucket, path, {
-            destination: `${file.destination}/${file.filename}/${fileName}.${file.file_ext}`,
-            metadata: { contentType: file.mimetype }
-          }).then(bucketFile => {
-            console.info(`file ${fileName}(${path}) completed uploading to bucket `)
-            removeTmpFile({ path })
-            makeFilePublic(bucketFile)
-          })
-        }))
-      }).catch(err => {
-        console.error(`Error occurred process file: ${file.originalname}`)
-        console.error(err)
-      })
-      // Then, dont break, and go next to upload main file.
+      return processImage(file)
+        .then(images => {
+          Promise.all(images.map(path => {
+            const fileName = trim(path, 'tmp/')
+            return uploadFileToBucket(bucket, path, {
+              destination: `${file.destination}/${file.filename}/${fileName}.${file.file_ext}`,
+              metadata: { contentType: file.mimetype }
+            }).then(bucketFile => {
+              console.info(`file ${fileName}(${path}) completed uploading to bucket `)
+              removeTmpFile({ path })
+              return makeFilePublic(bucketFile)
+            })
+          }))
+        })
+        .then(() => uploadBasicFile())
+        .catch(err => {
+          console.error(`Error occurred process file: ${file.originalname}`)
+          console.error(err)
+        })
     case ASSETS_TYPE.VIDEO:
     case ASSETS_TYPE.AUDIO:
-      return uploadFileToBucket(bucket, file.path, {
-        destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_ext}`,
-        metadata: { contentType: file.mimetype }
-      }).then(bucketFile => {
-        console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
-        removeTmpFile(file)
-        makeFilePublic(bucketFile)
-      })
+      return uploadBasicFile()
   }
 }
 
