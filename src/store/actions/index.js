@@ -10,7 +10,12 @@ import * as actionsList from 'src/store/actions/list'
 import * as actionsItem from 'src/store/actions/item'
 
 import { availableModels } from 'configuration/navigationAside'
-const models = map(availableModels, (m, k) => ({ name: m, modelFetcher: () => import(`model/${m}`) }))
+const models = map(availableModels, m => ({
+  name: m,
+  modelFetcher: process.env.NODE_ENV === 'production'
+    ? () => import(`model/${m}`)
+    : () => Promise.resolve(require(`model/${m}`))
+}))
 
 export default Object.assign({
   ALERT_SWITCH: ({ commit, }, { active, message, callback, }) => {
@@ -40,6 +45,9 @@ export default Object.assign({
   },
 
   FETCH_MODEL_DATA: ({ commit, dispatch, state, getters }) => {
+    /**
+     * ToDo: should check permission to decide to load the model.
+     */
     const fetchModel = get(find(models, { name: get(getters, 'modelName', '') }), 'modelFetcher')
     return fetchModel ? fetchModel().then(m => commit('SET_MODEL_DATA', { modelData: m })) : Promise.resolve()
   },

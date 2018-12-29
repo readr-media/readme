@@ -2,9 +2,9 @@
   <div class="index">
     <div class="index--items">
       <template v-for="item in asideItems">
-        <router-link :to="`/${get(item, 'route', '')}`" :key="get(item, 'name')" v-if="get(item, 'active')">
+        <router-link :to="`/list/${get(item, 'name', '')}`" :key="get(item, 'name')" v-if="get(item, 'active')">
           <div class="index--item">
-            <div :to="`/${get(item, 'route', '')}`" class="index--item__title"><span v-text="$t(`NAVIGATION.${get(item, 'name', '').replace(/-/g, '_').toUpperCase()}`)"></span></div>
+            <div :to="`/list/${get(item, 'name', '')}`" class="index--item__title"><span v-text="$t(`NAVIGATION.${get(item, 'name', '').replace(/-/g, '_').toUpperCase()}`)"></span></div>
           </div>
         </router-link>
       </template>

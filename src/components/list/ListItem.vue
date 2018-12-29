@@ -1,35 +1,41 @@
 <template>
   <div class="list-item" tabIndex="0"
     :class="{ header: type === 'header', }">
-    <div class="list-item__checkbox" v-if="type !== 'header'"><CheckboxItem :value.sync="checked" :id="get(item, 'id', `${Date.now()}`)"></CheckboxItem></div>
-    <div class="list-item__checkbox header" v-else><ListActionBox @copy="copy" @del="del"></ListActionBox></div>
+    <template v-if="sortedStructure">
+      <transition name="fade" mode="out-in">
+        <div class="list-item__checkbox" v-if="type !== 'header'"><CheckboxItem :value.sync="checked" :id="get(item, 'id', `${Date.now()}`)"></CheckboxItem></div>
+        <div class="list-item__checkbox header" v-else><ListActionBox @copy="copy" @del="del"></ListActionBox></div>
+      </transition>
+    </template>
     <template v-for="obj in sortedStructure">
-      <div v-if="obj.isListable"
-        @click="clickHandler(obj.isEditEntry)"
-        :key="`list-item__content-${obj.name}-${Date.now()}`"
-        :class="`list-item__content ${obj.name}`"
-        :style="{
-          minWidth: get(calcWidth(obj), 'minWidth'),
-          maxWidth: get(calcWidth(obj), 'maxWidth'),
-          flex: 1,
-        }">
-        <template v-if="!obj.isAnchoric || type === 'header'">
-          <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
-          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
-          <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
-        </template>
-        <router-link v-else-if="obj.isAnchoric" :to="`/${get($route, 'params.item')}/${get(item, 'id')}`">
-          <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
-          <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
-          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
-          <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
-        </router-link>
-      </div>
+      <transition name="fade" mode="out-in">
+        <div v-if="obj.isListable"
+          @click="clickHandler(obj.isEditEntry)"
+          :key="`list-item__content-${obj.name}-${Date.now()}`"
+          :class="`list-item__content ${obj.name}`"
+          :style="{
+            minWidth: get(calcWidth(obj), 'minWidth'),
+            maxWidth: get(calcWidth(obj), 'maxWidth'),
+            flex: 1,
+          }">
+          <template v-if="!obj.isAnchoric || type === 'header'">
+            <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
+            <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
+            <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
+          </template>
+          <router-link v-else-if="obj.isAnchoric" :to="`/${get($route, 'params.item')}/${get(item, 'id')}`">
+            <span v-text="get(item, obj.name)" v-if="isSpicialItems(obj.type) || type === 'header'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
+            <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
+            <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
+            <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
+          </router-link>
+        </div>
+      </transition>
     </template>
   </div>
 </template>

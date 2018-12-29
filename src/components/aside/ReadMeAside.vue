@@ -13,14 +13,14 @@
           <div class="aside__container__item" :key="`item-${index}`">
             <router-link v-if="get(item, 'type', 'list') === 'list'"
               :class="{ active: get($route, 'params.item') === get(item, 'name', '') }"
-              :to="`/${get(item, 'name', '')}`">
+              :to="`/list/${get(item, 'name', '')}`">
               <span v-text="$t(`NAVIGATION.${get(item, 'name', 'item').replace(/-/g, '_').toUpperCase()}`)"></span>
             </router-link>
             <span v-else v-text="$t(`NAVIGATION.${get(item, 'name', 'item').toUpperCase()}`)"></span>
           </div>
           <template v-for="(sub, sindex) in get(item, 'sub')">
             <div class="aside__container__item sub availible" v-if="get(sub, 'active', false) && get(item, 'nav', false) === activeNav">
-              <router-link :to="`/${get(sub, 'name', '')}`"
+              <router-link :to="`/list/${get(sub, 'name', '')}`"
                 :class="{ active: get($route, 'params.item') === get(sub, 'name', '') }">
                 <span v-text="$t(`NAVIGATION.${(get(sub, 'name', 'item').replace(/-/g, '_')).toUpperCase()}`)"></span>
               </router-link>

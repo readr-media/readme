@@ -48,24 +48,11 @@
       Spinner,
       Tab
     },
-    computed: {
-      modelData () {
-        let model
-        try {
-          model = () => import(`model/ASSET`)
-        } catch (error) {
-          console.log(`There's no model found: ASSET`)
-        }
-        return model        
-      },
-      endpointOfList () {
-        return get(this.modelData, 'assetsEndpoint')
-      }
-    },
     data () {
       return {
         assets: [],
         isLoading: false,
+        modelData: {},
         selectedItem: -1,
         tabs: [ this.$t('EDITOR.ASSET_PICKER.PICK'), this.$t('EDITOR.ASSET_PICKER.GENERATE') ]
       }
@@ -97,16 +84,20 @@
     },
     mounted () {
       debug('Going to fetch assets list.')
-      this.endpointOfList && fetchAsset(this.endpointOfList)
-        .then(res => {
-          debug('Assets Get!', res.data)
-          const data = camelizeKeys(res.data)
-          this.assets = get(data, 'items')
-        })
-        .catch(err => {
-          debug('Getting Assets in fail!!', err)
-          this.assets = []
-        })
+      import(`model/ASSET`).then(m => {
+        this.modelData = m
+        const endpointOfList = get(m, 'assetsEndpoint')
+        endpointOfList && fetchAsset(endpointOfList)
+          .then(res => {
+            debug('Assets Get!', res.data)
+            const data = camelizeKeys(res.data)
+            this.assets = get(data, 'items')
+          })
+          .catch(err => {
+            debug('Getting Assets in fail!!', err)
+            this.assets = []
+          })
+      })
     },
     props: {
       callback: {

@@ -58,13 +58,22 @@ router.post('/create', authVerify, (req, res) => {
     title: get(req, 'body.title'),
     copyright: get(req, 'body.copyright'),
   }))
-  res.send({
-    message: 'Done.',
-    url: fileInfo.fileDestinations
-  })
-
+  
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file)
+  transferFileToStorage(file).then(() => {
+    res.send({
+      message: 'Done.',
+      url: fileInfo.fileDestinations
+    })
+  }).catch(error => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during transfering file : ${file}`)
+    console.error(error)     
+  })
 })
 
 router.put('/update', authVerify, (req, res) => {
@@ -80,13 +89,21 @@ router.put('/update', authVerify, (req, res) => {
     copyright: get(req, 'body.copyright'),
   })
 
-  res.send({
-    message: 'Done.',
-    url: fileInfo.fileDestinations
-  })
-
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file)
+  transferFileToStorage(file).then(() => {
+    res.send({
+      message: 'Done.',
+      url: fileInfo.fileDestinations
+    })
+  }).catch(error => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during transfering file : ${file}`)
+    console.error(error)     
+  })
 })
 
 router.post('/process/:owner', checkPermission, upload.single('filepond-file'), (req, res) => {
