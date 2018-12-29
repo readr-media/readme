@@ -138,12 +138,12 @@
         this.$router.go(-1)
       },
       backToParent () {
-        this.isSubItem ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}`) : this.$router.push(`/${get(this.$route, 'params.item')}`)
+        this.isSubItem ? this.$router.push(`/list/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}`) : this.$router.push(`/list/${get(this.$route, 'params.item')}`)
       },
       create () {
         this.isSubItem
-          ? this.$router.push(`/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}/new`)
-          : this.$router.push(`/${get(this.$route, 'params.item')}/new`)
+          ? this.$router.push(`/list/${get(this.$route, 'params.item')}/${get(this.$route, 'params.subItem')}/new`)
+          : this.$router.push(`/list/${get(this.$route, 'params.item')}/new`)
       },
       focusSearch () {
         this.isSearchFocused = true

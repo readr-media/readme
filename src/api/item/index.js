@@ -1,4 +1,3 @@
-import { PROJECT_ACTIVE, } from 'api/config'
 import { constructUrlWithQuery, del, fetchInStrict, put, post, } from 'src/api/comm'
 import { getHost, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:api:item')
@@ -13,7 +12,7 @@ export function updateItem ({ params, endpoint, }) {
 
 export function postItem ({ params, endpoint, }) {
   const url = `${host}/api/${endpoint}/create`
-  params.active = PROJECT_ACTIVE.ACTIVE
+  params.active = 1
   return post(url, params) 
 }
 
