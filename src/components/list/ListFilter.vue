@@ -1,43 +1,67 @@
 <template>
-  <div class="list-search">
+  <div class="list-search" :class="{ 'with-filter': isFilterSetupped }">
     <input class="list-search__input" type="text" ref="searchInput"
-      :placeholder="$t('LIST.SEARCH')"
       v-model="currentSearchVal"
+      :placeholder="filtersStr || $t('LIST.SEARCH')"
+      @focusin="toggleFilterVisible(true)"
+      @focusout="toggleFilterVisible(false)"
       @keyup="setCurrVal"
       @change="checkIsChanged">
-    <div class="list-search__filter filter-button" ref="filterBox"
-      :class="{ active: isFilterHovered }" tabindex="0"
-      @focusin="isFilterHovered = true"
-      @focusout="isFilterHovered = false">
-      <div class="list-search__filter__hint hint"><span v-text="$t('LIST.SEARCH_HINT')"></span></div>
-    </div>
-    <div class="list-search__filter--toolbox filter-toolbox"
-      @focusin="isFilterHovered = true" tabindex="0"
-      @focusout="isFilterHovered = false">
-      <ListFilterTools></ListFilterTools>
-    </div>
+    <template v-if="isFilterSetupped">
+      <div class="list-search__filter filter-button" ref="filterBox"
+        :class="{ active: isFilterHovered, working: isFilterWorking }" tabindex="0"
+        @focusin="isFilterHovered = true"
+        @focusout="isFilterHovered = false">
+        <div class="list-search__filter__hint hint"><span v-text="$t('LIST.SEARCH_HINT')"></span></div>
+      </div>
+      <div class="list-search__filter--toolbox filter-toolbox"
+        @focusin="isFilterHovered = true" tabindex="0"
+        @focusout="isFilterHovered = false">
+        <ListFilterTools :filtersVals.sync="filters"></ListFilterTools>
+      </div>
+    </template>
   </div>
 </template>
 <script>
   import ListFilterTools from './ListFilterTools.vue'
+  import { get, map } from 'lodash'
   export default {
     name: 'ListFilter',
     components: {
       ListFilterTools,
     },
+    computed: {
+      isFilterSetupped () {
+        return get(this.$store, 'getters.filters.length', 0) > 0
+      },
+      isFilterWorking () {
+        return map(this.filters, f => f).length > 0
+      },
+    },
     data () {
       return {
         currentSearchVal: '',
+        filters: {},
+        filtersStr: '',
         isFilterHovered: false,
       }
     },
     methods: {
       checkIsChanged () {},
       setCurrVal () {},
+      toggleFilterVisible (flag) {
+        if (flag) {
+          this.filtersStr = ''
+        } else {
+          this.filtersStr = map(this.filters, f => f).join(', ')
+        }
+      }
     },
     mounted () {
-      this.$refs.filterBox.ondragstart = function () { return false }
-      this.$refs.filterBox.onselectstart = function () { return false }   
+      if (this.$refs.filterBox) {
+        this.$refs.filterBox.ondragstart = function () { return false }
+        this.$refs.filterBox.onselectstart = function () { return false } 
+      }
     },
     props: {
       value: {
@@ -47,6 +71,13 @@
     watch: {
       currentSearchVal () {
         this.$emit('update:value', this.currentSearchVal)
+      },
+      filters: {
+        handler: function () {
+          this.filtersStr = map(this.filters, f => f).join(', ')
+          this.isFilterHovered = false
+        },
+        deep: true
       },
     },
   }
@@ -60,13 +91,15 @@
     height 36px
     width 100%    
     background-color #f7f7f7
-    padding 10px 55px 10px 45px
+    padding 10px 10px 10px 45px
     position relative
     background-image url(/public/icons/icon-search.png)
     background-position 15px 8px
     background-size 20px 20px
     background-repeat no-repeat
 
+    &.with-filter
+      padding-right 55px
     &__input
       outline none
       width 100%
@@ -82,7 +115,7 @@
 
       &::-webkit-input-placeholder
         color #a0a0a0
-        font-weight 100
+        font-weight normal
     &__filter
       position absolute
       right 0
@@ -98,8 +131,9 @@
       outline none
       &:not(.active)
         animation fade-out 0.5s
-      &.active
+      &.working, &.active
         background-image url(/public/icons/icon_filter_clicked.png)
+      &.active
         & ~ .filter-toolbox
           display flex
       &:hover

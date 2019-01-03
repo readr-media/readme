@@ -25,28 +25,8 @@ export default {
     'SEARCH_APPLIED': '已採用',
     'SEARCH_HINT': '顯示篩選選項',
     'FILTER': {
-      'TITLE': '標題',
-      'CONTENT': '內容',
-      'AUTHOR': '作者',
-      'TAG': '#',
-      'ID': 'ID',
-      'SLUG': 'SLUG',
-      'TIME': '時間',
-      'PEROID': '期間',
-      'DATE': '日期',
       'CLEAR': '清除',
       'CONFIRM': '篩選',
-      'PLACEHOLDER': {
-        'TITLE': '請輸入標題關鍵字',
-        'CONTENT': '請輸入內容關鍵字',
-        'AUTHOR': '請輸入作者姓名',
-        'TAG': '請輸入 #',
-        'ID': '請輸入 ID',
-        'SLUG': '請輸入 SLUG',
-        'TIME': '請輸入時間狀態',
-        'PEROID': '請輸入時間區間',
-        'DATE': '請輸入標題關鍵字',        
-      },
     },
     'EDIT': '修改',
     'DEL': '刪除',
@@ -99,6 +79,12 @@ export default {
     'PROGRESS': '進度',
     'UPDATED_BY': '最後更新',
     'TAGS': '關鍵字',
+    'FILTER_PLACEHOLDER': {
+      'ID': '請輸入 ID',
+      'TITLE': '請輸入標題關鍵字',
+      'TAGS': '#',
+      'SLUG': '請輸入 SLUG',
+    }    
   },
   'REPORT': {
     'NEW': '新增報導',
@@ -157,7 +143,12 @@ export default {
     'BIRTHDAY': '生日',
     'WORK': '職業',
     'PHONE': '電話',
-    'NAME': '姓名'
+    'NAME': '姓名',
+    'FILTER_PLACEHOLDER': {
+      'ID': '請輸入 ID',
+      'NICKNAME': '請輸入暱稱關鍵字',
+      'MAIL': '請輸入信箱關鍵字',
+    }
   },
   'MEMO': {
     'NEW': '新增筆記',
@@ -286,6 +277,12 @@ export default {
       'ONCE': '只能投一次',
       'DAILY': '一天可投一次',
       'WEEKLY': '一週可投一次',
+    },
+    'FILTER_PLACEHOLDER': {
+      'TITLE': '請輸入標題關鍵字',
+      'DESCRIPTION': '請輸入說明關鍵字',
+      'TAGS': '#',
+      'ID': '請輸入 ID',
     }
   },
   'POST': {
@@ -328,6 +325,14 @@ export default {
     'AUTHORS': '作者',
     'SLUG': 'SLUG',
     'POST_ORDER': '排序',
+    'FILTER_PLACEHOLDER': {
+      'TITLE': '請輸入標題關鍵字',
+      'CONTENT': '請輸入內容關鍵字',
+      'AUTHOR': '請輸入作者',
+      'TAGS': '#',
+      'ID': '請輸入 ID',
+      'SLUG': '請輸入 SLUG',
+    }        
   },
   'ASSET': {
     'ID': 'ID',
@@ -348,6 +353,12 @@ export default {
     'FILE_NAME': '檔名',
     'FILE_EXT': '副檔名',
     'FILE_TYPE': '檔案類型',
+    'FILTER_PLACEHOLDER': {
+      'TITLE': '請輸入標題關鍵字',
+      'AUTHOR': '請輸入作者',
+      'TAGS': '#',
+      'ID': '請輸入 ID',
+    }
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',
