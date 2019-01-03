@@ -41,3 +41,4 @@ export const model = [
   { name: 'ogImage', type: 'AssetPicker', isEditable: true, isListable: false, isHidden: false, },
   // { name: 'updatedBy', type: 'TextInput', isEditable: false, isListable: false, isHidden: true, },
 ]
+export const LIST_MAXRESULT = 15

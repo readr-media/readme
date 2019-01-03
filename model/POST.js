@@ -87,3 +87,4 @@ export const model = [
 export const groups = [ 'info', 'basic', 'content', 'share' ]
 export const isPreviewable = true
 export const previewHost = 'https://www.readr.tw/post'
+export const LIST_MAXRESULT = 15

@@ -60,4 +60,4 @@ export const model = [
 ]
 export const filter = [ 'custom_editor' ]
 export const groups = [ 'info', 'basic', 'content', ]
-export const LIST_MAXRESULT = 10
+export const LIST_MAXRESULT = 15
