@@ -1,49 +1,79 @@
 <template>
   <div class="filter-tools">
-    <template v-for="item in FILTERS">
+    <template v-for="item in filterItems">
       <div class="filter--item">
-        <div class="filter--item__title"><span v-text="$t(`LIST.FILTER.${item.name}`)"></span></div>
-        <div class="filter--item__value">
-          <ListFilterItems :type="item.type" :name="item.name"></ListFilterItems>
+        <div class="filter--item__title"><span v-text="$t(`${modelName}.${get(item, 'name', '').toUpperCase()}`)"></span></div>
+        <div class="filter--item__value" :key="key">
+          <ListFilterItem :type="item.type" :name="item.name" :value.sync="filters[ item.name ]"></ListFilterItem>
         </div>
       </div>
     </template>
     <div class="filter--actions">
-      <div class="clear" ref="clear"><span v-text="$t('LIST.FILTER.CLEAR')"></span></div>
-      <div class="confirm" ref="confirm"><span v-text="$t('LIST.FILTER.CONFIRM')"></span></div>
+      <div class="clear" ref="clear" @click="clear"><span v-text="$t('LIST.FILTER.CLEAR')"></span></div>
+      <div class="confirm" ref="confirm" @click="confirm"><span v-text="$t('LIST.FILTER.CONFIRM')"></span></div>
     </div>
   </div>
 </template>
 <script>
-  import ListFilterItems from './ListFilterItems.vue'
-  const FILTERS = [
-    { name: 'TITLE', type: 'TextInput' },
-    { name: 'CONTENT', type: 'TextInput' },
-    { name: 'AUTHOR', type: 'TextInput' },
-    { name: 'TAG', type: 'TextInput' },
-    { name: 'ID', type: 'TextInput' },
-    { name: 'SLUG', type: 'TextInput' },
-    { name: 'TIME', type: 'Datetime' },
-    { name: 'PEROID', type: 'Datetime' },
-    { name: 'DATE', type: 'Datetime' },
-  ]
+  import ListFilterItem from './ListFilterItem.vue'
+  import { filter, get, map } from 'lodash'
+
   export default {
     name: 'ListFilterTools',
     components: {
-      ListFilterItems,
+      ListFilterItem,
+    },
+    computed: {
+      filterItems () {
+        return this.$store.getters.filters || []
+      },
+      filledItems () {
+        const filledItems = {}
+        map(this.filters, (f, k) => {
+          if (f) {
+            filledItems[ k ] = f
+          }
+        })
+        return filledItems
+      }
     },
     data () {
       return {
-        FILTERS,
+        filters: {},
+        key: Date.now().toString(),
+        modelName: ''
       }
     },
-    methods: {},
+    methods: {
+      clear () {
+        this.filters = {}
+        this.$emit('update:filtersVals', this.filledItems)
+        this.key = Date.now().toString()
+      },
+      confirm () {
+        this.$emit('update:filtersVals', this.filledItems)
+      },
+      get
+    },
+    beforeMount () {
+      this.modelName = this.$store.getters.modelName
+    },
     mounted () {
       this.$refs.clear.ondragstart = function () { return false }
       this.$refs.clear.onselectstart = function () { return false }   
       this.$refs.confirm.ondragstart = function () { return false }
       this.$refs.confirm.onselectstart = function () { return false }               
     },
+    props: {
+      filtersVals: {}
+    },
+    watch: {
+      '$store.getters.structure': function (newVals, oldVals) {
+        if (newVals !== oldVals) {
+          this.modelName = this.$store.getters.modelName
+        }
+      },        
+    }
   }
 </script>
 <style lang="stylus" scoped>

@@ -42,3 +42,7 @@ export const model = [
 export const groups = [ 'info', 'basic' ]
 export const assetsEndpoint = '/api/asset/list?type=image'
 export const LIST_MAXRESULT = 15
+export const filters = [
+  { name: 'title', type: 'TextInput' },
+  { name: 'id', type: 'TextInput' },
+]
