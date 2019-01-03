@@ -39,3 +39,4 @@ export const model = [
   { name: 'updatedBy', type: 'TextInput', isEditable: false, isListable: false, isHidden: true, order: { editor: 5 }, },
   { name: 'tags', type: 'TextTagItem', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
 ]
+export const LIST_MAXRESULT = 15

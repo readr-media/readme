@@ -102,9 +102,6 @@
       modelData () {
         return this.$store.getters.modelData
       },
-      maxResult () {
-        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
-      },
       sub () {
         return get(find(this.asideItems, { name: this.modelRaw, }), 'sub', [])
       },
@@ -160,7 +157,8 @@
         } else {
           params.page = this.page
         }
-        params.maxResult = this.maxResult
+
+        params.maxResult = this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
         params.id = this.isSubItem || undefined
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
@@ -196,31 +194,26 @@
       },
     },
     beforeMount () {
-      fetchModelData(this.$store).then(() => {
-        return Promise.all([
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])
-      })
+      fetchModelData(this.$store)
     },   
     mounted () {
       this.isFilterActive = true
     },
     watch: {
       '$route': function () {
-        Promise.all([
-          fetchModelData(this.$store),
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])         
+        /**
+         *  As soon as the route changes, we fetch the proper model data at first.
+         */
+        fetchModelData(this.$store)               
       },
-      model () {
-        this.isSpinnerActive = true
+      '$store.getters.structure': function () {
+        /**
+         *  Make sure the structure changed before we fetch list.
+         */
         Promise.all([
-          fetchModelData(this.$store),
           this.refresh({}),
           this.refreshItemsCount({})
-        ])
+        ])  
       },
       filter () {
         debug('Mutation detected: filter', this.filter)
@@ -263,7 +256,7 @@
       background-color #a3a3a3
       margin-top 10px
       margin-right 10px
-      border-radius 2px
+      border-radius 4px
       height 30px
       outline none
       padding 0 10px

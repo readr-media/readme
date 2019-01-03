@@ -1,21 +1,25 @@
 <template>
   <div class="list-container" :class="{ 'editor-active': activeEditor, }">
     <template v-if="!activeEditor">
-      <div class="list-container__header">
-        <ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem>
-      </div>
-      <div class="list-container__items">
-        <template v-for="(item, index) in items">
-          <ListItem @edit="editItem" @checkup="checkup"
-            :item="item"
-            :key="`list-container__items-${index}`"></ListItem>
-        </template>
-        <slot name="spinner"></slot>
-      </div>
-      <div class="list-container__footer">
-        <RecordCount :total="itemsCount"></RecordCount>
-        <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
-      </div>
+      <transition name="fade" mode="out-in">
+        <div :key="key">
+          <div class="list-container__header">
+            <ListItem :item="header" type="header" @del="del" @copy="copy"></ListItem>
+          </div>
+          <div class="list-container__items">
+            <template v-for="(item, index) in items">
+              <ListItem @edit="editItem" @checkup="checkup"
+                :item="item"
+                :key="`list-container__items-${index}`"></ListItem>
+            </template>
+            <slot name="spinner"></slot>
+          </div>
+          <div class="list-container__footer">
+            <RecordCount :total="itemsCount"></RecordCount>
+            <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
+          </div>
+        </div>
+      </transition>
     </template>
     <template v-else>
       <ItemEditor type="create" slot="editor" v-if="activeEditor === 'new'"
@@ -78,6 +82,7 @@
         checkedItems: {},
         editorItem: {},
         header: {},
+        key: '',
         isAllowedToSave: true,
       }
     },
@@ -115,6 +120,7 @@
     },
     mounted () {
       this.activeEditor === 'edit' && isEmpty(this.editorItem) && this.backToParent()
+      this.key = this.$store.getters.modelName
       map(this.$store.getters.structure, i => { 
         this.header[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
       })
@@ -149,9 +155,12 @@
         })
       },
       '$store.getters.structure': function (newVals, oldVals) {
-        newVals !== oldVals && map(this.$store.getters.structure, i => { 
-          this.header[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
-        })
+        if (newVals !== oldVals) {
+          this.key = this.$store.getters.modelName
+          map(this.$store.getters.structure, i => { 
+            this.header[ i.name ] = this.$t(`${this.$store.getters.modelName}.${decamelize(i.name).toUpperCase()}`)
+          })
+        }
       }
     },
   }

@@ -7,7 +7,10 @@
       :placeholder="placeHolder"
       :style="{
         backgroundColor: background_color,
+        color,
         width,
+        fontSize,
+        fontWeight,
       }"
       @focus="focus"
       @focusout="focusout"
@@ -62,6 +65,9 @@
       },
       value: {},
       width: {},
+      color: {},
+      fontSize: {},
+      fontWeight: {},
     },
     watch: {
       current: function () {
