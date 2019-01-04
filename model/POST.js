@@ -94,5 +94,7 @@ export const filters = [
   { name: 'author', type: 'TextInput' },
   { name: 'tags', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
-  { name: 'slug', type: 'TextInput' },
+  { name: 'publishStatus', type: 'Datetime' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
 ]

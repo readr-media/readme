@@ -66,4 +66,9 @@ export const filters = [
   { name: 'description', type: 'TextInput' },
   { name: 'tags', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
+  { name: 'publishedAt', type: 'Datetime' },
+  { name: 'startAt', type: 'Datetime' },    
+  { name: 'endAt', type: 'Datetime' },    
 ]

@@ -42,8 +42,12 @@ export const model = [
 
 export const filters = [
   { name: 'title', type: 'TextInput' },
+  { name: 'description', type: 'TextInput' },
   { name: 'tags', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
   { name: 'slug', type: 'TextInput' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'publishedAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
 ]
 export const LIST_MAXRESULT = 15

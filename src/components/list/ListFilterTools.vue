@@ -2,7 +2,7 @@
   <div class="filter-tools">
     <template v-for="item in filterItems">
       <div class="filter--item">
-        <div class="filter--item__title"><span v-text="$t(`${modelName}.${get(item, 'name', '').toUpperCase()}`)"></span></div>
+        <div class="filter--item__title"><span v-text="$t(`${modelName}.${decamelize(get(item, 'name', '')).toUpperCase()}`)"></span></div>
         <div class="filter--item__value" :key="key">
           <ListFilterItem :type="item.type" :name="item.name" :value.sync="filters[ item.name ]"></ListFilterItem>
         </div>
@@ -17,6 +17,7 @@
 <script>
   import ListFilterItem from './ListFilterItem.vue'
   import { filter, get, map } from 'lodash'
+  import { decamelize, } from 'humps'
 
   export default {
     name: 'ListFilterTools',
@@ -48,11 +49,15 @@
       clear () {
         this.filters = {}
         this.$emit('update:filtersVals', this.filledItems)
+        this.$emit('close')
         this.key = Date.now().toString()
       },
       confirm () {
         this.$emit('update:filtersVals', this.filledItems)
+        console.log('go close!')
+        this.$emit('close')
       },
+      decamelize,
       get
     },
     beforeMount () {
@@ -82,19 +87,23 @@
       padding 10px 18px
       width 100%
     &--item
-      height 34px
+      min-height 34px
       display flex
       margin 10px 0
       &:first-child
         margin-top 0
       &__title
-        width 30px
+        width 60px
         font-size 0.875rem
         line-height normal
         color #000
         display flex
         justify-content flex-start
-        align-items center
+        align-items flex-start
+        span
+         min-height 34px
+         display inline-flex
+         align-items center
       &__value
         flex 1  
         background-color #fff

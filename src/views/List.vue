@@ -4,16 +4,15 @@
       <div class="list__header">
         <template v-if="!isEditorActive">
           <div class="list__wrapper left">
-            <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
             <div class="list__name"><span v-text="title"></span></div>
           </div>
           <div class="list__wrapper right">
             <div class="list__search" v-if="isFilterActive">
-              <ListFilter :value.sync="filter"></ListFilter>
+              <ListFilter :value.sync="searchVal" :filters.sync="filters" :key="key"></ListFilter>
             </div>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
-              <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
+              <div class="btn create" @click="create"><span v-text="`＋　${$t('LIST.ADD')}`"></span></div>
             </div>
           </div>
         </template>
@@ -40,7 +39,6 @@
   </div>
 </template>
 <script>
-  // import FilterGroup from 'src/components/list/FilterGroup.vue'
   import ListFilter from 'src/components/list/ListFilter.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
@@ -70,7 +68,6 @@
   export default {
     name: 'List',
     components: {
-      // FilterGroup,
       ListFilter,
       ListContainer,
       Spinner,
@@ -120,14 +117,15 @@
     },
     data () {
       return {
-        filter: '',
+        filters: {},
         filterSearched: '',
         filterChecksCurrent: {},
-        // isFilterApplied: false,
         isFilterActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
+        key: Date.now().toString(),
         page: DEFAULT_PAGE,
+        searchVal: '',
       }
     },
     methods: {
@@ -177,7 +175,7 @@
         fetchItemsCount(this.$store, params, this.modelRaw)
       },
       search () {
-        this.filterSearched = this.filter
+        this.filterSearched = this.searchVal
         // this.isFilterApplied = true
         Promise.all([
           this.refresh({
@@ -200,25 +198,31 @@
       this.isFilterActive = true
     },
     watch: {
-      '$route': function () {
-        /**
-         *  As soon as the route changes, we fetch the proper model data at first.
-         */
-        fetchModelData(this.$store)               
+      '$route': function (newRoute, oldRoute) {        
+        if (newRoute.params.item !== oldRoute.params.item) {
+          /**
+          *  As soon as the route changes and the model get different, we fetch the proper model data at first.
+          */
+          fetchModelData(this.$store)
+        }
       },
-      '$store.getters.structure': function () {
-        /**
-         *  Make sure the structure changed before we fetch list.
-         */
-        Promise.all([
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])  
+      '$store.getters.structure': function (newStructure, oldStructure) {
+        if (newStructure !== oldStructure) {
+          /**
+          *  Make sure the structure changed before we fetch list.
+          */
+          Promise.all([
+            this.refresh({}),
+            this.refreshItemsCount({})
+          ])  
+          this.filters = {}
+          this.searchVal = ''
+          this.key = Date.now().toString()
+        }
       },
-      filter () {
-        debug('Mutation detected: filter', this.filter)
+      searchVal () {
+        debug('Mutation detected: search', this.searchVal)
         this.search()
-        // this.isFilterApplied = this.filterSearched === this.filter
       },
       filterChecksCurrent () {
         debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
