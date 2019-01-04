@@ -4,12 +4,16 @@
     fontSize="0.875rem"
     :placeHolder="$t(`${key}.FILTER_PLACEHOLDER.${name.toUpperCase()}`)"
     :value.sync="val" />
+  <ListFilterItemDatetime v-else-if="type === 'Datetime'"
+    :value.sync="val" />
 </template>
 <script>
   import TextInput from 'src/components/form/TextInput.vue'
+  import ListFilterItemDatetime from './ListFilterItemDatetime.vue'
   export default {
     name: 'ListFilterItem',
     components: {
+      ListFilterItemDatetime,
       TextInput
     },
     data () {

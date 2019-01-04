@@ -27,6 +27,12 @@ export default {
     'FILTER': {
       'CLEAR': '清除',
       'CONFIRM': '篩選',
+      'DATETIME_TYPE': {
+        'NONE': '無',
+        'AFTER': '之後',
+        'BEFORE': '之前',
+        'PERIOD': '期間',
+      }
     },
     'EDIT': '修改',
     'DEL': '刪除',
@@ -84,6 +90,7 @@ export default {
       'TITLE': '請輸入標題關鍵字',
       'TAGS': '#',
       'SLUG': '請輸入 SLUG',
+      'DESCRIPTION': '請輸入關鍵字'
     }    
   },
   'REPORT': {
@@ -145,9 +152,11 @@ export default {
     'PHONE': '電話',
     'NAME': '姓名',
     'FILTER_PLACEHOLDER': {
-      'ID': '請輸入 ID',
-      'NICKNAME': '請輸入暱稱關鍵字',
       'MAIL': '請輸入信箱關鍵字',
+      'NICKNAME': '請輸入暱稱關鍵字',
+      'ID': '請輸入 ID',
+      'UPDATED_AT': '更新時間',
+      'CREATED_AT': '建立時間'
     }
   },
   'MEMO': {

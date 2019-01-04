@@ -139,14 +139,12 @@
     },
     mounted () {
       this.fetchModel().then(m => {
-        console.log('m', m)
         this.modelData = m
       })
     },
     watch: {
       modelname () {
         this.fetchModel().then(m => {
-          console.log('mm', m)
           this.modelData = m
         })        
       }

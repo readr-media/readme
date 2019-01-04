@@ -45,4 +45,7 @@ export const LIST_MAXRESULT = 15
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
+  // { name: 'destination', type: 'TextInput' },
+  // { name: 'createdAt', type: 'Datetime' },
+  // { name: 'updatedAt', type: 'Datetime' },
 ]
