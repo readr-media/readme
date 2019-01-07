@@ -8,7 +8,7 @@
     <div class="account-info__actions">
       <ActionBox :active.sync="isActionsActive" align="right">
         <template slot="actions">
-          <div class="item"><span v-text="$t('HEADER.LOGOUT')"></span></div>
+          <div class="item" @click="logout"><span v-text="$t('HEADER.LOGOUT')"></span></div>
         </template>
       </ActionBox>
     </div>
@@ -18,7 +18,9 @@
   import ActionBox from 'src/components/common/ActionBox.vue'
   import { get, } from 'lodash'
   import { isDescendant, getFullUrl, } from 'src/util/comm'
+  import { removeToken, } from 'src/util/services'
   const debug = require('debug')('CLIENT:AccountActionBox')
+  const logout = store => store.dispatch('LOGOUT', {})
   export default {
     name: 'AccountActionBox',
     components: {
@@ -37,6 +39,14 @@
     methods: {
       get,
       getFullUrl,
+      logout () {
+        logout(this.$store).then(() => {
+          const domain = get(this.$store, 'state.setting.DOMAIN')
+          return removeToken(domain).then(() => {
+            location.replace('/login')
+          })
+        })
+      },
       switchActions (status, event) {
         const targ = event.target
         if (isDescendant(targ, { parent: this.$el })) {
