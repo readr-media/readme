@@ -10,6 +10,14 @@ const LOGIN = ({ commit, }, { params, token, }) => {
   })
 }
 
+const LOGOUT = ({ commit, }) => {
+  return new Promise((resolve) => {
+    commit('SET_LOGGEIN_STATUS', { body: false, })
+    commit('SET_PROFILE', { profile: {},})
+    resolve()
+  })
+}
+
 const DISPOSABLE_TOKEN = ({ commit, }, { type, }) => {
   return memberFunc.getDisposableToken(type).then((token) => {
     commit('SET_TOKEN', { token, type, })
@@ -18,5 +26,6 @@ const DISPOSABLE_TOKEN = ({ commit, }, { type, }) => {
 
 export {
   LOGIN,
+  LOGOUT,
   DISPOSABLE_TOKEN
 }
