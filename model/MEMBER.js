@@ -35,6 +35,12 @@ export const model = [
 
 ]
 
-export const filter = [ 'custom_editor' ]
+export const filters = [
+  { name: 'nickname', type: 'TextInput' },
+  { name: 'mail', type: 'TextInput' },
+  { name: 'id', type: 'TextInput' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
+]
 export const groups = [ 'info', 'basic', 'advanced' ]
 export const LIST_MAXRESULT = 15

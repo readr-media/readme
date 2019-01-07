@@ -1,5 +1,8 @@
 import { get } from 'lodash'
 export default {
+  filters (state, getters) {
+    return get(getters, 'modelData.filters')
+  },
   isLoginPage (state) {
     const route = get(state, 'route.path')
     return route.indexOf('login') > -1

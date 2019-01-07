@@ -58,6 +58,17 @@ export const model = [
   { name: 'maxChoice', type: 'TextInput', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 1, }, required: true },
   { name: 'changeable', type: 'CheckboxItem', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, order: { editor: 3, }, hideTitle: true, subText: 'CHANGEABLE', watcher: 'frequency', showWith: isSupposedToShowedWithFrequency,},
 ]
-export const filter = [ 'custom_editor' ]
+
 export const groups = [ 'info', 'basic', 'content', ]
-export const LIST_MAXRESULT = 10
+export const LIST_MAXRESULT = 15
+export const filters = [
+  { name: 'title', type: 'TextInput' },
+  { name: 'description', type: 'TextInput' },
+  { name: 'tags', type: 'TextInput' },
+  { name: 'id', type: 'TextInput' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
+  { name: 'publishedAt', type: 'Datetime' },
+  { name: 'startAt', type: 'Datetime' },    
+  { name: 'endAt', type: 'Datetime' },    
+]

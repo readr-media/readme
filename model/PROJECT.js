@@ -39,3 +39,15 @@ export const model = [
   { name: 'updatedBy', type: 'TextInput', isEditable: false, isListable: false, isHidden: true, order: { editor: 5 }, },
   { name: 'tags', type: 'TextTagItem', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
 ]
+
+export const filters = [
+  { name: 'title', type: 'TextInput' },
+  { name: 'description', type: 'TextInput' },
+  { name: 'tags', type: 'TextInput' },
+  { name: 'id', type: 'TextInput' },
+  { name: 'slug', type: 'TextInput' },
+  { name: 'createdAt', type: 'Datetime' },
+  { name: 'publishedAt', type: 'Datetime' },
+  { name: 'updatedAt', type: 'Datetime' },
+]
+export const LIST_MAXRESULT = 15

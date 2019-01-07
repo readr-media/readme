@@ -4,16 +4,15 @@
       <div class="list__header">
         <template v-if="!isEditorActive">
           <div class="list__wrapper left">
-            <!--FilterGroup class="list__filter" :filterChecks="filterChecks" :model="model" :value.sync="filterChecksCurrent"></FilterGroup-->
             <div class="list__name"><span v-text="title"></span></div>
           </div>
           <div class="list__wrapper right">
             <div class="list__search" v-if="isFilterActive">
-              <ListFilter :value.sync="filter"></ListFilter>
+              <ListFilter :value.sync="searchVal" :filters.sync="filters" :key="key"></ListFilter>
             </div>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
-              <div class="btn create" @click="create"><span v-text="$t('LIST.ADD')"></span></div>
+              <div class="btn create" @click="create"><span v-text="`＋　${$t('LIST.ADD')}`"></span></div>
             </div>
           </div>
         </template>
@@ -40,7 +39,6 @@
   </div>
 </template>
 <script>
-  // import FilterGroup from 'src/components/list/FilterGroup.vue'
   import ListFilter from 'src/components/list/ListFilter.vue'
   import ListContainer from 'src/components/list/ListContainer.vue'
   import Spinner from 'src/components/Spinner.vue'
@@ -70,7 +68,6 @@
   export default {
     name: 'List',
     components: {
-      // FilterGroup,
       ListFilter,
       ListContainer,
       Spinner,
@@ -102,9 +99,6 @@
       modelData () {
         return this.$store.getters.modelData
       },
-      maxResult () {
-        return this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
-      },
       sub () {
         return get(find(this.asideItems, { name: this.modelRaw, }), 'sub', [])
       },
@@ -123,14 +117,15 @@
     },
     data () {
       return {
-        filter: '',
+        filters: {},
         filterSearched: '',
         filterChecksCurrent: {},
-        // isFilterApplied: false,
         isFilterActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
+        key: Date.now().toString(),
         page: DEFAULT_PAGE,
+        searchVal: '',
       }
     },
     methods: {
@@ -160,7 +155,8 @@
         } else {
           params.page = this.page
         }
-        params.maxResult = this.maxResult
+
+        params.maxResult = this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
         params.id = this.isSubItem || undefined
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
@@ -179,7 +175,7 @@
         fetchItemsCount(this.$store, params, this.modelRaw)
       },
       search () {
-        this.filterSearched = this.filter
+        this.filterSearched = this.searchVal
         // this.isFilterApplied = true
         Promise.all([
           this.refresh({
@@ -196,36 +192,37 @@
       },
     },
     beforeMount () {
-      fetchModelData(this.$store).then(() => {
-        return Promise.all([
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])
-      })
+      fetchModelData(this.$store)
     },   
     mounted () {
       this.isFilterActive = true
     },
     watch: {
-      '$route': function () {
-        Promise.all([
-          fetchModelData(this.$store),
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])         
+      '$route': function (newRoute, oldRoute) {        
+        if (newRoute.params.item !== oldRoute.params.item) {
+          /**
+          *  As soon as the route changes and the model get different, we fetch the proper model data at first.
+          */
+          fetchModelData(this.$store)
+        }
       },
-      model () {
-        this.isSpinnerActive = true
-        Promise.all([
-          fetchModelData(this.$store),
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])
+      '$store.getters.structure': function (newStructure, oldStructure) {
+        if (newStructure !== oldStructure) {
+          /**
+          *  Make sure the structure changed before we fetch list.
+          */
+          Promise.all([
+            this.refresh({}),
+            this.refreshItemsCount({})
+          ])  
+          this.filters = {}
+          this.searchVal = ''
+          this.key = Date.now().toString()
+        }
       },
-      filter () {
-        debug('Mutation detected: filter', this.filter)
+      searchVal () {
+        debug('Mutation detected: search', this.searchVal)
         this.search()
-        // this.isFilterApplied = this.filterSearched === this.filter
       },
       filterChecksCurrent () {
         debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
@@ -263,7 +260,7 @@
       background-color #a3a3a3
       margin-top 10px
       margin-right 10px
-      border-radius 2px
+      border-radius 4px
       height 30px
       outline none
       padding 0 10px

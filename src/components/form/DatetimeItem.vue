@@ -1,6 +1,6 @@
 <template>
   <Datetime
-    :class="{ warn: isWarningActive, grey: theme === 'grey' }"
+    :class="{ warn: isWarningActive, grey: theme === 'grey', 'height-fit': heightFit }"
     v-model="current"
     input-format="YYYY/MM/DD HH:mm"
     input-class="datepicker__input"
@@ -54,6 +54,7 @@
       },
       relativeToRef: {},
       theme: {},
+      heightFit: {}
     },
     watch: {
       current () {
@@ -95,7 +96,10 @@
     width 100%
     height 35px
     color #808080
-    border none   
+    border none 
+  &.height-fit
+    >>> .datepicker__input
+      height 100%
   &.grey
     >>> .datepicker__input
       background-color rgba(0,0,0,0.05)
