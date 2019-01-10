@@ -173,6 +173,9 @@ function render (req, res, next) {
 
 app.get('*', (req, res, next) => {
   req.domain = get(req.host.split(':'), 0)
+  console.log('req.host', req.host)
+  console.log('req.domain', req.domain)
+  console.log('req.referer', req.referer)
   next()
 }, isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
@@ -180,7 +183,9 @@ app.get('*', (req, res, next) => {
 
 app.use('/api', (req, res, next) => {
   req.domain = get(req.host.split(':'), 0)
+  console.log('req.host', req.host)
   console.log('req.domain', req.domain)
+  console.log('req.referer', req.referer)
   next()
 }, require('./api/index'))
 
