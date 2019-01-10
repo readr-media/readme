@@ -1,3 +1,4 @@
+const { availableModels } = require('../../configuration')
 const { filter, find, get, map, } = require('lodash')
 const { redisFetching, redisWriting, } = require('../middle/redis')
 const config = require('../config')
@@ -74,8 +75,13 @@ const authorize = (req, res, next) => {
   }
 }
 
+const isReqAllowed = req => {
+  return get(availableModels, req.domain, false) && true
+}
+
 module.exports = {
   authorize,
   constructScope,
   fetchPermissions,
+  isReqAllowed,
 }

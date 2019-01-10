@@ -9,7 +9,7 @@
     <div class="aside__container">
       <div class="aside__container__item title"><span v-text="$t(`NAVIGATION.${activeNav.toUpperCase()}`)"></span></div>
       <template v-for="(item, index) in asideItems">
-        <template v-if="get(item, 'active', false) && get(item, 'nav', false) === activeNav">
+        <template v-if="findIndex(availableModels, m => m === get(item, 'name', 'item').replace(/-/g, '_').toUpperCase()) > -1 && get(item, 'nav', false) === activeNav">
           <div class="aside__container__item" :key="`item-${index}`">
             <router-link v-if="get(item, 'type', 'list') === 'list'"
               :class="{ active: get($route, 'params.item') === get(item, 'name', '') }"
@@ -32,7 +32,8 @@
   </div>
 </template>
 <script>
-  import { find, get, } from 'lodash'
+  import { find, findIndex, get, } from 'lodash'
+  import { availableModels } from 'configuration/'
   const fetchAsideItems = store => store.dispatch('FETCH_ASIDE_ITEMS', { params: {}, })
   const fetchAsideNav = store => store.dispatch('FETCH_ASIDE_NAV', { params: {}, })
   const debug = require('debug')('CLIENT:ReadMeAside')
@@ -45,6 +46,9 @@
       asideNav () {
         return get(this.$store, 'state.asideNav', [])
       },
+      availableModels () {
+        return get(availableModels, get(this.$store, 'state.setting.DOMAIN'), [])
+      },
       showIndex () {
         return this.$route.fullPath !== '/'
       },
@@ -55,6 +59,7 @@
       }
     },
     methods: {
+      findIndex,
       get,
       navClickHandler (key) {
         debug('key', key)

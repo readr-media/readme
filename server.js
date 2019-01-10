@@ -103,6 +103,7 @@ function render (req, res, next) {
   const curr_host = get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
+  debug('req.headers', req.headers)
 
   if (filter(config.PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     // !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
@@ -136,6 +137,7 @@ function render (req, res, next) {
     }
   }
 
+
   let context = {
     title: 'ReadMe',
     ogTitle: 'Readr',
@@ -154,7 +156,8 @@ function render (req, res, next) {
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
-      DOMAIN: config.DOMAIN
+      // DOMAIN: config.DOMAIN,
+      DOMAIN: get(curr_host.split(':'), 0),
     } 
   }
   renderer.renderToString(context, (err, html) => {
@@ -168,11 +171,17 @@ function render (req, res, next) {
   })
 }
 
-app.get('*', isProd ? render : (req, res, next) => {
+app.get('*', (req, res, next) => {
+  req.domain = get(req.host.split(':'), 0)
+  next()
+}, isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
 })
 
-app.use('/api', require('./api/index'))
+app.use('/api', (req, res, next) => {
+  req.domain = get(req.host.split(':'), 0)
+  next()
+}, require('./api/index'))
 
 const port = process.env.PORT || 8081
 const server = app.listen(port, () => {
