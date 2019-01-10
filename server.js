@@ -180,6 +180,7 @@ app.get('*', (req, res, next) => {
 
 app.use('/api', (req, res, next) => {
   req.domain = get(req.host.split(':'), 0)
+  console.log('req.domain', req.domain)
   next()
 }, require('./api/index'))
 

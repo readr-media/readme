@@ -76,6 +76,8 @@ const authorize = (req, res, next) => {
 }
 
 const isReqAllowed = req => {
+  console.log('req.domain', req.domain)
+  console.log(availableModels)
   return get(availableModels, req.domain, false) && true
 }
 
