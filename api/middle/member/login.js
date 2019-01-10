@@ -6,16 +6,19 @@ const jwtService = require('../../services')
 const router = express.Router()
 const superagent = require('superagent')
 const { OAuth2Client, } = require('google-auth-library')
-const { constructScope, } = require('../../services/perm')
+const { constructScope, isReqAllowed, } = require('../../services/perm')
 const { get, } = require('lodash')
 const { redisWriting, } = require('../redis')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 const login = (req, res) => {
-  debug('About to send login req.')
+  debug('About to send login req.', isReqAllowed(req))
   if ((!req.body.email || !req.body.password) && (req.body.login_mode === 'google' && req.body.login_mode === 'facebook')) {
     res.status(400).send({ message: 'Please offer id/password.', })
+    return
+  } else if (!isReqAllowed(req)) {
+    res.status(403).send({ message: 'Unauthorized req.', })
     return
   }
   const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
@@ -31,6 +34,7 @@ const login = (req, res) => {
         const scopes = constructScope(get(response, [ 'body', 'permissions', ]), get(mem, [ 'role', ], 1))
         const token = jwtService.generateJwt({
           id: get(mem, 'id', req.body.id), 
+          domain: req.domain,
           memuuid: get(mem, 'uuid'), 
           email: get(mem, 'mail', req.body.email), 
           name: get(mem, 'name'), 
@@ -44,7 +48,8 @@ const login = (req, res) => {
         const cookies = new Cookies( req, res, {} )
         cookies.set(config.JWT_SIGNING_COOKIE_NAME, token, {
           httpOnly: false,
-          domain: config.DOMAIN,
+          // domain: config.DOMAIN,
+          domain: req.domain,
           // secure: process.env.NODE_ENV === 'production',
           expires: new Date(Date.now() + (req.body.keepAlive ? 14 : 1) * 24 * 60 * 60 * 1000),
         })
