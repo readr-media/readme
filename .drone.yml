@@ -31,7 +31,7 @@ pipeline:
     secrets: [google_credentials]
     commands:
     - gcloud source repos clone default default
-    - cp default/k8s-deploy/readr-prod/readr-site/config.js api/
+    - cp default/k8s-deploy/readr-prod/readme/config.js api/
     - cp default/readme/production/.kube.yml ./.kube.yml
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
