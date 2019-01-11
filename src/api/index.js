@@ -19,6 +19,11 @@ export function fetchAsideNav () {
   })
 }
 
+export function fetchAvalibleModels ({ params = {} }) {
+  const url = `${host}/api/available-ms`
+  return fetchInStrict(url, { cookie: params.cookie })
+}
+
 export function checkLoginStatus ({ params = {}}) {
   debug('Going to send req to check status...')
   const url = `${host}/api/status`

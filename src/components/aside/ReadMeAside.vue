@@ -33,7 +33,6 @@
 </template>
 <script>
   import { find, findIndex, get, } from 'lodash'
-  import { availableModels } from 'configuration/'
   const fetchAsideItems = store => store.dispatch('FETCH_ASIDE_ITEMS', { params: {}, })
   const fetchAsideNav = store => store.dispatch('FETCH_ASIDE_NAV', { params: {}, })
   const debug = require('debug')('CLIENT:ReadMeAside')
@@ -47,7 +46,7 @@
         return get(this.$store, 'state.asideNav', [])
       },
       availableModels () {
-        return get(availableModels, get(this.$store, 'state.setting.DOMAIN'), [])
+        return get(this.$store, 'state.availableModels', [])
       },
       showIndex () {
         return this.$route.fullPath !== '/'
