@@ -2,11 +2,11 @@
 import * as listFunc from 'src/api/list'
 import { get, } from 'lodash'
 const debug = require('debug')('CLIENT:store:actions:list')
-const FETCH_LIST = ({ commit, }, { params, endpoint, }) => {
+const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
   debug('params', params)
   debug('endpoint', endpoint)
   return listFunc.fetchList({ params, endpoint, }).then(({ status, body, }) => {
-    if (status === 200) {
+    if (status === 200 && type === 'LITING_PAGE') {
       commit('SET_LIST', { items: get(body, 'items'), })
     }
     return { status, items: get(body, 'items'), }
