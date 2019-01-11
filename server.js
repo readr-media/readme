@@ -172,18 +172,18 @@ function render (req, res, next) {
 }
 
 app.get('*', (req, res, next) => {
-  req.domain = get(get(req, 'headers.host', '').split(':'), 0)
+  req.identifier = get(get(req, 'headers.host', '').split(':'), 0)
   console.log(`get(req, 'headers.host')`, get(req, 'headers.host'))
-  console.log('req.domain', req.domain)
+  console.log('req.identifier', req.identifier)
   next()
 }, isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
 })
 
 app.use('/api', (req, res, next) => {
-  req.domain = get(get(req, 'headers.host', '').split(':'), 0)
+  req.identifier = get(get(req, 'headers.host', '').split(':'), 0)
   console.log(`get(req, 'headers.host')`, get(req, 'headers.host'))
-  console.log('req.domain', req.domain)
+  console.log('req.identifier', req.identifier)
   next()
 }, require('./api/index'))
 

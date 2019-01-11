@@ -34,7 +34,7 @@ const login = (req, res) => {
         const scopes = constructScope(get(response, [ 'body', 'permissions', ]), get(mem, [ 'role', ], 1))
         const token = jwtService.generateJwt({
           id: get(mem, 'id', req.body.id), 
-          domain: req.domain,
+          domain: req.identifier,
           memuuid: get(mem, 'uuid'), 
           email: get(mem, 'mail', req.body.email), 
           name: get(mem, 'name'), 
