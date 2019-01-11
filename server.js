@@ -103,7 +103,6 @@ function render (req, res, next) {
   const curr_host = get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
-  debug('req.headers', req.headers)
 
   if (filter(config.PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     // !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
