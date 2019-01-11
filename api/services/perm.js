@@ -75,9 +75,7 @@ const authorize = (req, res, next) => {
 }
 
 const isReqAllowed = req => {
-  console.log('req.identifier', req.identifier)
-  console.log(config.AVAILABLE_MODELS)
-  return get(config.AVAILABLE_MODELS, req.identifier, false) && true
+  return get(config, [ 'AVAILABLE_MODELS', req.identifier ], false) && true
 }
 
 module.exports = {

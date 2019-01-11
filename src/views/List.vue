@@ -63,6 +63,7 @@
       fields: [ 'nickname', 'id' ],
     }, params),
     endpoint,
+    type: 'LITING_PAGE'
   })
 
   export default {
@@ -148,6 +149,7 @@
       },
       get,
       refresh ({ params = {}, }) {
+        debug('Goin to refresh!')
         this.filterSearched && (params.keyword = this.filterSearched)
         this.page = params.page || this.page
         if (params.page) {
@@ -207,6 +209,7 @@
         }
       },
       '$store.getters.structure': function (newStructure, oldStructure) {
+        debug('$store.getters.structure gets changed:', [ newStructure, oldStructure ])
         if (newStructure !== oldStructure) {
           /**
           *  Make sure the structure changed before we fetch list.
