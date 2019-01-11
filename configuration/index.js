@@ -5,14 +5,6 @@ const nav = [
   { name: 'configure', },
 ]
 
-/**
- * ToDo: this is supposed to be moved to /api/config.js
- */
-const availableModels = {
-  'cms.readr.tw': [ 'POST', 'PROJECT', 'ASSET', 'MEMBER', 'MEMO', 'POLL', 'POST', 'REPORT', 'ENEWS_GROUP_LIST', ],
-  'cms-dev.readr.tw': [ 'POST', 'PROJECT', 'ASSET', 'MEMBER', 'MEMO', 'POLL', 'POST', 'REPORT', 'ENEWS_GROUP_LIST', ],
-  'localhost': [ 'POST', 'PROJECT', 'ASSET', 'MEMBER', 'MEMO', 'POLL', 'POST', 'REPORT', 'ENEWS_GROUP_LIST', ]
-}
 const items = [
   { nav: 'management', name: 'dashbord', type: 'wrapper', },
   { nav: 'management', name: 'project', type: 'list', },
@@ -43,6 +35,5 @@ const items = [
 
 module.exports = {
   nav,
-  availableModels,
   items
 }

@@ -183,9 +183,10 @@ app.get('*', (req, res, next) => {
 
 app.use('/api', (req, res, next) => {
   req.domain = get(req.host.split(':'), 0)
+  console.log(`get(req, 'headers.host')`, get(req, 'headers.host'))
   console.log('req.host', req.host)
   console.log('req.domain', req.domain)
-  console.log('req.referer', req.referer)
+  console.log(`get(req, 'headers')`, get(req, 'headers'))
   next()
 }, require('./api/index'))
 

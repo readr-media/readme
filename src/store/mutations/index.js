@@ -14,6 +14,9 @@ export default Object.assign({
     state[ 'alertFlag' ][ 'message' ] = message
     state[ 'alertFlag' ][ 'callback' ] = callback
   },
+  SET_AVALIBLE_MODELS: (state, { models, }) => {
+    state[ 'availableModels' ] = models
+  },
   SET_CLIENT_SIDE_MOUNTED: (state, {}) => {
     state['isClientSideMounted'] = true
   },

@@ -13,7 +13,6 @@
 </template>
 <script>
   import { findIndex, get, } from 'lodash'
-  import { availableModels } from 'configuration/'
   export default {
     name: 'Index',
     components: {},
@@ -22,7 +21,7 @@
         return get(this.$store, 'state.asideItems', [])
       },
       availableModels () {
-        return get(availableModels, get(this.$store, 'state.setting.DOMAIN'), [])
+        return get(this.$store, 'state.availableModels', [])
       },
     },
     methods: {

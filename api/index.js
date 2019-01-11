@@ -70,6 +70,9 @@ router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
 
+router.get('/available-ms', (req, res) => {
+  res.json(_.get(CONFIG, `AVAILABLE_MODELS.${req.domain}`, []))
+})
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)

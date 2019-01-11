@@ -2,6 +2,7 @@ import { get, find, map } from 'lodash'
 import {
   fetchAsideItems,
   fetchAsideNav,
+  fetchAvalibleModels,
   checkLoginStatus,
   fetchProfile,
 } from 'src/api'
@@ -9,7 +10,6 @@ import * as actionsMember from 'src/store/actions/member'
 import * as actionsList from 'src/store/actions/list'
 import * as actionsItem from 'src/store/actions/item'
 
-import { availableModels } from 'configuration/'
 let models
 
 export default Object.assign({
@@ -39,11 +39,17 @@ export default Object.assign({
     })
   },
 
+  FETCH_AVAILABLE_MODELS: ({ commit, dispatch, state, getters }) => {
+    return fetchAvalibleModels({}).then(({ body }) => {
+      return commit('SET_AVALIBLE_MODELS', { models: body || [] })
+    })
+  },
+
   FETCH_MODEL_DATA: ({ commit, dispatch, state, getters }) => {
     /**
      * ToDo: should check permission to decide to load the model.
      */
-    models = models || map(get(availableModels, get(state, 'setting.DOMAIN'), []), m => ({
+    models = models || map(get(state, 'availableModels', []), m => ({
       name: m,
       modelFetcher: process.env.NODE_ENV === 'production'
         ? () => import(`model/${m}`)
