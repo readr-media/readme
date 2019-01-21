@@ -77,9 +77,7 @@ const authorize = (req, res, next) => {
 const isReqAllowed = req => {
   console.log(`
     Checking if the req is aythorized.
-    Host: ${req.identifier}
-    Reault: ${config.AVAILABLE_MODELS}`)  
-  console.log('config', config)
+    Host: ${req.identifier}`)  
   return get(config, [ 'AVAILABLE_MODELS', req.identifier ], false) && true
 }
 
