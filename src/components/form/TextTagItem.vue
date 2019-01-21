@@ -19,7 +19,7 @@
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
           @click="selectTag(index)"
-          :key="`autocom-item-${get(item, 'name')}-${Date.now()}`"
+          :key="`autocom-item-${get(item, 'name')}-${index}-${Date.now()}`"
           :class="{ selected: currAutocompleteIndex === index }"></span>
       </div>
     </div>
