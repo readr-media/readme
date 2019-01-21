@@ -15,7 +15,7 @@
         </div>  
       </div>
     </template>
-    <div class="buttonized-item btn"  v-if="options.length"
+    <div class="buttonized-item btn"  v-if="options.length && wording"
       :class="{ block: isProcessing }" @click="handler">
       <span v-text="$t(`EDITOR.BUTTONIZED_BUTTON.${wording}`)"></span>
       <Spinner class="spinner" :show="isProcessing"></Spinner>
@@ -41,7 +41,7 @@
       },
       status () {
         const current = find(this.options, opt => opt.value === this.value)
-        return get(current, 'name', 'DRAFT')
+        return get(current, 'name', this.$store.getters.modelName !== 'MEMBER' ? 'DRAFT' : '')
       },
       options () {
         return get(this.item, 'options')

@@ -19,7 +19,7 @@
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
           @click="selectTag(index)"
-          :key="`autocom-item-${get(item, 'name', Date.now())}`"
+          :key="`autocom-item-${get(item, 'name')}-${index}-${Date.now()}`"
           :class="{ selected: currAutocompleteIndex === index }"></span>
       </div>
     </div>
@@ -89,7 +89,7 @@
           return
         } else {
           if (e.keyCode === 40) {
-            this.currAutocompleteIndex += this.currAutocompleteIndex < ((this.autocomplete ? this.autocomplete.length - 1 : 0) || 0) ? 1 : 0
+            this.currAutocompleteIndex += this.currAutocompleteIndex < get(this.autocomplete, 'length', 1) - 1 ? 1 : 0
           } else if (e.keyCode === 38) {
             this.currAutocompleteIndex -= this.currAutocompleteIndex > 0 ? 1 : 0
           } if (e.keyCode === 13) {
@@ -137,6 +137,7 @@
     watch: {
       autocomplete: function () {
         debug('autocomplete change detected.', this.autocomplete)
+        this.currAutocompleteIndex = 0
       },
       tags () {
         debug('tags change detected.')
