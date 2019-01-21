@@ -71,6 +71,7 @@ router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
 
 router.get('/available-ms', (req, res) => {
+  console.log('Going to give available models for host:', req.identifier)
   res.json(_.get(CONFIG, [ 'AVAILABLE_MODELS', req.identifier ], []))
 })
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
