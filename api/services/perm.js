@@ -79,6 +79,7 @@ const isReqAllowed = req => {
     Checking if the req is aythorized.
     Host: ${req.identifier}
     Reault: ${config.AVAILABLE_MODELS}`)  
+  console.log('config', config)
   return get(config, [ 'AVAILABLE_MODELS', req.identifier ], false) && true
 }
 
