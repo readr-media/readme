@@ -12,7 +12,7 @@
             </div>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
-              <div class="btn create" @click="create"><span v-text="`＋　${$t('LIST.ADD')}`"></span></div>
+              <div class="btn create" @click="create"><span v-text="`＋　${$t(`${$store.getters.modelName}.NEW`)}`"></span></div>
             </div>
           </div>
         </template>
