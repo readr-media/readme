@@ -16,6 +16,7 @@ export function createStore () {
       },
       asideItems: [],
       asideNav: [],
+      availableModels: [],
       commonLightboxFlag: {
         active: false,
         component: {},

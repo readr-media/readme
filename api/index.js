@@ -5,25 +5,15 @@ const { handlerError } = require('./comm')
 const { setupClientCache } = require('./middle/comm')
 const { verifyToken, } = require('./middle/member/comm')
 const CONFIG = require('./config')
-const Cookies = require('cookies')
-const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
-const crypto = require('crypto')
 const debug = require('debug')('README:api')
 const express = require('express')
-const fs = require('fs')
-const isProd = process.env.NODE_ENV === 'production'
-const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
-// const jwtService = require('./service.js')
-
-const { fetchFromRedis, insertIntoRedis } = require('./middle/redis')
 
 const apiHost = CONFIG.API_PROTOCOL + '://' + CONFIG.API_HOST + ':' + CONFIG.API_PORT
 const router = express.Router()
 const superagent = require('superagent')
 
-const SECRET_LENGTH = 10
 const authVerify = jwtExpress({ secret: CONFIG.JWT_SECRET })
 
 router.use(bodyParser.urlencoded({ extended: false }))
@@ -80,6 +70,9 @@ router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
 
+router.get('/available-ms', (req, res) => {
+  res.json(_.get(CONFIG, [ 'AVAILABLE_MODELS', req.identifier ], []))
+})
 router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)

@@ -74,8 +74,13 @@ const authorize = (req, res, next) => {
   }
 }
 
+const isReqAllowed = req => {
+  return get(config, [ 'AVAILABLE_MODELS', req.identifier ], false) && true
+}
+
 module.exports = {
   authorize,
   constructScope,
   fetchPermissions,
+  isReqAllowed,
 }

@@ -136,6 +136,7 @@ function render (req, res, next) {
     }
   }
 
+
   let context = {
     title: 'ReadMe',
     ogTitle: 'Readr',
@@ -154,7 +155,8 @@ function render (req, res, next) {
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
-      DOMAIN: config.DOMAIN
+      // DOMAIN: config.DOMAIN,
+      DOMAIN: get(curr_host.split(':'), 0),
     } 
   }
   renderer.renderToString(context, (err, html) => {
@@ -168,11 +170,17 @@ function render (req, res, next) {
   })
 }
 
-app.get('*', isProd ? render : (req, res, next) => {
+app.get('*', (req, res, next) => {
+  req.identifier = get(get(req, 'headers.host', '').split(':'), 0)
+  next()
+}, isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
 })
 
-app.use('/api', require('./api/index'))
+app.use('/api', (req, res, next) => {
+  req.identifier = get(get(req, 'headers.host', '').split(':'), 0)
+  next()
+}, require('./api/index'))
 
 const port = process.env.PORT || 8081
 const server = app.listen(port, () => {

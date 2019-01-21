@@ -22,27 +22,25 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
-// import Comments from 'readr-comment'
-// Vue.use(Comments)
-
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
   beforeRouteEnter (to, from, next) {    
     const cookie = getToken()
-    const permission = get(to, [ 'meta', 'permission', ])
+    const permission = get(to, 'meta.permission')
     const preRouteInit = cookie
       ? !get(store, 'state.profile.role') || !get(store, 'state.isLoggedIn')
       ? [
           store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, }, }).then(() => debug('CHECKT LOGGIN STATUS')),
           store.dispatch('FETCH_PROFILE', { params: { cookie, }, }).then(() => debug('FETCH DATA')),
         ]
-      : [ new Promise((rslv) => rslv()), ]
-      : [ new Promise((rslv) => rslv()), ]
+      : [ () => Promise.resolve(), ]
+      : [ () => Promise.resolve(), ]
     
     debug('router link enter somewhere.', to, from)
     debug('permission', permission)
     debug('cookie', cookie)
     Promise.all([
+      store.dispatch('FETCH_AVAILABLE_MODELS', {}),
       ...preRouteInit,
     ]).then(() => {
       debug(get(store, 'state.profile.role'))

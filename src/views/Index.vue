@@ -2,7 +2,7 @@
   <div class="index">
     <div class="index--items">
       <template v-for="item in asideItems">
-        <router-link :to="`/list/${get(item, 'name', '')}`" :key="get(item, 'name')" v-if="get(item, 'active')">
+        <router-link :to="`/list/${get(item, 'name', '')}`" :key="get(item, 'name')" v-if="findIndex(availableModels, m => m === get(item, 'name', 'item').replace(/-/g, '_').toUpperCase()) > -1">
           <div class="index--item">
             <div :to="`/list/${get(item, 'name', '')}`" class="index--item__title"><span v-text="$t(`NAVIGATION.${get(item, 'name', '').replace(/-/g, '_').toUpperCase()}`)"></span></div>
           </div>
@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
+  import { findIndex, get, } from 'lodash'
   export default {
     name: 'Index',
     components: {},
@@ -20,8 +20,12 @@
       asideItems () {
         return get(this.$store, 'state.asideItems', [])
       },
+      availableModels () {
+        return get(this.$store, 'state.availableModels', [])
+      },
     },
     methods: {
+      findIndex,
       get,
     },
     mounted () {},
