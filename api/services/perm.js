@@ -1,8 +1,7 @@
 const { filter, find, get, map, } = require('lodash')
-const { redisFetching, redisWriting, } = require('../middle/redis')
+const { redisFetching, } = require('../middle/redis')
 const config = require('../config')
 const debug = require('debug')('README:api:perms')
-const superagent = require('superagent')
 const axios = require('axios')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
