@@ -299,6 +299,7 @@ export default {
     'EDIT': '編輯貼文',
     'ID': '編號',
     'TITLE': '標題',
+    'DESCRIPTION': '說明',
     'UPDATED_AT': '更新時間',
     'CREATED_AT': '建立時間',
     'PUBLISHED_AT': '發佈時間',

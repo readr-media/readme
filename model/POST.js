@@ -63,13 +63,14 @@ export const model = [
   { name: 'authors', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5 }, },
-  { name: 'content', type: 'ContentEditor', group: 'content', isEditable: true, isListable: false, },
+  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5, editor: 1 }, },
+  { name: 'content', type: 'ContentEditor', group: 'content', isEditable: true, isListable: false, order: { editor: 2 }, },
 
   // For post.type === review
   { name: 'link', type: 'TextInput', group: 'content', isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
 
   // For post.type === report
+  // { name: 'description', type: 'TextareaInput', group: 'content', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, order: { editor: 1.5 }, watcher: 'type', showWith: isSupposedToShowWithTypeReport,},
   { name: 'heroImage', type: 'AssetPicker', group: 'content', listWidth: { min: '180', max: '180' }, isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, acceptedFileTypes: [ 'image/*' ], },
   { name: 'slug', type: 'TextInput', group: 'content', isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
 
