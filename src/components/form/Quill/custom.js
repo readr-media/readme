@@ -48,6 +48,7 @@ export const registerHr = () => {
   })
 }
 
+// const debugEmbed =  require('debug')('QUILLEMBED')
 export const registerEmbed = () => {
   return new Promise(resolve => {
     const BlockEmbed = Quill.import('blots/block/embed')
@@ -58,7 +59,7 @@ export const registerEmbed = () => {
         return node
       }
       static value(node) {
-        return node.innerText
+        return node.innerHTML
       }
     }
     ReadmeEmbbed.blotName = 'embed'
