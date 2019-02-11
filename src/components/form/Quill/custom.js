@@ -59,11 +59,11 @@ export const registerEmbed = () => {
         return node
       }
       static value(node) {
-        return node.innerText
+        return node.innerHTML
       }
     }
     ReadmeEmbbed.blotName = 'embed'
-    ReadmeEmbbed.tagName = 'div'
+    ReadmeEmbbed.tagName = 'p'
     Quill.register({ 'formats/embed': ReadmeEmbbed, })
     resolve()
   })
