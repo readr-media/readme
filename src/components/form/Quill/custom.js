@@ -59,7 +59,7 @@ export const registerEmbed = () => {
         return node
       }
       static value(node) {
-        return node.innerHTML
+        return node.innerText
       }
     }
     ReadmeEmbbed.blotName = 'embed'
