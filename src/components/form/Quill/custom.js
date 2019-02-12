@@ -1,4 +1,5 @@
 import { get, map } from 'lodash'
+
 export const registerImageSrcSet = () => {
   const resizeOpts = [
     { target: 'mobile@4x', width: 1500 },
@@ -48,23 +49,22 @@ export const registerHr = () => {
   })
 }
 
-// const debugEmbed =  require('debug')('QUILLEMBED')
+const debugEmbed =  require('debug')('QUILLEMBED')
+const debugEmbeddedCode = require('debug')('EMBEDDED')
+const debugfilteredContent = require('debug')('CODEDFILTERED')
 export const registerEmbed = () => {
   return new Promise(resolve => {
-    const BlockEmbed = Quill.import('blots/block/embed')
+    const BlockEmbed = Quill.import('blots/block')
     class ReadmeEmbbed extends BlockEmbed {
       static create(value) {
         const node = super.create(value)
         node.innerHTML = value
         return node
       }
-      static value(node) {
-        return node.innerHTML
-      }
     }
-    ReadmeEmbbed.blotName = 'embed'
+    ReadmeEmbbed.blotName = 'codes'
     ReadmeEmbbed.tagName = 'p'
-    Quill.register({ 'formats/embed': ReadmeEmbbed, })
+    Quill.register(ReadmeEmbbed, true)
     resolve()
   })
 }

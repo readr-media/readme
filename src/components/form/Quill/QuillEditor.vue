@@ -22,7 +22,7 @@
           <button class="ql-link"></button>
           <button class="ql-video"></button>
           <button v-show="$can('editPostOg')" class="ql-hr"></button>
-          <button class="ql-embed"></button>
+          <button class="ql-codes"></button>
         </span>
       </div>
       <div
@@ -81,7 +81,7 @@ export default {
               store: this.$store,
               'image': this.$_quillEditor_imageHandler,
               'hr': this.$_quillEditor_customHrHandler,
-              'embed': this.valueSetUpEmbed,
+              'codes': this.valueSetUpEmbed,
             },
           },
           clipboard: {
@@ -135,7 +135,7 @@ export default {
     },    
     valueSetUpEmbed () {
       debug('call valueSetter')
-      setUpValue(this.$store, { active: true, type: 'embed', value: '' })
+      setUpValue(this.$store, { active: true, type: 'codes', value: '' })
     },
   },
   props: {
@@ -148,12 +148,14 @@ export default {
       debug('MUTATION DETECTED: content', this.content)
     },
     'valueSetter.value': function () {
-      debug('this.valueSetter.value', this.valueSetter.value)
-
       if (!this.valueSetter.value || !this.valueSetter.active) { return }
+
+      /**
+       * Going to append embedded codes.
+       */
       this.quillEditor.focus()
       const range = this.quillEditor.getSelection()
-      this.quillEditor.insertEmbed(range.index, 'embed', this.valueSetter.value)   
+      this.quillEditor.insertEmbed(range.index, 'codes', this.valueSetter.value)   
 
       setUpValue(this.$store, { active: false, type: '', value: '' })
     },
@@ -189,7 +191,7 @@ export default {
       width 54px
       &:after
         content 'More'
-    >>> .ql-embed
+    >>> .ql-codes
       width 70px
       &:after
         content 'Embed'
