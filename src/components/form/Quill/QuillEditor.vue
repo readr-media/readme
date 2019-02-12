@@ -22,7 +22,7 @@
           <button class="ql-link"></button>
           <button class="ql-video"></button>
           <button v-show="$can('editPostOg')" class="ql-hr"></button>
-          <button class="ql-codes"></button>
+          <button class="ql-embed"></button>
         </span>
       </div>
       <div
@@ -52,6 +52,7 @@ import {
   registerFigcaption, } from './custom.js'
 
 const debug = require('debug')('CLIENT:QuillEditor')
+const debugEditorChange = require('debug')('CLIENT:QuillEditorChange')
 const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
   active: true,
   component: AssetPickerPanel,
@@ -81,7 +82,7 @@ export default {
               store: this.$store,
               'image': this.$_quillEditor_imageHandler,
               'hr': this.$_quillEditor_customHrHandler,
-              'codes': this.valueSetUpEmbed,
+              'embed': this.valueSetUpEmbed,
             },
           },
           clipboard: {
@@ -117,7 +118,7 @@ export default {
     },
 
     $_quillEditor_onEditorChange (event) {
-      debug('change', event.html)
+      debugEditorChange(event.html)
       if (event.html) {
         this.$emit('update:content', event.html)
       }
@@ -125,17 +126,16 @@ export default {
     $_quillEditor_toggleHtml (event) {
       event.target.parentNode.parentNode.classList.toggle('showHtml')
     },
-    preparePreviewData (value) {
+    preparePreviewData (value, title) {
       debug('value', value)
       this.quillEditor.focus()
       const range = this.quillEditor.getSelection()
-      this.quillEditor.insertEmbed(range.index, 'imageSrcSet', value)
-      this.quillEditor.insertEmbed(range.index + 1, 'figcaption', 'null')
+      this.quillEditor.insertEmbed(range.index, 'readme-image', { src: value, title })
       return Promise.resolve()
     },    
     valueSetUpEmbed () {
       debug('call valueSetter')
-      setUpValue(this.$store, { active: true, type: 'codes', value: '' })
+      setUpValue(this.$store, { active: true, type: 'readme-embed', value: '' })
     },
   },
   props: {
@@ -155,7 +155,7 @@ export default {
        */
       this.quillEditor.focus()
       const range = this.quillEditor.getSelection()
-      this.quillEditor.insertEmbed(range.index, 'codes', this.valueSetter.value)   
+      this.quillEditor.insertEmbed(range.index, 'readme-embed', this.valueSetter.value)   
 
       setUpValue(this.$store, { active: false, type: '', value: '' })
     },
@@ -191,7 +191,7 @@ export default {
       width 54px
       &:after
         content 'More'
-    >>> .ql-codes
+    >>> .ql-embed
       width 70px
       &:after
         content 'Embed'

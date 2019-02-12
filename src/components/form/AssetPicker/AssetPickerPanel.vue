@@ -79,7 +79,7 @@
         }     
         fileDestinations.desktop = `${fileBasicDestination}.${get(file, 'fileExt')}`
         debug('fileDestinations', fileDestinations)
-        this.callback(fileDestinations).then(() => switchOff(this.$store) )
+        this.callback(fileDestinations, get(file, 'title', '')).then(() => switchOff(this.$store) )
       },
     },
     mounted () {

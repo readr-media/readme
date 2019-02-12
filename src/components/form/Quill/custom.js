@@ -1,4 +1,5 @@
 import { get, map } from 'lodash'
+import sanitizeHtml from 'sanitize-html'
 
 export const registerImageSrcSet = () => {
   const resizeOpts = [
@@ -11,24 +12,30 @@ export const registerImageSrcSet = () => {
     { target: 'desktop@1x', width: 2000 }
   ]
   return new Promise(resolve => {
-    const BlockEmbed = Quill.import('blots/block/embed')
+    const BlockEmbed = Quill.import('blots/embed')
     class ImageSrcSet extends BlockEmbed {
-      static create(urlSet) {
+      static create({ src: urlSet, title }) {
         const node = super.create(urlSet)
+        const img = document.createElement('img')
+        const figcaption = document.createElement('figcaption')
         const srcsetArr = []
         map(resizeOpts, opt => {
           if (get(opt, 'target') && get(opt, 'width') && get(urlSet, get(opt, 'target'))) {
             srcsetArr.push(`${get(urlSet, get(opt, 'target'))} ${get(opt, 'width')}w`)
           }
         })
-        node.src = get(urlSet, 'desktop')
-        node.srcset = srcsetArr.join(',')
+        img.src = get(urlSet, 'desktop')
+        img.srcset = srcsetArr.join(',')
+        figcaption.innerText = title
+        node.appendChild(img)
+        title && node.appendChild(figcaption)
         return node
       }
     }
-    ImageSrcSet.blotName = 'imageSrcSet'
-    ImageSrcSet.tagName = 'img'
-    Quill.register({ 'formats/imageSrcSet': ImageSrcSet, })
+    ImageSrcSet.blotName = 'readme-image'
+    ImageSrcSet.className = 'readme-image'
+    ImageSrcSet.tagName = 'div'
+    Quill.register(ImageSrcSet, true)
     resolve()    
   })
 }
@@ -49,12 +56,9 @@ export const registerHr = () => {
   })
 }
 
-const debugEmbed =  require('debug')('QUILLEMBED')
-const debugEmbeddedCode = require('debug')('EMBEDDED')
-const debugfilteredContent = require('debug')('CODEDFILTERED')
 export const registerEmbed = () => {
   return new Promise(resolve => {
-    const BlockEmbed = Quill.import('blots/block')
+    const BlockEmbed = Quill.import('blots/embed')
     class ReadmeEmbbed extends BlockEmbed {
       static create(value) {
         const node = super.create(value)
@@ -62,8 +66,9 @@ export const registerEmbed = () => {
         return node
       }
     }
-    ReadmeEmbbed.blotName = 'codes'
-    ReadmeEmbbed.tagName = 'p'
+    ReadmeEmbbed.blotName = 'readme-embed'
+    ReadmeEmbbed.className = 'readme-embed'
+    ReadmeEmbbed.tagName = 'div'
     Quill.register(ReadmeEmbbed, true)
     resolve()
   })
