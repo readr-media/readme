@@ -203,6 +203,16 @@ export default {
       color #b3b3b1
       font-size .75rem
       font-weight 400
+    >>> .readme-embed
+      script
+        display:block;
+        background-image:url(/public/icons/script-img.png);
+        background-position:center center;
+        background-repeat:no-repeat;
+        background-size:contain;
+        height:20px;
+        width:150px;
+        margin:0;
     > input
       display none
     &.showHtml

@@ -1,5 +1,4 @@
 import { get, map } from 'lodash'
-import sanitizeHtml from 'sanitize-html'
 
 export const registerImageSrcSet = () => {
   const resizeOpts = [
