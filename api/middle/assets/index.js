@@ -1,13 +1,15 @@
+const { camelizeKeys } = require('humps')
 const { constructFileInfo, transferFileToStorage } = require('./comm')
-const { find, filter, get } = require('lodash')
+const { filter, get } = require('lodash')
 const { handlerError } = require('../../comm')
 const Cookies = require('cookies')
-const axios = require('axios')
 const config = require('../../config')
+const axios = require('axios')
 const debug = require('debug')('README:api:project')
 const express = require('express')
 const fs = require('fs')
 const jwtService = require('../../services')
+const numeral = require('numeral')
 const multer  = require('multer')
 const router = express.Router()
 const upload = multer({ dest: 'tmp/' })
@@ -16,11 +18,6 @@ const jwtExpress = require('express-jwt')
 const authVerify = jwtExpress({ secret: config.JWT_SECRET })
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 const decodeUriComponent = require('decode-uri-component')
-
-const mock = [
-  { asset_type: 2, destination: 'http://www.readr.tw/assets/video/e0652038fc543d31a65eecaabcdd4bec/0', file_type: 'video/mpeg',file_ext: 'mp4', id: 0, title: 'TEST VID', copyright: 2, file_name: 'SampleVideo_1280x720_10mb' },
-  { asset_type: 3, destination: 'http://www.readr.tw/assets/audio/51f9c647d7670e86df56433974fd5b51/1', file_type: 'audio/mpeg',file_ext: 'mp3', id: 1, title: 'TEST AUD', copyright: 1, file_name: 'SampleAudio_0.7mb.mp3' },
-]
 
 const checkPermission = (req, res, next) => {
   const cookies = new Cookies( req, res, {} )
@@ -34,38 +31,70 @@ const checkPermission = (req, res, next) => {
     }
   })
 }
+
 router.use('/list', checkPermission, (req, res) => {
   debug('Got a req for assets list.')
   debug('req.query.type', req.query.type)
-  const assetType = req.query.type || 'all'
-  if (assetType !== 'all') {
-    res.json({ _items: filter(mock, a => {
-      return get(get(a, 'file_type', '').split('/'), '0') === assetType
-    })})
-  } else {
-    res.json({ _items: mock })
-  }
+
+  const url = `${apiHost}/asset?${req.query.type ? `asset_type=[${req.query.type}]`: ''}`
+  axios.get(url, {
+    timeout: config.API_TIMEOUT,
+  }).then(response => {
+    debug('Fetch asset list from api successfully.')
+    debug(response.data)
+    res.json(camelizeKeys(response.data))
+  })
+  .catch(error => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during fetching data from : ${url}`)
+    console.error(error) 
+  })
 })
 
 router.post('/create', authVerify, (req, res) => {
-  debug('Got a asset create req.')
-  debug(req.body)
+  debug('Got an asset post req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
+  const user = req.user.id
+  const url = `${apiHost}/asset`
 
-  mock.push(Object.assign({}, fileInfo, {
-    destination: fileInfo.fileDestinations.basic,
-    id: mock.length,
-    title: get(req, 'body.title'),
+  const payload = {
     copyright: get(req, 'body.copyright'),
-  }))
-  
+    title: get(req, 'body.title'),
+    
+    asset_type: fileInfo.asset_type,
+    active: 1,
+    created_by: user,
+    destination: fileInfo.fileDestinations.basic,
+    file_name: fileInfo.file_extension,
+    file_extension: fileInfo.file_extension,
+    file_name: fileInfo.file_name,
+  }
+
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file).then(() => {
-    res.send({
-      message: 'Done.',
-      url: fileInfo.fileDestinations
+  transferFileToStorage(file).then(() => (
+    axios
+    .post(url, payload)
+    .then(response => {
+      debug('Creating asset successfully.')
+      res.send({
+        message: 'Done.',
+        url: fileInfo.fileDestinations
+      })
     })
-  }).catch(error => {
+    .catch(err => {
+      const errWrapped = handlerError(err)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error('Error occurred during insert new asset:', payload)
+      console.error(err) 
+    })    
+  )).catch(error => {
     const errWrapped = handlerError(error)
     res.status(errWrapped.status).send({
       status: errWrapped.status,
@@ -77,24 +106,44 @@ router.post('/create', authVerify, (req, res) => {
 })
 
 router.put('/update', authVerify, (req, res) => {
-  debug('Got a asset create req.')
-  debug(req.body)
+  debug('Got an asset update req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
+  const user = req.user.id
+  const url = `${apiHost}/asset`
 
-  let mockItem = find(mock, { id: get(req.body, 'id') })
-  mockItem = Object.assign(mockItem, fileInfo, {
-    destination: get(fileInfo, 'fileDestinations.basic', get(req, 'body.destination')),
-    id: mock.length,
-    title: get(req, 'body.title'),
+  const payload = {
     copyright: get(req, 'body.copyright'),
-  })
+    title: get(req, 'body.title'),
+    asset_type: fileInfo.asset_type,
+    active: 1,
+    id: get(req, 'body.id'),
+    updated_by: user,
+    destination: fileInfo.fileDestinations.basic,
+    file_name: fileInfo.file_extension,
+    file_extension: fileInfo.file_extension,
+    file_name: fileInfo.file_name,
+  }
 
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
   transferFileToStorage(file).then(() => {
-    res.send({
-      message: 'Done.',
-      url: fileInfo.fileDestinations
+    axios
+    .put(url, payload)
+    .then(response => {
+      debug('Updating asset successfully.')
+      res.send({
+        message: 'Done.',
+        url: fileInfo.fileDestinations
+      })
     })
+    .catch(err => {
+      const errWrapped = handlerError(err)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error('Error occurred during updateing an asset:', payload)
+      console.error(err) 
+    })      
   }).catch(error => {
     const errWrapped = handlerError(error)
     res.status(errWrapped.status).send({
@@ -132,6 +181,24 @@ router.delete('/revert', checkPermission, (req, res, next) => {
     res.status(400).send('Bad request.')
   }
 })
+router.delete('/', authVerify, (req, res) => {
+  debug('Got an asset del call.')
+  debug(req.body)
+  const ids = get(req, 'body.ids', [])
+  axios
+  .delete(`${apiHost}/asset?ids=[${ids.join(',')}]`)
+  .then(() => res.send({ status: 200, text: 'Done.' }))
+  .catch(err => {
+    const errWrapped = handlerError(err)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during deleting assets: ${ids}`)
+    console.error(err)     
+  })
+})
+
 
 router.get('/restore', checkPermission, (req, res) => {
   debug('Got a /assets/fetch call:', asset)

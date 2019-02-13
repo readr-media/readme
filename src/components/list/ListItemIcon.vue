@@ -21,7 +21,7 @@
     },
     computed: {       
       source () {
-        return `${get(this.item, 'destination')}.${get(this.item, 'fileExt')}`
+        return `${get(this.item, 'destination')}.${get(this.item, 'fileExtension')}`
       },
       title () {
         return get(this.item, 'title')

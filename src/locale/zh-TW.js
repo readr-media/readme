@@ -361,7 +361,7 @@ export default {
     'NEW': '新增素材',
     'DESTINATION': '目錄',
     'FILE_NAME': '檔名',
-    'FILE_EXT': '副檔名',
+    'FILE_EXTENSION': '副檔名',
     'FILE_TYPE': '檔案類型',
     'FILTER_PLACEHOLDER': {
       'TITLE': '請輸入標題關鍵字',

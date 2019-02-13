@@ -32,7 +32,7 @@ export const model = [
   { name: 'title', type: 'TextInput', group: 'basic', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, required: true },
   
   { name: 'fileName', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
-  { name: 'fileExt', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
+  { name: 'fileExtension', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'fileType', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'file', type: 'Uploader', group: 'basic', isEditable: true, isListable: false, },
 
@@ -40,7 +40,7 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic' ]
-export const assetsEndpoint = '/api/asset/list?type=image'
+export const assetsEndpoint = '/api/asset/list?type=1'
 export const LIST_MAXRESULT = 15
 export const filters = [
   { name: 'title', type: 'TextInput' },
