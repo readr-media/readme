@@ -203,6 +203,9 @@ export default {
       color #b3b3b1
       font-size .75rem
       font-weight 400
+    >>> .readme-image, >>> .readme-embed
+      span[contenteditable]
+        display block
     >>> .readme-embed
       script
         display:block;
