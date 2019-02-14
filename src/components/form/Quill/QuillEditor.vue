@@ -230,14 +230,11 @@ export default {
         margin-top 10px
     >>> .readme-embed
       script
-        display:block;
-        background-image:url(/public/icons/script-img.png);
-        background-position:center center;
-        background-repeat:no-repeat;
-        background-size:contain;
-        height:20px;
-        width:150px;
-        margin:0;
+        display block
+        margin 0
+        color #c4c4c4
+        &:before
+          content '<SCRIPT>...</SCRIPT>'
       script:not(:first-child), iframe:not(:first-child)
         margin-top 10px
     > input
