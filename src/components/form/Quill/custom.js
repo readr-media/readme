@@ -24,6 +24,7 @@ export const registerImageSrcSet = () => {
         })
         img.src = get(urlSet, 'desktop')
         img.srcset = srcsetArr.join(',')
+        img.setAttribute('alt', title)
         node.setAttribute('text', title)
         node.setAttribute('contenteditable', 'false')
         node.appendChild(img)
