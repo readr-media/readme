@@ -128,8 +128,11 @@ export default {
     },
     preparePreviewData (value, title) {
       debug('value', value)
-      this.quillEditor.focus()
-      const range = this.quillEditor.getSelection()
+      let range = this.quillEditor.getSelection()
+      if (!range) {
+        this.quillEditor.focus()
+        range = this.quillEditor.getSelection()
+      }
       this.quillEditor.insertEmbed(range.index, 'readme-image', { src: value, title })
       return Promise.resolve()
     },    
@@ -174,6 +177,9 @@ export default {
     background-color white
     border-radius 4px
 
+    >>> .ql-editor
+      > p
+        margin 10px 0
     >>> .ql-toolbar
       .ql-picker-label
         outline none
@@ -203,9 +209,25 @@ export default {
       color #b3b3b1
       font-size .75rem
       font-weight 400
-    >>> .readme-image, >>> .readme-embed
-      span[contenteditable]
+      margin-top 10px
+    >>> .readme-embed, >>> .readme-image
+      display flex
+      justify-content center
+      align-items center
+      flex-direction column
+      width 100%
+      background-color #e3e3e354
+      border-radius 5px
+      padding 10px
+    
+    >>> .readme-image
+      &:after
+        content attr(text)
         display block
+        color #b3b3b1
+        font-size .75rem
+        font-weight 400
+        margin-top 10px
     >>> .readme-embed
       script
         display:block;
@@ -216,6 +238,8 @@ export default {
         height:20px;
         width:150px;
         margin:0;
+      script:not(:first-child), iframe:not(:first-child)
+        margin-top 10px
     > input
       display none
     &.showHtml
