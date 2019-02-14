@@ -73,7 +73,7 @@
         
         const sanitizeHtmlOptions = {
           allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
-            iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', 'allow' ],
+            iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', 'allow', 'style' ],
 
             /**
              * Notice: <script> can only be set with attribute 'src'
