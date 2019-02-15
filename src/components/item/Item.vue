@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))">
+  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))" class="editor-item">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
       :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
