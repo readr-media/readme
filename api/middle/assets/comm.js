@@ -69,7 +69,7 @@ const transferFileToStorage = async file => {
   if (!get(file, 'filename')) { return Promise.resolve() }
 
   const fileType = get(file, 'asset_type')
-  const uploadBasicFile = uploadFileToBucket(bucket, file.path, {
+  const uploadBasicFile = () => uploadFileToBucket(bucket, file.path, {
     destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_extension}`,
     metadata: { contentType: file.mimetype }
   }).then(bucketFile => {
