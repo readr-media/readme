@@ -21,6 +21,7 @@
 </template>
 <script>
   import TextareaInput from 'src/components/form/TextareaInput.vue'
+  import sanitizeHtml from 'sanitize-html'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:ValueSetter')
   const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
@@ -42,8 +43,9 @@
     },
     data () {
       return {
+        isProcessing: false,
         val: '',
-        isProcessing: false
+        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ]
       }
     },
     methods: {
@@ -53,9 +55,73 @@
       confirm () {
         debug('this.isProcessing', this.isProcessing)
         if (this.isProcessing) { return }
+        if (this.type === 'readme-embed') {
+          const value = this.validateEmbed()
+          return value
+            ? setUpValue(this.$store, { active: true, type: '', value })
+            : alert(`Only source from "${this.whitelist.join(', ')}" with https are valid.`)
+        }
         setUpValue(this.$store, { active: true, type: '', value: this.val })
         this.isProcessing = true
       },
+      validateEmbed () {
+        /**
+         * Filter unallowed content here.
+         */
+        const exp_valid_src = new RegExp(`^https:\/\/(${this.whitelist.join('|')})`)
+        let isEmbedValid = true
+        
+        const sanitizeHtmlOptions = {
+          allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
+            iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', 'allow', 'style' ],
+
+            /**
+             * Notice: <script> can only be set with attribute 'src'
+             */
+            script: [ 'src' ]
+          }),
+          allowedIframeHostnames: this.whitelist,
+          allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'script' ],
+          customContentBreakTagName: 'hr',
+          transformTags: {
+            'iframe': function (tagName, attribs) {
+              return {
+                tagName,
+                attribs: Object.assign(attribs, {
+                  allowfullscreen: 'allowfullscreen',
+                }),
+              }
+            },
+            'script': function (tagName, attribs) {
+              /**
+               * Notice:
+               * - There's nothing could be embraced in script, so text would be setup to empty.
+               * - Source should be maintained in whitelist.
+               * - Source should be go with https protocol.
+               */
+              const src = get(attribs, 'src', '')
+              const isSrcValid = exp_valid_src.test(src)
+
+              return {
+                tagName,
+                text: '',
+                attribs: Object.assign(attribs, {
+                  src: isSrcValid ? src : '' ,
+                }),
+              }
+            }
+          },
+          exclusiveFilter: function (frame) {
+            if ((frame.tag === 'script' || frame.tag === 'iframe') && !get(frame.attribs, 'src', '').trim()) {
+              isEmbedValid = false
+              return true
+            }
+            return false
+          }
+        }
+        const val = sanitizeHtml(this.val, sanitizeHtmlOptions)        
+        return isEmbedValid && val
+      }
     },
     mounted () {
       this.val = this.value

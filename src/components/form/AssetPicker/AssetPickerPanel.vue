@@ -74,12 +74,12 @@
         debug('Going to call back!', file)
         if (get(file, 'assetType') === ASSETS_TYPE.IMAGE) {
           map(IMAGE_SIZE, f => {
-            fileDestinations[ f ] = `${fileBasicDestination}-${f}.${get(file, 'fileExt')}`
+            fileDestinations[ f ] = `${fileBasicDestination}-${f}.${get(file, 'fileExtension')}`
           })
         }     
-        fileDestinations.desktop = `${fileBasicDestination}.${get(file, 'fileExt')}`
+        fileDestinations.desktop = `${fileBasicDestination}.${get(file, 'fileExtension')}`
         debug('fileDestinations', fileDestinations)
-        this.callback(fileDestinations).then(() => switchOff(this.$store) )
+        this.callback(fileDestinations, get(file, 'title', '')).then(() => switchOff(this.$store) )
       },
     },
     mounted () {

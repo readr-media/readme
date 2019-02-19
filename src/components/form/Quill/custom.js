@@ -1,4 +1,5 @@
 import { get, map } from 'lodash'
+
 export const registerImageSrcSet = () => {
   const resizeOpts = [
     { target: 'mobile@4x', width: 1500 },
@@ -12,22 +13,28 @@ export const registerImageSrcSet = () => {
   return new Promise(resolve => {
     const BlockEmbed = Quill.import('blots/block/embed')
     class ImageSrcSet extends BlockEmbed {
-      static create(urlSet) {
+      static create({ src: urlSet, title }) {
         const node = super.create(urlSet)
+        const img = document.createElement('img')
         const srcsetArr = []
         map(resizeOpts, opt => {
           if (get(opt, 'target') && get(opt, 'width') && get(urlSet, get(opt, 'target'))) {
             srcsetArr.push(`${get(urlSet, get(opt, 'target'))} ${get(opt, 'width')}w`)
           }
         })
-        node.src = get(urlSet, 'desktop')
-        node.srcset = srcsetArr.join(',')
+        img.src = get(urlSet, 'desktop')
+        img.srcset = srcsetArr.join(',')
+        img.setAttribute('alt', title)
+        node.setAttribute('text', title)
+        node.setAttribute('contenteditable', 'false')
+        node.appendChild(img)
         return node
       }
     }
-    ImageSrcSet.blotName = 'imageSrcSet'
-    ImageSrcSet.tagName = 'img'
-    Quill.register({ 'formats/imageSrcSet': ImageSrcSet, })
+    ImageSrcSet.blotName = 'readme-image'
+    ImageSrcSet.className = 'readme-image'
+    ImageSrcSet.tagName = 'div'
+    Quill.register(ImageSrcSet, true)
     resolve()    
   })
 }
@@ -51,16 +58,18 @@ export const registerHr = () => {
 export const registerEmbed = () => {
   return new Promise(resolve => {
     const BlockEmbed = Quill.import('blots/block/embed')
-    class Embbed extends BlockEmbed {
+    class ReadmeEmbbed extends BlockEmbed {
       static create(value) {
         const node = super.create(value)
         node.innerHTML = value
+        node.setAttribute('contenteditable', 'false')
         return node
       }
     }
-    Embbed.blotName = 'embed'
-    Embbed.tagName = 'div'
-    Quill.register({ 'formats/embed': Embbed, })
+    ReadmeEmbbed.blotName = 'readme-embed'
+    ReadmeEmbbed.className = 'readme-embed'
+    ReadmeEmbbed.tagName = 'div'
+    Quill.register(ReadmeEmbbed, true)
     resolve()
   })
 }

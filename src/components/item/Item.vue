@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))">
+  <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))" class="editor-item">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
       :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
@@ -46,7 +46,7 @@
     <Uploader v-else-if="itemObj.type === 'Uploader'"
       :acceptedFileTypes="itemObj.acceptedFileTypes"
       :destination="refVals[ 'destination' ]"
-      :fileExt="refVals[ 'fileExt' ]"
+      :fileExt="refVals[ 'fileExtension' ]"
       :fileObj.sync="value"></Uploader>
     <AssetPicker v-else-if="itemObj.type === 'AssetPicker'"
       :value.sync="value"></AssetPicker>
