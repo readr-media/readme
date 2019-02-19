@@ -11,6 +11,7 @@
   import MidiaPreviewer from 'src/components/common/MidiaPreviewer.vue'
   import Spinner from 'src/components/Spinner.vue'
   import axios from 'axios'
+  import truncate from 'truncate-html'
   import { get } from 'lodash'
   const debug = require('debug')('CLIENT:ListItemIcon')
   export default {
@@ -24,7 +25,7 @@
         return `${get(this.item, 'destination')}.${get(this.item, 'fileExtension')}`
       },
       title () {
-        return get(this.item, 'title')
+        return truncate(get(this.item, 'title'), 23)
       },
     },
     data () {
@@ -58,8 +59,7 @@
 </script>
 <style lang="stylus" scoped>
   .list-item-icon
-    width 160px
-    padding 15px
+    width 100%
     outline none
     &__title
       font-size 0.875rem

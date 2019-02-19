@@ -45,7 +45,7 @@
       return {
         isProcessing: false,
         val: '',
-        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ]
+        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio' ]
       }
     },
     methods: {
@@ -73,15 +73,17 @@
         
         const sanitizeHtmlOptions = {
           allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
-            iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', 'allow', 'style' ],
-
+            iframe: [ 'frameborder', 'scrolling', 'allowfullscreen', 'src', 'width', 'height', 'allow', 'style' ],
             /**
              * Notice: <script> can only be set with attribute 'src'
              */
-            script: [ 'src' ]
+            script: [ 'src' ],
+            div: [ 'style' ],
+            a: [ 'class', 'href', 'target', 'style' ],
+            img: [ 'alt', 'src', 'style' ],
           }),
           allowedIframeHostnames: this.whitelist,
-          allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'script' ],
+          allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'script', 'div' ],
           customContentBreakTagName: 'hr',
           transformTags: {
             'iframe': function (tagName, attribs) {
@@ -109,10 +111,27 @@
                   src: isSrcValid ? src : '' ,
                 }),
               }
+            },
+            'a': function (tagName, attribs) {
+              /**
+               * Notice:
+               * - Source should be maintained in whitelist.
+               * - Source should be go with https protocol.
+               */
+              const href = get(attribs, 'href', '')
+              const isSrcValid = exp_valid_src.test(href)
+
+              return {
+                tagName,
+                attribs: Object.assign(attribs, {
+                  href: isSrcValid ? href : '' ,
+                }),
+              }
             }
           },
           exclusiveFilter: function (frame) {
-            if ((frame.tag === 'script' || frame.tag === 'iframe') && !get(frame.attribs, 'src', '').trim()) {
+            if (((frame.tag === 'script' || frame.tag === 'iframe') && !get(frame.attribs, 'src', '').trim())
+              || (frame.tag === 'a' && !get(frame.attribs, 'href', '').trim())) {
               isEmbedValid = false
               return true
             }

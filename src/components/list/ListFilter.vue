@@ -120,19 +120,20 @@
     &__input
       outline none
       width 100%
-      height 16px
+      height 1.5rem
       border none
       background-color #f7f7f7
-      font-size 1rem
       font-weight 100
       color #000
 
-      font-size 0.875rem
+      font-size 0.9375rem
       line-height normal
 
       &::-webkit-input-placeholder
         color #a0a0a0
         font-weight normal
+        font-size 0.875rem
+        vertical-align top
     &__filter
       &__wrapper
         position absolute
