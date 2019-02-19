@@ -4,7 +4,12 @@
       <div class="asset-picker-panel__search"><ListFilter></ListFilter></div>
       <div class="asset-picker-panel__list">
         <template v-for="(a, i) in assets">
-          <div @click="choose(i)" :class="[ 'asset-item', i === selectedItem ? 'selected' : '' ]">
+          <div @click="choose(i)" 
+            :class="[
+              'asset-item',
+              i === selectedItem ? 'selected' : '',
+              i % 4 ? '' : 'first',
+            ]">
             <ListItemIcon :item="a"></ListItemIcon>
           </div>
         </template>
@@ -112,26 +117,45 @@
     max-height 700px
     width 90vw
     height 90vh
-    padding 30px 80px
-    display flex
-    flex-direction column
-    overflow auto
+    padding 80px 80px 120px
+    overflow hidden
     &.uploader
       > div
         height 100%
+    &__search
+      position absolute
+      top 110px
+      left 80px
+      width calc(100% - 160px)
+      height 36px
+
     &__list
-      flex 1
       display flex
       flex-wrap wrap
-      margin-top 30px
+      align-content flex-start
+      margin-top 15px
+      height 100%
+      width 100%
+      overflow auto
       .asset-item
+        width calc(25% - 5px)
+        height 190px
+        margin-bottom 5px
+        cursor pointer
+        padding 15px
+        &:not(.first)
+          margin-left 5px
         &.selected
-          > div
-            background-color #e6f8f9
+          background-color #e6f8f9
     &__confirm
       margin-top 30px
       display flex
       justify-content flex-end
+      position absolute
+      bottom 30px
+      right 80px
+      width 160px
+      height 68px
       span
         font-size 1.25rem
         font-weight normal
