@@ -53,7 +53,7 @@ router.use('/list', checkPermission, (req, res) => {
   })
 })
 
-router.post('/create', authVerify, (req, res, next) => {
+router.post('/create', authVerify, async (req, res, next) => {
   debug('Got an asset post req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
   const user = req.user.id
@@ -73,36 +73,29 @@ router.post('/create', authVerify, (req, res, next) => {
   }
 
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file).then(() => (
-    axios
-    .post(url, payload)
-    .then(response => {
-      debug('Creating asset successfully.')
-      res.send({
-        message: 'Done.',
-        url: fileInfo.fileDestinations
-      })
-      req.outcome = response
-      next()
-    })
-    .catch(err => {
-      const errWrapped = handlerError(err)
-      const outcome = { status: errWrapped.status, text: errWrapped.text }
-      console.error('Error occurred during insert new asset:', payload)
-      console.error(err) 
-      res.status(errWrapped.status).send(outcome)
-      req.outcome = outcome
-      next()
-    })    
-  )).catch(error => {
+  const transferingFileReport = await transferFileToStorage(file)
+  .then(() => ({ status: 200 }))
+  .catch(error => {
     const errWrapped = handlerError(error)
-    const outcome = { status: errWrapped.status, text: errWrapped.text }
-    console.error(`Error occurred during transfering file : ${file}`)
-    console.error(error)     
-    res.status(errWrapped.status).send(outcome)
-    req.outcome = outcome
-    next()
+    console.error(`Error occurred during transfering file : ${file} \n`, error)
+    return { status: errWrapped.status, text: errWrapped.text }
   })
+
+  if (get(transferingFileReport, 'status') === 200) {
+    const creatingReport = await axios.post(url, payload)
+    .then(() => ({ status: 200 }))
+    .catch(error => {
+      const errWrapped = handlerError(error)
+      console.error('Error occurred during insert new asset:', payload, '\n', error)
+      return { status: errWrapped.status, text: errWrapped.text }      
+    })
+    res.status(creatingReport.status).send(Object.assign(creatingReport, { url: fileInfo.fileDestinations }))
+    req.outcome = creatingReport
+  } else {
+    res.status(transferingFileReport.status).send(transferingFileReport)
+    req.outcome = transferingFileReport
+  }
+  next()
 })
 
 router.put('/update', authVerify, (req, res, next) => {
