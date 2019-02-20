@@ -2,8 +2,10 @@ const CONFIG = require('../../config')
 const debug = require('debug')('CLIENT:README:api:middle:gcLogger:comm')
 const { get } = require('lodash')
 
-const { Logging } = require('@google-cloud/logging')
-const loggingClient = new Logging({
+// const { Logging } = require('@google-cloud/logging')
+const Logging = require('@google-cloud/logging')
+// const loggingClient = new Logging({
+const loggingClient = Logging({
   projectId: CONFIG.GCP_PROJECT_ID,
   keyFilename: CONFIG.GCP_KEYFILE,
 })

@@ -2,7 +2,6 @@ const { camelizeKeys } = require('humps')
 const { constructFileInfo, transferFileToStorage } = require('./comm')
 const { filter, get } = require('lodash')
 const { handlerError } = require('../../comm')
-const { tracer } = require('../gcLogger/comm')
 const Cookies = require('cookies')
 const config = require('../../config')
 const axios = require('axios')
@@ -83,35 +82,28 @@ router.post('/create', authVerify, (req, res, next) => {
         message: 'Done.',
         url: fileInfo.fileDestinations
       })
-      req.payload = payload
       req.outcome = response
       next()
     })
     .catch(err => {
       const errWrapped = handlerError(err)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
+      const outcome = { status: errWrapped.status, text: errWrapped.text }
       console.error('Error occurred during insert new asset:', payload)
       console.error(err) 
-      req.payload = payload
-      req.outcome = err
+      res.status(errWrapped.status).send(outcome)
+      req.outcome = outcome
       next()
     })    
   )).catch(error => {
     const errWrapped = handlerError(error)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during transfering file : ${file}`)
     console.error(error)     
-    req.payload = payload
-    req.outcome = error
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
     next()
   })
-}, tracer)
+})
 
 router.put('/update', authVerify, (req, res, next) => {
   debug('Got an asset update req.')
@@ -133,7 +125,6 @@ router.put('/update', authVerify, (req, res, next) => {
   }
 
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  req.payload = payload
   transferFileToStorage(file).then(() => {
     axios
     .put(url, payload)
@@ -148,27 +139,23 @@ router.put('/update', authVerify, (req, res, next) => {
     })
     .catch(err => {
       const errWrapped = handlerError(err)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
+      const outcome = { status: errWrapped.status, text: errWrapped.text }
       console.error('Error occurred during updateing an asset:', payload)
       console.error(err) 
-      req.outcome = err
+      res.status(errWrapped.status).send(outcome)
+      req.outcome = outcome
       next()
     })      
   }).catch(error => {
     const errWrapped = handlerError(error)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during transfering file : ${file}`)
     console.error(error)  
-    req.outcome = error
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
     next()   
   })
-}, tracer)
+})
 
 router.post('/process/:owner', checkPermission, upload.single('filepond-file'), (req, res) => {
   const type = get(req, 'params.owner')
@@ -200,7 +187,6 @@ router.delete('/', authVerify, (req, res, next) => {
   debug('Got an asset del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
-  req.payload = ids
   axios
   .delete(`${apiHost}/asset?ids=[${ids.join(',')}]`)
   .then(response => {
@@ -210,16 +196,14 @@ router.delete('/', authVerify, (req, res, next) => {
   })
   .catch(err => {
     const errWrapped = handlerError(err)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during deleting assets: ${ids}`)
     console.error(err)     
-    req.outcome = err
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
     next()
   })
-}, tracer)
+})
 
 
 router.get('/restore', checkPermission, (req, res) => {

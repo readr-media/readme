@@ -1,7 +1,6 @@
 const { camelizeKeys } = require('humps')
 const { get, map } = require('lodash')
 const { handlerError } = require('../comm')
-const { tracer } = require('./gcLogger/comm')
 const config = require('../config')
 const debug = require('debug')('README:api:project')
 const express = require('express')
@@ -59,11 +58,10 @@ router.post('/create', (req, res, next) => {
       console.error(`Error occurred during create a new project : ${url}`)
       console.error(error) 
     }
-    req.payload = payload
     req.outcome = response
     next()
   })
-}, tracer)
+})
 
 router.put('/update', (req, res, next) => {
   debug('Got a project updating call.')
@@ -86,17 +84,15 @@ router.put('/update', (req, res, next) => {
       console.error(`Error occurred during update project: ${url}`)
       console.error(error) 
     }
-    req.payload = payload
     req.outcome = response
     next()
   })
-}, tracer)
+})
 
 router.delete('/', (req, res, next) => {
   debug('Got a proj del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
-  req.payload = ids
   Promise.all(map(ids, id => new Promise(resolve => {
     const url = `${apiHost}/project/${id}`
     debug('MEMBER### DELETING PROJECT:', id)
@@ -115,19 +111,17 @@ router.delete('/', (req, res, next) => {
     console.error(error)    
   }))).then(() => {
     res.send({ status: 200, text: 'Done.' })
-    req.outcome = 'successfully'
+    req.outcome = { status: 200 }
     next()
   }).catch(err => {
     const errWrapped = handlerError(err)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during deleting project: ${ids}`)
     console.error(err)     
-    req.outcome = 'in fail'
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
     next()
   })
-}, tracer)
+})
 
 module.exports = router

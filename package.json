@@ -16,7 +16,7 @@
     "npm": ">=4.0"
   },
   "dependencies": {
-    "@google-cloud/logging": "^4.4.0",
+    "@google-cloud/logging": "^1.2.0",
     "@google-cloud/pubsub": "^0.18.0",
     "@google-cloud/storage": "^1.6.0",
     "axios": "^0.18.0",
