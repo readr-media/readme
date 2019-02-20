@@ -69,6 +69,17 @@ router.use('/post', [ authVerify, authorize ], require('./middle/post'))
 router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
+router.use('/trace', (req, res, next) => {
+  debug('trace', req.url)
+  if  (CONFIG.GCP_PROJECT_ID && CONFIG.GCP_KEYFILE && CONFIG.GCP_STACKDRIVER_LOG_NAME) {
+    next()
+  } else {
+    /**
+     * have to setup config GCP_PROJECT_ID, GCP_KEYFILE and GCP_STACKDRIVER_LOG_NAME to activate tracing.
+     */
+    res.status(404).send('404 | Not found.').end()
+  }
+}, require('./middle/gcLogger'))
 
 router.get('/available-ms', (req, res) => {
   console.log('Going to give available models for host:', req.identifier)

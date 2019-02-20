@@ -17,6 +17,9 @@ import LightBox from 'src/components/common/LightBox.vue'
 import ReadMeHeader from 'src/components/header/ReadMeHeader.vue'
 import ReadMeAside from 'src/components/aside/ReadMeAside.vue'
 import SystemInfo from 'src/components/SystemInfo.vue'
+import Tap from 'tap.js'
+import { isAlink, logTrace, } from 'src/util/services'
+import { get } from 'lodash'
 
 export default {
   components: {
@@ -26,8 +29,28 @@ export default {
     ReadMeAside,
     SystemInfo,
   },
+  computed: {
+    me () {
+      return get(this.$store, 'state.profile.id')
+    },    
+    useragent () {
+      return get(this.$store, 'state.useragent')
+    },  
+  },
   mounted () {
     this.$store.dispatch('UPDATE_CLIENT_SIDE_MOUNTED')
+    const globalTapevent = new Tap(document)
+    document.addEventListener('tap', event => {
+      const checkAlink = isAlink(event.target)
+      logTrace({
+        category: 'whole-site',
+        description: 'ele clicked',
+        eventType: 'click',
+        sub: this.me,
+        target: event.target,
+        useragent: this.useragent,
+      })
+    })      
   },
 }
 </script>
