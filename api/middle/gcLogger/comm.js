@@ -27,8 +27,9 @@ const tracer = (req, res) => {
   trace({
     ip: req.clientIp,
     method: req.method,
+    url: req.url_origin,
     model,
-    payload: req.payload,
+    payload: req.body,
     operator: req.user.id,
     response,
   })
