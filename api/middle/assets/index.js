@@ -2,6 +2,7 @@ const { camelizeKeys } = require('humps')
 const { constructFileInfo, transferFileToStorage } = require('./comm')
 const { filter, get } = require('lodash')
 const { handlerError } = require('../../comm')
+const { tracer } = require('../gcLogger/comm')
 const Cookies = require('cookies')
 const config = require('../../config')
 const axios = require('axios')
@@ -53,7 +54,7 @@ router.use('/list', checkPermission, (req, res) => {
   })
 })
 
-router.post('/create', authVerify, (req, res) => {
+router.post('/create', authVerify, (req, res, next) => {
   debug('Got an asset post req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
   const user = req.user.id
@@ -82,6 +83,9 @@ router.post('/create', authVerify, (req, res) => {
         message: 'Done.',
         url: fileInfo.fileDestinations
       })
+      req.payload = payload
+      req.outcome = response
+      next()
     })
     .catch(err => {
       const errWrapped = handlerError(err)
@@ -91,6 +95,9 @@ router.post('/create', authVerify, (req, res) => {
       })
       console.error('Error occurred during insert new asset:', payload)
       console.error(err) 
+      req.payload = payload
+      req.outcome = err
+      next()
     })    
   )).catch(error => {
     const errWrapped = handlerError(error)
@@ -100,10 +107,13 @@ router.post('/create', authVerify, (req, res) => {
     })
     console.error(`Error occurred during transfering file : ${file}`)
     console.error(error)     
+    req.payload = payload
+    req.outcome = error
+    next()
   })
-})
+}, tracer)
 
-router.put('/update', authVerify, (req, res) => {
+router.put('/update', authVerify, (req, res, next) => {
   debug('Got an asset update req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
   const user = req.user.id
@@ -123,6 +133,7 @@ router.put('/update', authVerify, (req, res) => {
   }
 
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
+  req.payload = payload
   transferFileToStorage(file).then(() => {
     axios
     .put(url, payload)
@@ -132,6 +143,8 @@ router.put('/update', authVerify, (req, res) => {
         message: 'Done.',
         url: fileInfo.fileDestinations
       })
+      req.outcome = response
+      next()
     })
     .catch(err => {
       const errWrapped = handlerError(err)
@@ -141,6 +154,8 @@ router.put('/update', authVerify, (req, res) => {
       })
       console.error('Error occurred during updateing an asset:', payload)
       console.error(err) 
+      req.outcome = err
+      next()
     })      
   }).catch(error => {
     const errWrapped = handlerError(error)
@@ -149,9 +164,11 @@ router.put('/update', authVerify, (req, res) => {
       text: errWrapped.text
     })
     console.error(`Error occurred during transfering file : ${file}`)
-    console.error(error)     
+    console.error(error)  
+    req.outcome = error
+    next()   
   })
-})
+}, tracer)
 
 router.post('/process/:owner', checkPermission, upload.single('filepond-file'), (req, res) => {
   const type = get(req, 'params.owner')
@@ -179,13 +196,18 @@ router.delete('/revert', checkPermission, (req, res, next) => {
     res.status(400).send('Bad request.')
   }
 })
-router.delete('/', authVerify, (req, res) => {
+router.delete('/', authVerify, (req, res, next) => {
   debug('Got an asset del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
+  req.payload = ids
   axios
   .delete(`${apiHost}/asset?ids=[${ids.join(',')}]`)
-  .then(() => res.send({ status: 200, text: 'Done.' }))
+  .then(response => {
+    res.send({ status: 200, text: 'Done.' })
+    req.outcome = response
+    next()
+  })
   .catch(err => {
     const errWrapped = handlerError(err)
     res.status(errWrapped.status).send({
@@ -194,8 +216,10 @@ router.delete('/', authVerify, (req, res) => {
     })
     console.error(`Error occurred during deleting assets: ${ids}`)
     console.error(err)     
+    req.outcome = err
+    next()
   })
-})
+}, tracer)
 
 
 router.get('/restore', checkPermission, (req, res) => {

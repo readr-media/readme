@@ -1,6 +1,7 @@
 const { camelizeKeys } = require('humps')
 const { handlerError } = require('../comm')
 const { get, map, remove } = require('lodash')
+const { trace, tracer } = require('./gcLogger/comm')
 const config = require('../config')
 const debug = require('debug')('README:api:poll')
 const express = require('express')
@@ -15,11 +16,19 @@ const postOpts = (url, opts) => new Promise(resolve => {
   .send({
     choices: opts
   })
-  .end((error) => {
+  .end((error, response) => {
     if (error) {
       console.error(`Error occurred during gen options: ${url}`)
       console.error(error) 
     }
+    trace({
+      ip: req.clientIp,
+      method: 'POST',
+      model: 'choices',
+      payload: choices,
+      operator: req.user.id,
+      response,
+    })
     resolve()
   })  
 })
@@ -35,11 +44,19 @@ const putOpts = (url, opts, margin) => new Promise(resolve => {
   .send({
     choices: choices
   })
-  .end((error) => {
+  .end((error, response) => {
     if (error) {
       console.error(`Error occurred during put options: ${url}`)
       console.error(error) 
     }
+    trace({
+      ip: req.clientIp,
+      method: 'PUT',
+      model: 'choices',
+      payload: choices,
+      operator: req.user.id,
+      response,
+    })
     resolve()
   })  
 })
@@ -126,7 +143,7 @@ router.use(`/:id/choices`, (req, res) => {
     }
   })
 })
-router.post('/create', (req, res) => {
+router.post('/create', (req, res, next) => {
   debug('Got a post creating call.')
   // res.send('ok')
   const url = `${apiHost}/v2/polls`
@@ -166,8 +183,11 @@ router.post('/create', (req, res) => {
       console.error(`Error occurred during create a new poll : ${url}`)
       console.error(error) 
     }
+    req.payload = req.body
+    req.outcome = response
+    next()
   })
-})
+}, tracer)
 
 router.put('/update', (req, res, next) => {  
   const url = `${apiHost}/v2/polls`
@@ -191,6 +211,14 @@ router.put('/update', (req, res, next) => {
       res.status(errWrapped.status).send({
         status: errWrapped.status,
         text: errWrapped.text
+      })
+      trace({
+        ip: req.clientIp,
+        method: req.method,
+        model: 'poll',
+        payload: req.body,
+        operator: req.user.id,
+        response,
       })
       console.error(`Error occurred during updating poll: ${url}`)
       console.error(error) 
@@ -221,11 +249,11 @@ router.get('/count', (req, res) => {
   // })
 })
 
-router.delete('/', (req, res) => {
+router.delete('/', (req, res, next) => {
   debug('Got a post del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
-
+  req.payload = ids
   Promise.all(map(ids, id => new Promise(resolve => {
     // const url = `${apiHost}/v2/polls/${id}`
     const url = `${apiHost}/v2/polls`
@@ -250,6 +278,8 @@ router.delete('/', (req, res) => {
     console.error(error)    
   }))).then(() => {
     res.send({ status: 200, text: 'Done.' })
+    req.outcome = 'successfully'
+    next()
   }).catch(err => {
     const errWrapped = handlerError(err)
     res.status(errWrapped.status).send({
@@ -258,6 +288,8 @@ router.delete('/', (req, res) => {
     })
     console.error(`Error occurred during deleting poll: ${ids}`)
     console.error(err)     
+    req.outcome = 'in fail'
+    next()
   })
-})
+}, tracer)
 module.exports = router

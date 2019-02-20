@@ -3,6 +3,7 @@ const merge = require('webpack-merge')
 const base = require('./webpack.base.config')
 const SWPrecachePlugin = require('sw-precache-webpack-plugin')
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = merge(base, {
   entry: {
@@ -37,6 +38,9 @@ const config = merge(base, {
     }
   },
   plugins: [
+    new CopyWebpackPlugin([
+      { from:'./src/trace-worker.js', to:'trace-worker.js' },
+    ]),        
     new webpack.ProvidePlugin({
       'window.Quill': 'quill',
       'Quill': 'quill/dist/quill.js',
@@ -58,6 +62,9 @@ if (process.env.NODE_ENV === 'production') {
     new SWPrecachePlugin({
       cacheId: 'read-admin',
       filename: 'service-worker.js',
+      importScripts: [
+        { filename: 'trace-worker.js' },
+      ],      
       minify: true,
       dontCacheBustUrlsMatching: /./,
       staticFileGlobsIgnorePatterns: [/\.map$/, /\.json$/],
