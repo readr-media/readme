@@ -10,7 +10,7 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
-const postOpts = (url, opts) => new Promise(resolve => {
+const postOpts = (url, opts, req) => new Promise(resolve => {
   superagent
   .post(url)
   .send({
@@ -32,7 +32,7 @@ const postOpts = (url, opts) => new Promise(resolve => {
     resolve()
   })  
 })
-const putOpts = (url, opts, margin) => new Promise(resolve => {
+const putOpts = (url, opts, margin, req) => new Promise(resolve => {
   const choices = map(opts, opt => Object.assign({}, opt))
   if (margin > -1) {
     map(choices, c => {
@@ -79,10 +79,10 @@ const updateOptions = (req, res) => {
     })
 
     const oldOpts = remove(choices, opt => opt.id)    
-    putOpts(url, oldOpts, oldOpts.length + choices.length)
+    putOpts(url, oldOpts, oldOpts.length + choices.length, req)
     .then(() => Promise.all([
-      putOpts(url, oldOpts),
-      postOpts(url, choices)
+      putOpts(url, oldOpts, undefined, req),
+      postOpts(url, choices, req)
     ]))
     .then(() => {
       res.send({ status: 200, text: 'Creating/Updating a poll successfully.' })
