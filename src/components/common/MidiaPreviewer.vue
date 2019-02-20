@@ -2,7 +2,7 @@
   <div class="media-previewer" v-show="file">
     <template v-if="file">
       <img class="media-previewer__img" v-if="isImg"
-        :src="preImgByte">  
+        :src="preImgSrc || preImgByte">
       <div class="media-previewer__vid" v-else-if="isVid">
         <video width="100%" height="100%" controlsList="nodownload" preload="metadata">
           <source :src="preMediaSource" :type="fileType">
@@ -17,7 +17,8 @@
   </div>
 </template>
 <script>
-  import { get } from 'lodash'
+  import { IMAGE_SIZE } from 'src/constants'
+  import { get, map } from 'lodash'
   const debug = require('debug')('CLIENT:MidiaPreviewer')
 
   export default {
@@ -42,6 +43,8 @@
     data () {
       return {
         preImgByte: null,
+        preImgSrc: null,
+        preImgSrcset: null,
         preMediaSource: '',
       }
     },
@@ -53,6 +56,10 @@
         this.preImgByte = null
 
         if (this.isImg) {
+          if (get(this.file, 'destination')) {
+            this.preImgSrc = `${get(this.file, 'destination')}-mobile@2x.${get(this.file, 'fileExtension')}`
+            return
+          }
           const file = get(this.file, 'file')
           if (FileReader && file) {
             const fr = new FileReader()

@@ -23,8 +23,8 @@ export default Object.assign({
     })
   },
 
-  COMMON_LIGHTBOX_SWITCH: ({ commit, }, { active, callback, component, props, }) => {
-    commit('SET_COMMON_LIGHTBOX_FLAG', { active, callback, component, props })
+  COMMON_LIGHTBOX_SWITCH: ({ commit, }, { active, callback, component, custProps, }) => {
+    commit('SET_COMMON_LIGHTBOX_FLAG', { active, callback, component, custProps })
   },
 
   FETCH_ASIDE_ITEMS: ({ commit, dispatch, state, }, { params, }) => {

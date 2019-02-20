@@ -30,10 +30,11 @@
   import { calcFileSize } from 'src/util/comm'
   import { get, last } from 'lodash'
   const debug = require('debug')('CLIENT:AssetPicker')
-  const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
+  const openPicker = (store, callback, assetType) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
     active: true,
     component: AssetPickerPanel,
     callback,
+    custProps: { assetType }
   })
   export default {
     name: 'AssetPicker',
@@ -86,7 +87,7 @@
         return   
       },
       openPicker () {
-        openPicker(this.$store, this.preparePreviewData)
+        openPicker(this.$store, this.preparePreviewData, this.assetType)
       },
       renmove () {
         this.$emit('update:value', '')
@@ -103,6 +104,7 @@
       })
     },
     props: {
+      assetType: {},
       theme: {},
       value: {}
     }

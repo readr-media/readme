@@ -40,7 +40,8 @@ export const model = [
 ]
 
 export const groups = [ 'info', 'basic' ]
-export const assetsEndpoint = '/api/asset/list?type=1'
+export const assetsEndpoint = '/api/asset/list'
+export const assetsCountEndpoint = '/api/asset/count'
 export const LIST_MAXRESULT = 15
 export const filters = [
   { name: 'title', type: 'TextInput' },

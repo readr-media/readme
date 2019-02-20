@@ -53,10 +53,11 @@ import {
 
 const debug = require('debug')('CLIENT:QuillEditor')
 const debugEditorChange = require('debug')('CLIENT:QuillEditorChange')
-const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
+const openPicker = (store, callback, assetType) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
   active: true,
   component: AssetPickerPanel,
   callback,
+  custProps: { assetType, }
 })
 const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
 
@@ -116,7 +117,7 @@ export default {
       // }
     },
     $_quillEditor_imageHandler () {
-      openPicker(this.$store, this.preparePreviewData)
+      openPicker(this.$store, this.preparePreviewData, [ 1 ])
     },
 
     $_quillEditor_onEditorChange (event) {
