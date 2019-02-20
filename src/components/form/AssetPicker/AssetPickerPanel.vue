@@ -1,18 +1,21 @@
 <template>
   <Tab :tabs="tabs" :defaultIndex="1">
     <div class="asset-picker-panel picker" slot="0">
-      <div class="asset-picker-panel__search"><ListFilter></ListFilter></div>
+      <div class="asset-picker-panel__search"><ListFilter bgcolor="#eeeeee"></ListFilter></div>
       <div class="asset-picker-panel__list">
         <template v-for="(a, i) in assets">
           <div @click="choose(i)" 
             :class="[
               'asset-item',
               i === selectedItem ? 'selected' : '',
-              i % 4 ? '' : 'first',
-            ]">
+              i % 4 ? '' : 'first',]"
+            :key="a.id">
             <ListItemIcon :item="a"></ListItemIcon>
           </div>
         </template>
+      </div>
+      <div class="asset-picker-panel__info">
+        <PaginationNav :currPage.sync="page" :totalPages="totalPages"></PaginationNav>
       </div>
       <div class="asset-picker-panel__confirm button" @click="confirm">
         <span v-text="$t('EDITOR.ASSET_PICKER.TAKE_UP')"></span>
@@ -20,7 +23,7 @@
     </div>
     <div class="asset-picker-panel uploader" slot="1">
       <div v-if="isLoading"><Spinner :show="true"></Spinner></div>
-      <div v-else><ItemEditor type="create" @saved="assetGened" modelName="ASSET"></ItemEditor></div>
+      <div v-else><ItemEditor type="create" @saved="assetGenedHandler" modelName="ASSET"></ItemEditor></div>
     </div>
   </Tab>
 </template>
@@ -28,19 +31,28 @@
   import Tab from 'src/components/common/Tab.vue'
   import ListFilter from 'src/components/list/ListFilter.vue'
   import ListItemIcon from 'src/components/list/ListItemIcon.vue'
+  import PaginationNav from 'src/components/list/PaginationNav.vue'
   import Spinner from 'src/components/Spinner.vue'
   import axios from 'axios'
+  import { IMAGE_SIZE } from 'src/constants'
   import { camelizeKeys, } from 'humps'
   import { get, map } from 'lodash'
+  import { constructUrlWithQuery } from 'src/api/comm'
 
   const ASSETS_TYPE = {
     IMAGE: 1,
     VIDEO: 2,
     AUDIO: 3
   }
-  const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
+  const MAX_RESULT = 8
+
   const debug = require('debug')('CLIENT:AssetPickerPanel')
-  const fetchAsset = assets_endpoint => axios.get(assets_endpoint)
+  const fetchAssetData = (endpoint, params, type) => {
+    if (!endpoint) { return Promise.resolve({}) }
+    const query = type !== 'count' ? Object.assign(params, { max_result: MAX_RESULT }) : params
+    const url = constructUrlWithQuery(endpoint, query)
+    return axios.get(url)
+  }
   const switchOff = store => store.dispatch('COMMON_LIGHTBOX_SWITCH', { active: false })
 
   export default {
@@ -50,20 +62,30 @@
       ItemEditor: () => import('src/components/item/ItemEditor.vue'),
       ListFilter,
       ListItemIcon,
+      PaginationNav,
       Spinner,
       Tab
+    },
+    computed: {
+      totalPages () {
+        return Math.ceil(this.assetsCount / MAX_RESULT) 
+      }
     },
     data () {
       return {
         assets: [],
+        assetsCount: 0,
+        assetType: [ 1 ],
+        endpointOfList: '',
         isLoading: false,
         modelData: {},
+        page: 1,
         selectedItem: -1,
-        tabs: [ this.$t('EDITOR.ASSET_PICKER.PICK'), this.$t('EDITOR.ASSET_PICKER.GENERATE') ]
+        tabs: [ this.$t('EDITOR.ASSET_PICKER.PICK'), this.$t('EDITOR.ASSET_PICKER.GENERATE') ],
       }
     },
     methods: {
-      assetGened (res) {
+      assetGenedHandler (res) {
         debug('Got a new asset!!!!!', res)
         const assetDestinations = get(res, 'body.url')
         setTimeout(() => this.callback(assetDestinations).then(() => switchOff(this.$store) ), 1000)
@@ -86,27 +108,48 @@
         debug('fileDestinations', fileDestinations)
         this.callback(fileDestinations, get(file, 'title', '')).then(() => switchOff(this.$store) )
       },
+      getAssetsCount () {
+        const assetsCountEndpoint = get(get(this.modelData, 'assetsCountEndpoint', '').split('?'), '0')
+        return fetchAssetData(assetsCountEndpoint, { asset_type: this.assetType }, 'count')
+          .then(res => get(res, 'data.meta.total', 0))
+          .catch(() => 0)
+      }
     },
-    mounted () {
+    async beforeMount () {
       debug('Going to fetch assets list.')
-      import(`model/ASSET`).then(m => {
-        this.modelData = m
-        const endpointOfList = get(m, 'assetsEndpoint')
-        endpointOfList && fetchAsset(endpointOfList)
-          .then(res => {
-            debug('Assets Get!', res.data)
-            const data = camelizeKeys(res.data)
-            this.assets = get(data, 'items')
-          })
-          .catch(err => {
-            debug('Getting Assets in fail!!', err)
-            this.assets = []
-          })
-      })
+      this.assetType = get(this.custProps, 'assetType') || this.assetType
+      this.modelData = await import(`model/ASSET`)
+      this.assetsCount= await this.getAssetsCount()
+      this.endpointOfList = get(get(this.modelData, 'assetsEndpoint', '').split('?'), '0')
+      fetchAssetData(this.endpointOfList, { asset_type: this.assetType, page: this.page }, 'list')
+        .then(res => {
+          debug('Assets Get!', res.data)
+          const data = camelizeKeys(res.data)
+          this.assets = get(data, 'items', [])
+        })
+        .catch(err => {
+          debug('Getting Assets in fail!!', err)
+          this.assets = []
+        })
     },
     props: {
       callback: {
         default: () => {}
+      },
+      custProps: {},
+    },
+    watch: {
+      page () {
+        fetchAssetData(this.endpointOfList, { asset_type: this.assetType, page: this.page }, 'list')
+        .then(res => {
+          debug('Assets Get!', res.data)
+          const data = camelizeKeys(res.data)
+          this.assets = get(data, 'items', [])
+        })
+        .catch(err => {
+          debug('Getting Assets in fail!!', err)
+          this.assets = []
+        })        
       }
     },
   }
@@ -120,6 +163,7 @@
     padding 80px 80px 120px
     overflow hidden
     &.uploader
+      padding 30px 80px
       > div
         height 100%
     &__search
@@ -134,12 +178,12 @@
       flex-wrap wrap
       align-content flex-start
       margin-top 15px
-      height 100%
+      height calc(100% - 50px)
       width 100%
       overflow auto
       .asset-item
         width calc(25% - 5px)
-        height 190px
+        height 200px
         margin-bottom 5px
         cursor pointer
         padding 15px
@@ -147,6 +191,9 @@
           margin-left 5px
         &.selected
           background-color #e6f8f9
+    &__info
+      height 50px
+      text-align right
     &__confirm
       margin-top 30px
       display flex

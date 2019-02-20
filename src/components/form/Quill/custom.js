@@ -1,15 +1,7 @@
 import { get, map } from 'lodash'
+import { IMAGE_SIZE_RESOLUTION } from 'src/constants'
 
 export const registerImageSrcSet = () => {
-  const resizeOpts = [
-    { target: 'mobile@4x', width: 1500 },
-    { target: 'mobile@3x', width: 1200 },
-    { target: 'mobile@2x', width: 800 },
-    { target: 'tablet@2x', width: 2700 },
-    { target: 'tablet@1x', width: 1000 },
-    { target: 'desktop@2x', width: 3000 },
-    { target: 'desktop@1x', width: 2000 }
-  ]
   return new Promise(resolve => {
     const BlockEmbed = Quill.import('blots/block/embed')
     class ImageSrcSet extends BlockEmbed {
@@ -17,7 +9,7 @@ export const registerImageSrcSet = () => {
         const node = super.create(urlSet)
         const img = document.createElement('img')
         const srcsetArr = []
-        map(resizeOpts, opt => {
+        map(IMAGE_SIZE_RESOLUTION, opt => {
           if (get(opt, 'target') && get(opt, 'width') && get(urlSet, get(opt, 'target'))) {
             srcsetArr.push(`${get(urlSet, get(opt, 'target'))} ${get(opt, 'width')}w`)
           }

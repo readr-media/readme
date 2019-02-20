@@ -9,6 +9,7 @@ const debug = require('debug')('CLIENT:api:comm')
 export function _buildQuery (params = {}) {
   let query = {}
   const whitelist = [
+    'asset_type',
     'where',
     'max_result',
     'maxResult',
@@ -51,6 +52,7 @@ export function _buildQuery (params = {}) {
           query[key] = JSON.stringify(where[key])
         })
       } else if (ele === 'ids'
+        || ele === 'asset_type'
         || ele === 'fields' 
         || ele === 'project_id' 
         || ele === 'object_ids' 

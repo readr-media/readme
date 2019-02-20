@@ -5,11 +5,10 @@ const { handlerError } = require('../../comm')
 const Cookies = require('cookies')
 const config = require('../../config')
 const axios = require('axios')
-const debug = require('debug')('README:api:project')
+const debug = require('debug')('README:api:assets')
 const express = require('express')
 const fs = require('fs')
 const jwtService = require('../../services')
-const numeral = require('numeral')
 const multer  = require('multer')
 const router = express.Router()
 const upload = multer({ dest: 'tmp/' })
@@ -33,10 +32,9 @@ const checkPermission = (req, res, next) => {
 }
 
 router.use('/list', checkPermission, (req, res) => {
-  debug('Got a req for assets list.')
-  debug('req.query.type', req.query.type)
+  debug('Got a req for assets list.', req.url)
 
-  const url = `${apiHost}/asset?${req.query.type ? `asset_type=[${req.query.type}]`: ''}`
+  const url = `${apiHost}/asset${req.url}`
   axios.get(url, {
     timeout: config.API_TIMEOUT,
   }).then(response => {
@@ -241,6 +239,28 @@ router.get('/load', (req, res) => {
   } else {
     res.status(404).send('Not Found.')
   }
+})
+
+router.use('/count', (req, res) => {
+  debug('Got an assets count req.')
+  const url = `${apiHost}/asset/count${req.url}`
+  debug('url', url)
+  axios.get(url, {
+    timeout: config.API_TIMEOUT,
+  }).then(response => {
+    debug('Get asset count from api successfully.')
+    debug(response.data)
+    res.json(camelizeKeys(response.data))
+  })
+  .catch(error => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during fetching data from : ${url}`)
+    console.error(error) 
+  })
 })
 
 module.exports = router

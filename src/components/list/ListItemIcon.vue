@@ -45,7 +45,12 @@
         const file = new Blob([response.data], {
           type: get(response, 'headers.content-type')
         })
-        this.file = { file, source: this.source }
+        this.file = {
+          file,
+          destination: get(this.item, 'destination'),
+          fileExtension: get(this.item, 'fileExtension'),
+          source: this.source
+        }
       })
       .catch(error => {
         this.isLoading = false
@@ -72,7 +77,7 @@
       color #000000
       margin 5px 0
     &__preview
-      height 90px
+      height 100px
       display flex
       justify-content center
       align-items center

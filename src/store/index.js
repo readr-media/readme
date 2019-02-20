@@ -20,7 +20,7 @@ export function createStore () {
       commonLightboxFlag: {
         active: false,
         component: {},
-        props: {},
+        custProps: {},
       },
       modelData: {},
       list: [],
