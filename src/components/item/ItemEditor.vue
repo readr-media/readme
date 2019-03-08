@@ -56,7 +56,7 @@
       add (form) {
         const normalizedForm = this.normalizeData(form)
         if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          switchAlert(this.$store, true, '', () => {})            
           this.isAllowedToSave = true
           return Promise.reject()
         } else {
@@ -123,7 +123,7 @@
       update (form) {
         const normalizedForm = this.normalizeData(form)
         if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, 'Incorrect value', () => {})            
+          switchAlert(this.$store, true, '', () => {})            
           this.isAllowedToSave = true
           return Promise.reject()
         } else {

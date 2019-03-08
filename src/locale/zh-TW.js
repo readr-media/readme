@@ -52,8 +52,15 @@ export default {
     'LOGOUT': '登出',
   },
   'ALERT': {
-    'CONFIRM': '確定',
+    'CONFIRM': '我知道了',
     'CANCEL': '取消',
+    'REPORTED': '錯誤問題已回報，謝謝合作。',
+    'UNIDENTIFIED_ISSUE': {
+      'PREFIX': '系統出現錯誤無法儲存，請',
+      'INFIX': '回報管理員',
+      'SUFFIX': '喔。',
+    },
+    'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉'
   },
   'PROJECT': {
     'NEW': '新增專題',
