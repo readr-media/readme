@@ -345,14 +345,15 @@ export default {
     }        
   },
   'ASSET': {
-    'ID': 'ID',
-    'TITLE': '檔名',
+    'ID': '編號',
+    'TITLE': '標題',
     'ASSET_TYPE': '類別',
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
     'ASSET_TYPE_NEVER': '不明',
     'FILE': '素材',
+    'UPDATED_AT': '更新時間',
     'COPYRIGHT': '財權聲明',
     'COPYRIGHT_COPYRIGHT': 'copyright',
     'COPYRIGHT_CC_BY_SA_3': 'cc-by-sa3.0',
