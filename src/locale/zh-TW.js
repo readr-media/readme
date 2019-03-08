@@ -60,7 +60,7 @@ export default {
       'INFIX': '回報管理員',
       'SUFFIX': '喔。',
     },
-    'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉'
+    'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉',
   },
   'PROJECT': {
     'NEW': '新增專題',
@@ -203,6 +203,8 @@ export default {
     'SAVE': '存檔',
     'CANCEL': '取消',  
     'PREVIEW': '預覽',
+    'UNAUTHORIZED_HOST': '你使用了不被信任的網站資源，目前僅接受來自以下網站的資源，且須通過 https 協定。',
+    'UNAUTHORIZED_HOST_HINT': '目前支援的網站：{hosts}',    
     'GROUPS': {
       'ADVANCED': '進階設定',
       'BASIC': '基本設定',
@@ -376,7 +378,9 @@ export default {
       'AUTHOR': '請輸入作者',
       'TAGS': '#',
       'ID': '請輸入 ID',
-    }
+    },
+    'USING_UNSUPPOERTED_FILE_FORMAT': '哎呀！你使用了陌生的檔案格式，目前沒有支援，請改用以下格式。',
+    'USING_UNSUPPOERTED_FILE_FORMAT_HINT': '目前支援類型：{format}'
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',

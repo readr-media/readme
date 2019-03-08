@@ -9,6 +9,7 @@
           <span v-text="$t('ALERT.UNIDENTIFIED_ISSUE.SUFFIX')"></span>
         </template>
       </div>
+      <div class="panel__item hint" v-show="hint"><span v-text="hint"></span></div>
       <div class="panel__actions">
         <div class="confirm" @click="confirm"><span v-text="textConfirm"></span></div>
         <template v-if="type === 'action'">
@@ -38,6 +39,9 @@
       },
       isActive () {
         return get(this.$store, 'state.alertFlag.active', false)
+      },
+      hint () {
+        return get(this.$store, 'state.alertFlag.hint')
       },
       message () {
         return get(this.$store, 'state.alertFlag.message')
@@ -110,20 +114,22 @@
       border-radius 2px
       padding 63px 33px 117px
       position relative
+
       &.reporting
         padding 63px 33px
-        .hint
-          font-size 1rem
-          font-weight normal
-          color #a0a0a0
-        .dove
-          display flex
-          justify-content center
-          align-items center
-          margin-top 41px
-          img
-            height 120px
-            width 184px  
+      .hint
+        margin-bottom 20px
+        font-size 1rem
+        font-weight normal
+        color #a0a0a0
+      .dove
+        display flex
+        justify-content center
+        align-items center
+        margin-top 41px
+        img
+          height 120px
+          width 184px  
       &__message
         margin-bottom 20px
         font-size 1.5rem

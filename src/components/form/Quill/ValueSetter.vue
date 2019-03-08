@@ -25,6 +25,10 @@
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:ValueSetter')
   const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
+  const switchAlert = (store, active, {
+    message,
+    hint
+  }, callback) => store.dispatch('ALERT_SWITCH', { active, message, hint, callback, type: 'action' })
   export default {
     name: 'ValueSetter',
     components: {
@@ -59,7 +63,11 @@
           const value = this.validateEmbed()
           return value
             ? setUpValue(this.$store, { active: true, type: '', value })
-            : alert(`Only source from "${this.whitelist.join(', ')}" with https are valid.`)
+            : switchAlert(this.$store, true, {
+              message: this.$t('EDITOR.UNAUTHORIZED_HOST'),
+              hint: this.$t('EDITOR.UNAUTHORIZED_HOST_HINT', { hosts: this.whitelist.join('、') })
+            }, () => {})     
+            // : alert(`Only source from "${this.whitelist.join(', ')}" with https are valid.`)
         }
         setUpValue(this.$store, { active: true, type: '', value: this.val })
         this.isProcessing = true

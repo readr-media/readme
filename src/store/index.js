@@ -13,6 +13,7 @@ export function createStore () {
         message: '',
         active: false,
         type: 'info',
+        hint: '',
       },
       asideItems: [],
       asideNav: [],

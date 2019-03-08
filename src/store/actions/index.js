@@ -13,8 +13,8 @@ import * as actionsItem from 'src/store/actions/item'
 let models
 
 export default Object.assign({
-  ALERT_SWITCH: ({ commit, }, { active, message, callback, }) => {
-    commit('SET_ALERT_FLAG', { active, message, callback, })
+  ALERT_SWITCH: ({ commit, }, { active, message, hint, callback, }) => {
+    commit('SET_ALERT_FLAG', { active, message, hint, callback, })
   },
 
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {

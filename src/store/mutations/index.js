@@ -9,10 +9,11 @@ export default Object.assign({
   SET_ASIDE_NAV: (state, { items }) => {
     state[ 'asideNav' ] = items
   },
-  SET_ALERT_FLAG: (state, { active, message, callback, }) => {
+  SET_ALERT_FLAG: (state, { active, message, callback, hint }) => {
     state[ 'alertFlag' ][ 'active' ] = active
     state[ 'alertFlag' ][ 'message' ] = message
     state[ 'alertFlag' ][ 'callback' ] = callback
+    state[ 'alertFlag' ][ 'hint' ] = hint
   },
   SET_AVALIBLE_MODELS: (state, { models, }) => {
     state[ 'availableModels' ] = models
