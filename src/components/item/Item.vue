@@ -77,6 +77,7 @@
   import { decamelize, } from 'humps'
   import { filter, get, map } from 'lodash'
   const debug = require('debug')('CLIENT:Item')
+  const setupDataMutationState = (store, status) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status })
   export default {
     name: 'Item',
     components: {
@@ -100,6 +101,7 @@
       return {
         currTagInput: '',
         isMounted: false,
+        isOriginDataSetup: false,
         value: undefined,
         autocompleteArr: [],
       }
@@ -119,7 +121,6 @@
       debug('this.itemObj.default', this.itemObj.default)
       this.value = get(this, 'itemVal') || get(this, 'itemVal') === 0 ? get(this, 'itemVal') : this.itemObj.default
       this.isMounted = true
-      // this.$forceUpdate()
     },
     props: {
       itemObj: {
@@ -142,12 +143,14 @@
       }
     },
     watch: {
-      itemVal () {
-        // this.value = this.value !== this.itemVal ? this.itemVal : this.value
-        // this.$forceUpdate()
-      },
-      value () {
+      itemVal (newVal, oldVal) {},
+      value (newVal, oldVal) {
         this.$emit('update:itemVal', this.value)
+        if (this.isOriginDataSetup && oldVal != newVal) {
+          console.log(this.itemObj.name, `${oldVal} -> ${newVal}`)
+          setupDataMutationState(this.$store, true)
+        }
+        !this.isOriginDataSetup && (this.isOriginDataSetup = true)
       },
       currTagInput (newValue, oldValue) {
         debug(`Mutation detected: currTagInput`)
@@ -164,6 +167,11 @@
           })
         }        
       },
+      '$route.fullPath': function () {
+        this.isOriginDataSetup = false
+        this.value = get(this, 'itemVal') || get(this, 'itemVal') === 0 ? get(this, 'itemVal') : this.itemObj.default
+        this.isMounted = true   
+      }
     }
   }
 </script>

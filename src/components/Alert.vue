@@ -13,7 +13,7 @@
       <div class="panel__actions">
         <div class="confirm" @click="confirm"><span v-text="textConfirm"></span></div>
         <template v-if="type === 'action'">
-          <div class="cancel" @click="close"><span v-text="$t('ALERT.CANCEL')"></span></div>
+          <div class="cancel" @click="close"><span v-text="textCancel"></span></div>
         </template>
       </div>
     </div>
@@ -32,11 +32,6 @@
   export default {
     name: 'Alert',
     computed: {
-      callback () {
-        return get(this.$store, 'state.alertFlag.callback') || function () {
-          debug('Go default callback!!')
-        }
-      },
       isActive () {
         return get(this.$store, 'state.alertFlag.active', false)
       },
@@ -52,19 +47,25 @@
       textConfirm () {
         return get(this.$store, 'state.alertFlag.textConfirm', this.$t('ALERT.CONFIRM'))
       },
+      textCancel () {
+        return get(this.$store, 'state.alertFlag.textCancel', this.$t('ALERT.CANCEL'))
+      }
     },
     data () {
       return {
         isReporting: false,
+        cancelHandler: undefined,
+        confirmHandler: undefined,
         countdown: 0,
       }
     },
     methods: {
       close () {
+        this.cancelHandler && this.cancelHandler()
         switchAlert(this.$store, false)
       },
       confirm () {
-        this.callback()
+        this.confirmHandler && this.confirmHandler()
         switchAlert(this.$store, false)
       },
       report () {
@@ -86,10 +87,13 @@
       isActive () {
         if (this.isActive) {
           preventScroll.on()
+          this.$forceUpdate()
+          this.confirmHandler = get(this.$store, 'state.alertFlag.confirmHandler') || get(this.$store, 'state.alertFlag.callback')
+          this.cancelHandler = get(this.$store, 'state.alertFlag.cancelHandler')
         } else {
           preventScroll.off()
         }
-      },      
+      }
     },
   }
 </script>
@@ -172,6 +176,8 @@
           text-align center
           color #f7f7f7
 
+          &.cancel
+            background-color #989898
           &:not(:last-child)
             margin-right 10px
           &:hover

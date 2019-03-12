@@ -65,6 +65,17 @@
     endpoint,
     type: 'LITING_PAGE'
   })
+  const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
+  const switchAlert = (store, active, {
+    message,
+    textConfirm,
+    textCancel,
+    type = 'action',
+    cancelHandler,
+    confirmHandler
+  }) => store.dispatch('ALERT_SWITCH', {
+    active, message, textConfirm, cancelHandler,
+    confirmHandler, textCancel, type })
 
   export default {
     name: 'List',
@@ -85,6 +96,7 @@
           || get(this.$route, 'params.subItem') === 'edit'
           || get(this.$route, 'params.action') === 'edit'
       },
+      isEditorDataMutated () { return get(this.$store, 'state.isEditorItemMutated.value', false) },
       isSubItem () {
         return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
       },
@@ -121,6 +133,11 @@
         filters: {},
         filterSearched: '',
         filterChecksCurrent: {},
+        leavingReminder: {
+          message: this.$t('ALERT.LEAVING_REMINDER'),
+          textConfirm: this.$t('ALERT.SAVE'),
+          textCancel: this.$t('ALERT.LEAVE_WITHOUT_SAVING'),
+        },
         isFilterActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
@@ -148,6 +165,29 @@
         this.isSearchFocused = false
       },
       get,
+      editorDataMutatedHandler (next) {
+        const handler = get(this.$store, 'state.isEditorItemMutated.handler', () => Promise.resolve())
+        return handler(next)
+      },      
+      leavingHandler (next) {
+        if (!this.isEditorDataMutated) {
+          next()
+        } else {
+          switchAlert(this.$store, true, {
+            message: this.leavingReminder.message,
+            textConfirm: this.leavingReminder.textConfirm,
+            textCancel: this.leavingReminder.textCancel,
+            type: 'action',
+            cancelHandler: () => {
+              setupDataMutationState(this.$store, false)
+              next()
+            },
+            confirmHandler: () => {
+              this.editorDataMutatedHandler(next)
+            }
+          }) 
+        }
+      },
       refresh ({ params = {}, }) {
         debug('Goin to refresh!')
         this.filterSearched && (params.keyword = this.filterSearched)
@@ -195,17 +235,24 @@
     },
     beforeMount () {
       fetchModelData(this.$store)
-    },   
+    },  
+    beforeRouteUpdate (to, from, next) {
+      next(false) // dont revise the url bar
+      this.leavingHandler(next, to)
+    },
+    beforeRouteLeave (to, from, next) {
+      this.leavingHandler(next, to)
+    }, 
     mounted () {
       this.isFilterActive = true
     },
     watch: {
-      '$route': function (newRoute, oldRoute) {        
+      '$route': function (newRoute, oldRoute) {
         if (newRoute.params.item !== oldRoute.params.item) {
           /**
           *  As soon as the route changes and the model get different, we fetch the proper model data at first.
           */
-          fetchModelData(this.$store)
+          fetchModelData(this.$store)          
         }
       },
       '$store.getters.structure': function (newStructure, oldStructure) {

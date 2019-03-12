@@ -4,7 +4,7 @@ export default {
     return get(getters, 'modelData.filters')
   },
   isLoginPage (state) {
-    const route = get(state, 'route.path')
+    const route = get(state, 'route.path', '')
     return route.indexOf('login') > -1
   },
   isPreviewable (state, getters) {

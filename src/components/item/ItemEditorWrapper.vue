@@ -61,6 +61,7 @@
   const debugAdd = require('debug')('CLIENT:ItemEditorWrapper:add')
   const watcher = WatchJS.watch
   const callOffWatcher = WatchJS.unwatch
+  const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
   export default {
     name: 'ItemEditorWrapper',
     components: {
@@ -71,6 +72,7 @@
     },
     computed: {      
       buttonizedItems () { return filter(this.structure, obj => obj.isButtonized) },     
+      isEditorDataMutated () { return get(this.$store, 'state.isEditorItemMutated.value', false) },
     },
     data () {
       return {
@@ -165,8 +167,9 @@
         this.reconstructGroups()
       },
       isShort (str) { return str.length > 2 || false },  
-      save () {
+      save (arg) {
         console.log('GO UPDATE.', this.formData)
+        const next = typeof(arg) === 'function' && arg
         if (this.isProcessing) {
           return Promise.reject()
         } else {
@@ -175,7 +178,8 @@
         if (this.type === 'update') {
           return this.update(this.formData).then(res => {
             this.isProcessing = false
-            return this.$emit('saved', res) && true
+            setupDataMutationState(this.$store, false)
+            return !next ? this.$emit('saved', res) && true : next()
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
@@ -185,7 +189,8 @@
           return this.add(this.formData).then(res => {
             this.isProcessing = false
             debugAdd('res',  res)
-            return this.$emit('saved', res) && true
+            setupDataMutationState(this.$store, false)
+            return !next ? this.$emit('saved', res) && true : next()
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
@@ -242,6 +247,10 @@
       },
     },
     watch: {
+      isEditorDataMutated () {
+        this.isEditorDataMutated && console.log('setup handler')
+        this.isEditorDataMutated && setupDataMutationState(this.$store, true, this.save)
+      },
       item () { this.initValue() }, 
       modelData () { this.initValue() }, 
     },

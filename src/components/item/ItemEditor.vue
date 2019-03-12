@@ -28,12 +28,12 @@
       endpoint () {
         return  this.modelname ? this.modelname.toLowerCase() : ''
       },
-      modelname () { return this.modelName || this.$store.getters.modelName },
       fetchModel () {
         return this.modelName !== this.$store.getters.modelName
           ? () => import(`model/${this.modelname}`)
           : Promise.resolve(this.$store.getters.modelData)
       },
+      modelname () { return this.modelName || this.$store.getters.modelName },
       structure () {
         if (this.modelName) {
           return this.modelData.model || []

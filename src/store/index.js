@@ -13,7 +13,11 @@ export function createStore () {
         message: '',
         active: false,
         type: 'info',
+        textCancel: '',
+        textConfirm: '',
         hint: '',
+        cancelHandler: () => {},
+        callback: () => {},
       },
       asideItems: [],
       asideNav: [],
@@ -22,6 +26,10 @@ export function createStore () {
         active: false,
         component: {},
         custProps: {},
+      },
+      isEditorItemMutated: {
+        value: false,
+        handler: () => {}
       },
       modelData: {},
       list: [],

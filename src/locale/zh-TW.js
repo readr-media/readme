@@ -61,6 +61,9 @@ export default {
       'SUFFIX': '喔。',
     },
     'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉',
+    'LEAVING_REMINDER': '準備離開嗎？記得先儲存哦。',
+    'SAVE': '儲存',
+    'LEAVE_WITHOUT_SAVING': '不儲存離開'
   },
   'PROJECT': {
     'NEW': '新增專題',
