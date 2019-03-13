@@ -157,7 +157,7 @@
       },
       get,
       editorDataMutatedHandler (next) {
-        const handler = get(this.$store, 'state.isEditorItemMutated.handler', () => Promise.resolve())
+        const handler = get(this.$store, 'state.isEditorItemMutated.handler', () => {})
         return handler(next)
       },      
       leavingHandler (...rest) {

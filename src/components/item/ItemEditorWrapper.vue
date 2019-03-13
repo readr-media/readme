@@ -54,7 +54,7 @@
   import Item from './Item.vue'
   import Spinner from 'src/components/Spinner.vue'
   import WatchJS from 'melanke-watchjs'
-  import { switchAlert } from 'src/util/actionDispatcher'
+  import { setupDataMutationState, switchAlert } from 'src/util/actionDispatcher'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -62,7 +62,6 @@
   const debugAdd = require('debug')('CLIENT:ItemEditorWrapper:add')
   const watcher = WatchJS.watch
   const callOffWatcher = WatchJS.unwatch
-  const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
   export default {
     name: 'ItemEditorWrapper',
     components: {
@@ -192,23 +191,21 @@
       save (...rest) {
         console.log('GO UPDATE.', this.formData)
         const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
-        if (this.isProcessing) {
-          return Promise.reject()
-        } else {
-          this.isProcessing = true
-        }
+
+        if (this.isProcessing) { return }
+        else { this.isProcessing = true }
+        
         if (this.type === 'update') {
-          return this.update(this.formData).then(res => {
+          this.update(this.formData).then(res => {
             this.isProcessing = false
             setupDataMutationState(this.$store, false)
             return !next ? this.$emit('saved', res) && true : next()
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
-            return Promise.reject()
           })
         } else if (this.type === 'create') {
-          return this.add(this.formData).then(res => {
+          this.add(this.formData).then(res => {
             this.isProcessing = false
             debugAdd('res',  res)
             setupDataMutationState(this.$store, false)
@@ -216,7 +213,6 @@
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
-            return Promise.reject()
           })          
         }
       },

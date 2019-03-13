@@ -13,12 +13,12 @@
   import ItemEditorWrapper from './ItemEditorWrapper.vue'
   import moment from 'moment'
   import numeral from 'numeral'
+  import { setupDataMutationState, switchAlert } from 'src/util/actionDispatcher'
   import { decamelize, decamelizeKeys, } from 'humps'
   import { get, map } from 'lodash'
   const debug = require('debug')('CLIENT:ItemEditor')
   const update = (store, params, endpoint) => store.dispatch('UPDATE_ITEM', { params, endpoint, })
   const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })  
-  const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
   export default {
     name: 'ItemEditor',
     components: {
@@ -49,6 +49,7 @@
     data () {
       return {
         isAllowedToSave: true,
+        formdataErrorLog: [],
         modelData: {}
       }
     },
@@ -56,8 +57,7 @@
       add (form) {
         const normalizedForm = this.normalizeData(form)
         if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, '', () => {})            
-          this.isAllowedToSave = true
+          this.savingAlertProcess()
           return Promise.reject()
         } else {
           normalizedForm.updatedAt = moment().toISOString(true)
@@ -72,6 +72,7 @@
       },      
       normalizeData (form) {
         const preForm = form
+        this.formdataErrorLog = []
         /**
          * Have to normalize any datetime type data before send put request.
          * And remove those data which's not editable(excluding 'ID').
@@ -88,6 +89,10 @@
                 const diff = curr.diff(ref) / (60 * 60 * 1000)
                 if ((item.relativeToWatcher === 'after' && diff <= 0) || (item.relativeToWatcher === 'before' && diff >= 0)) {
                   this.isAllowedToSave = false
+                  this.formdataErrorLog.push({
+                    name: item.name,
+                    message: this.$t('ALERT.DATETIME_VERIFIED_IN_FAIL')
+                  })
                 }                
               }
 
@@ -111,6 +116,10 @@
           }
           if (item.required&& ((!preForm[ item.name ] && preForm[ item.name ] !== 0) || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
             debug(item.name, item.required, preForm[ item.name ])
+            this.formdataErrorLog.push({
+              name: item.name,
+              message: this.$t('ALERT.REQUIRED_ITEM_EMPTY')
+            })            
             this.isAllowedToSave = false
           }
         })
@@ -119,12 +128,26 @@
       },  
       saved (res) {
         this.$emit('saved', res)
-      },    
+      },  
+      savingAlertProcess () {
+        switchAlert(this.$store, true, {
+          message: this.$t('ALERT.SAVE_REMINDER'),
+          textConfirm: this.$t('ALERT.KEEP_FILLING'),
+          textCancel: this.$t('ALERT.LEAVE_WITHOUT_SAVING'),
+          type: 'action',
+          cancelHandler: () => {
+            this.isAllowedToSave = true
+            setupDataMutationState(this.$store, false).then(() => this.saved({}))
+          },
+          confirmHandler: () => {
+            this.isAllowedToSave = true
+          }
+        })           
+      },  
       update (form) {
         const normalizedForm = this.normalizeData(form)
         if (!this.isAllowedToSave) {
-          switchAlert(this.$store, true, '', () => {})            
-          this.isAllowedToSave = true
+          this.savingAlertProcess()
           return Promise.reject()
         } else {
           normalizedForm.updatedAt = moment().toISOString(true)

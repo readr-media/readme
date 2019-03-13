@@ -66,10 +66,14 @@ export default {
       'DATA_MUTATED': '您有資料變動，預覽前請先儲存，否則無法預覽最新頁面。',
       'NEVER_SAVE': '儲存後才能進行預覽。',
     },
+    'SAVE_REMINDER': '部分必填欄位尚未填寫以致無法儲存，返回頁面完成填寫嗎？',
     'SAVE': '儲存',
     'LEAVE_WITHOUT_SAVING': '不儲存離開',
     'PREVIEW_WITHOUT_SAVING': '繼續預覽',
-    'PREVIEW_BACKTO_SAVE': '前往儲存'
+    'PREVIEW_BACKTO_SAVE': '前往儲存',
+    'KEEP_FILLING': '繼續填寫',
+    'DATETIME_VERIFIED_IN_FAIL': '請選擇適當的時間。',
+    'REQUIRED_ITEM_EMPTY': '必填項目未填。'
   },
   'PROJECT': {
     'NEW': '新增專題',
