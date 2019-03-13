@@ -2,7 +2,8 @@
   <div id="app" class="app"
     :class="{
       'login': $store.getters.isLoginPage,
-      'page-not-found': isPageNotFound
+      'page-not-found': isPageNotFound,
+      'system-error': isSystemError,
     }">
     <ReadMeHeader class="app-header"></ReadMeHeader>
     <ReadMeAside class="app-aside"></ReadMeAside>
@@ -38,8 +39,12 @@ export default {
       return get(this.$store, 'state.profile.id')
     },
     isPageNotFound () {
-      const exp_404 = /^\/404$/
+      const exp_404 = /^\/404/
       return exp_404.test(this.$route.fullPath)
+    },
+    isSystemError () {
+      const exp_500 = /^\/500/
+      return exp_500.test(this.$route.fullPath)
     },
     useragent () {
       return get(this.$store, 'state.useragent')
@@ -102,7 +107,7 @@ button
     left 0
     top 0
     z-index 1
-  &.page-not-found
+  &.page-not-found, &.system-error
     padding-top 0
     padding-left 0
     .app-header, .app-aside

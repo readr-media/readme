@@ -11,6 +11,7 @@ const List = () => import('src/views/List.vue')
 const Login = () => import('src/views/Login.vue')
 const PageNotFound = () => import('src/views/PageNotFound.vue')
 const SetUp = () => import('src/views/SetUp.vue')
+const SystemError = () => import('src/views/SystemError.vue')
 
 export function createRouter () {
   return new Router({
@@ -22,7 +23,8 @@ export function createRouter () {
       { path: '/login', component: Login, },
       { path: '/setup/:type?', component: SetUp, meta: { permission: 'admin', }, },
       { path: '/list/:item/:subItem?/:action?', component: List, meta: { permission: 'admin', }, },
-      { path: '/404', component: PageNotFound }
+      { path: '/404', component: PageNotFound },
+      { path: '/500', component: SystemError }
     ]
   })
 }

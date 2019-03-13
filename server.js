@@ -98,7 +98,8 @@ function render (req, res, next) {
   const s = Date.now()
 
   const curr_host = get(req, 'headers.host') || ''
-  const exp_404 = /^\/404$/
+  const exp_404 = /^\/404/
+  const exp_500 = /^\/500/
   const targ_exp = /(dev)|(localhost)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
 
@@ -131,7 +132,8 @@ function render (req, res, next) {
       // Render Error Page or Redirect
       console.error(`error during render : ${req.url}`)
       console.error(err.stack)
-      return res.status(500).send('500 | Internal Server Error')
+      req.url = '/500'
+      render(req, res, next)  
     }
   }
 
@@ -156,13 +158,19 @@ function render (req, res, next) {
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
       DOMAIN: get(curr_host.split(':'), 0),
     },
-    is404: exp_404.test(req.url)
+    is404: exp_404.test(req.url),
+    is500: exp_500.test(req.url),
   }
   renderer.renderToString(context, (err, html) => {
     if (err) {
       return handleError(err)
     }
-    res.status(context.is404 ? 404 : 200).send(html)
+    const status = context.is404
+      ? 404
+      : context.is500
+      ? 500
+      : 200
+    res.status(status).send(html)
     if (!isProd) {
       console.log(`whole request: ${Date.now() - s}ms`)
     }

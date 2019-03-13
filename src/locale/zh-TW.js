@@ -447,5 +447,8 @@ export default {
   'PAGE_NOT_FOUND': {
     'GO_HOME': '回首頁',
     'MESSAGE': '此頁面不存在'
-  }
+  },
+  'SYSTEM_ERROR': {
+    'MESSAGE': '系統忙碌中，請重新整理或是稍後再試',
+  },
 }
