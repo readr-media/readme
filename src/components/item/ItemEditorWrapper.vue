@@ -26,7 +26,7 @@
         </div>
         <div class="panel__actions">
           <div class="preview btn" :class="{ block: isProcessing }"
-            v-if="$store.getters.isPreviewable && get(item, 'id')"
+            v-if="$store.getters.isPreviewable && previewHost"
             @click="preview">
             <span v-text="$t('EDITOR.PREVIEW')" v-show="!isProcessing"></span>
             <Spinner class="spinner" :show="isProcessing"></Spinner>
@@ -54,6 +54,7 @@
   import Item from './Item.vue'
   import Spinner from 'src/components/Spinner.vue'
   import WatchJS from 'melanke-watchjs'
+  import { switchAlert } from 'src/util/actionDispatcher'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -73,6 +74,7 @@
     computed: {      
       buttonizedItems () { return filter(this.structure, obj => obj.isButtonized) },     
       isEditorDataMutated () { return get(this.$store, 'state.isEditorItemMutated.value', false) },
+      previewHost () { return get(this.modelData, 'previewHost') }
     },
     data () {
       return {
@@ -90,10 +92,30 @@
       decamelize,
       get,
       preview () {
-        const host = get(this.modelData, 'previewHost')
-        const id = get(this.item, 'id')
-        debug('Go preview', [ host, id ])
-        host && id && window.open(`${host}/${id}?preview=true`, '_blank')
+        debug('Go preview')
+        if (!get(this.item, 'id')) {
+          switchAlert(this.$store, true, {
+            message: this.$t('ALERT.PREVIEW_REMINDER.NEVER_SAVE'),
+            textConfirm: this.$t('ALERT.PREVIEW_BACKTO_SAVE'),
+            type: 'info',
+            confirmHandler: () => {}
+          })      
+          return      
+        }
+        if (this.isEditorDataMutated) {
+          switchAlert(this.$store, true, {
+            message: this.$t('ALERT.PREVIEW_REMINDER.DATA_MUTATED'),
+            textConfirm: this.$t('ALERT.PREVIEW_BACKTO_SAVE'),
+            textCancel: this.$t('ALERT.PREVIEW_WITHOUT_SAVING'),
+            type: 'action',
+            cancelHandler: () => {
+              window.open(`${this.previewHost}/${get(this.item, 'id')}?preview=true`, '_blank')
+            },
+            confirmHandler: () => {}
+          })         
+        } else {
+          window.open(`${this.previewHost}/${get(this.item, 'id')}?preview=true`, '_blank')
+        }
       },
       reconstructGroups () {
         debug('reconstructGroups!', this.structure)

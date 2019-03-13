@@ -45,6 +45,7 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import WrapperContainer from 'src/components/wrapper/WrapperContainer.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
+  import { switchAlert } from 'src/util/actionDispatcher'
   import { find, get, map, } from 'lodash'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
@@ -66,16 +67,6 @@
     type: 'LITING_PAGE'
   })
   const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
-  const switchAlert = (store, active, {
-    message,
-    textConfirm,
-    textCancel,
-    type = 'action',
-    cancelHandler,
-    confirmHandler
-  }) => store.dispatch('ALERT_SWITCH', {
-    active, message, textConfirm, cancelHandler,
-    confirmHandler, textCancel, type })
 
   export default {
     name: 'List',

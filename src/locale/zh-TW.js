@@ -62,8 +62,14 @@ export default {
     },
     'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉',
     'LEAVING_REMINDER': '準備離開嗎？記得先儲存哦。',
+    'PREVIEW_REMINDER': {
+      'DATA_MUTATED': '您有資料變動，預覽前請先儲存，否則無法預覽最新頁面。',
+      'NEVER_SAVE': '儲存後才能進行預覽。',
+    },
     'SAVE': '儲存',
-    'LEAVE_WITHOUT_SAVING': '不儲存離開'
+    'LEAVE_WITHOUT_SAVING': '不儲存離開',
+    'PREVIEW_WITHOUT_SAVING': '繼續預覽',
+    'PREVIEW_BACKTO_SAVE': '前往儲存'
   },
   'PROJECT': {
     'NEW': '新增專題',
