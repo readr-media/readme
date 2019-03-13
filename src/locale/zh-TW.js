@@ -444,4 +444,8 @@ export default {
   'MANAGEMENT': {
 
   },
+  'PAGE_NOT_FOUND': {
+    'GO_HOME': '回首頁',
+    'MESSAGE': '此頁面不存在'
+  }
 }
