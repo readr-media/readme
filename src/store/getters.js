@@ -16,6 +16,9 @@ export default {
       && get(state, 'route.params.subItem') !== 'edit')
       || false
   },
+  isSearchable (state, getters) {
+    return get(getters, 'modelData.isSearchable', false)
+  },
   modelName (state) {
     return get(state, 'route.params.item', '').replace(/-/g, '_').toUpperCase()
   },

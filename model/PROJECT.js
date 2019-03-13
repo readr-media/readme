@@ -40,6 +40,7 @@ export const model = [
   { name: 'tags', type: 'TextTagItem', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true,  }, order: { editor: 3.5 }, autocomplete: tagsAutoComplete, },
 ]
 
+export const isSearchable = false
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'description', type: 'TextInput' },
