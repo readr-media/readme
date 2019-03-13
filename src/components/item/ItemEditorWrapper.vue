@@ -16,6 +16,7 @@
                       :editorMode="type"
                       :modelName="modelName"
                       :refVals="formData"
+                      :isWarned="isWarned(obj.name)"
                       :itemVal.sync="formData[ obj.name ]"
                       :itemObj="obj"></Item>
                   </div>
@@ -187,6 +188,9 @@
         }
         this.reconstructGroups()
       },
+      isWarned (itemName) {
+        return find(this.formdataErrorLog, { name: itemName })
+      },
       isShort (str) { return str.length > 2 || false },  
       save (...rest) {
         console.log('GO UPDATE.', this.formData)
@@ -237,6 +241,9 @@
           debug('form:', form)
           resolve(true)
         }),
+      },
+      formdataErrorLog: {
+        default: () => []
       },
       item: {
         type: Object,

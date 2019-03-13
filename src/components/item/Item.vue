@@ -3,6 +3,7 @@
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
       :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :isWarned="isWarned"
       :value.sync="value"></TextInput>
     <DatetimeItem v-else-if="itemObj.type === 'Datetime'"
       :relativeToRef="itemObj.relativeToWatcher"
@@ -30,6 +31,7 @@
     <BooleanSwitcher v-else-if="itemObj.type === 'BooleanSwitcher'"
       :status.sync="value"></BooleanSwitcher>
     <Dropdownlist v-else-if="itemObj.type === 'Dropdownlist'"
+      :isWarned="isWarned"
       :name="itemObj.name"
       :defaultVal="itemObj.default"
       :defaultText="itemObj.defaultText"
@@ -49,6 +51,7 @@
       :fileExt="refVals[ 'fileExtension' ]"
       :fileObj.sync="value"></Uploader>
     <AssetPicker v-else-if="itemObj.type === 'AssetPicker'"
+      :isWarned="isWarned"
       :value.sync="value"></AssetPicker>
   </div>
   <div v-else>
@@ -123,6 +126,7 @@
       this.isMounted = true
     },
     props: {
+      isWarned: {},
       itemObj: {
         type: Object,
         default: () => ({})

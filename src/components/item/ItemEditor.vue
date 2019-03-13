@@ -7,15 +7,15 @@
     :type="type"
     :item="item"
     :add="add"
+    :formdataErrorLog="formdataErrorLog"
     :update="update"></ItemEditorWrapper>
 </template>
 <script>
   import ItemEditorWrapper from './ItemEditorWrapper.vue'
   import moment from 'moment'
-  import numeral from 'numeral'
   import { setupDataMutationState, switchAlert } from 'src/util/actionDispatcher'
   import { decamelize, decamelizeKeys, } from 'humps'
-  import { get, map } from 'lodash'
+  import { get, map, toNumber } from 'lodash'
   const debug = require('debug')('CLIENT:ItemEditor')
   const update = (store, params, endpoint) => store.dispatch('UPDATE_ITEM', { params, endpoint, })
   const post = (store, params, endpoint) => store.dispatch('POST_ITEM', { params, endpoint, })  
@@ -100,7 +100,7 @@
             }
           } else if ((item.type === 'TextInput' || item.type === 'Dropdownlist' || item.type === 'CheckboxItem') && item.isNumSentitive) {
             // preForm[ item.name ] = preForm[ item.name ] && !isNaN(preForm[ item.name ]) ? Number(preForm[ item.name ]) : null
-            preForm[ item.name ] = preForm[ item.name ] ? numeral(preForm[ item.name ]).value() : 0
+            preForm[ item.name ] = preForm[ item.name ] ? toNumber(preForm[ item.name ]) : 0
           } else if (item.type === 'TextInput' && preForm[ item.name ] === 'undefined') {
             preForm[ item.name ] = ''
           }
@@ -114,7 +114,9 @@
           if (item.name.toUpperCase() === 'UPDATEDBY' || item.name.toUpperCase() === 'AUTHOR') {
             preForm[ item.name ] = this.me
           }
-          if (item.required&& ((!preForm[ item.name ] && preForm[ item.name ] !== 0) || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
+          if (item.required
+            && ((!preForm[ item.name ] && preForm[ item.name ] !== 0) 
+              || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
             debug(item.name, item.required, preForm[ item.name ])
             this.formdataErrorLog.push({
               name: item.name,
