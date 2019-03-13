@@ -169,23 +169,33 @@
         const handler = get(this.$store, 'state.isEditorItemMutated.handler', () => Promise.resolve())
         return handler(next)
       },      
-      leavingHandler (next) {
+      leavingHandler (...rest) {
+        const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
         if (!this.isEditorDataMutated) {
-          next()
+          next && next()
         } else {
-          switchAlert(this.$store, true, {
-            message: this.leavingReminder.message,
-            textConfirm: this.leavingReminder.textConfirm,
-            textCancel: this.leavingReminder.textCancel,
-            type: 'action',
-            cancelHandler: () => {
-              setupDataMutationState(this.$store, false)
-              next()
-            },
-            confirmHandler: () => {
-              this.editorDataMutatedHandler(next)
-            }
-          }) 
+          if (next) {
+            switchAlert(this.$store, true, {
+              message: this.leavingReminder.message,
+              textConfirm: this.leavingReminder.textConfirm,
+              textCancel: this.leavingReminder.textCancel,
+              type: 'action',
+              cancelHandler: () => {
+                setupDataMutationState(this.$store, false)
+                next()
+              },
+              confirmHandler: () => {
+                this.editorDataMutatedHandler(next)
+              }
+            }) 
+          } else {
+            /**
+             * This is supposed to occur in windows.onbeforeunload.
+             */
+            const event = get(rest, '0') || window.evnet
+            event && (event.returnValue = this.$t('ALERT.LEAVING_REMINDER'))
+            return this.$t('ALERT.LEAVING_REMINDER')
+          }
         }
       },
       refresh ({ params = {}, }) {
@@ -281,6 +291,11 @@
           this.refreshItemsCount({})
         ])
       },
+      isEditorDataMutated () {
+        this.isEditorDataMutated
+          ? window.addEventListener('beforeunload', this.leavingHandler)
+          : window.removeEventListener('beforeunload', this.leavingHandler)
+      }
     },
   }
 </script>

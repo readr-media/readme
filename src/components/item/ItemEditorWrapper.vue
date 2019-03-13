@@ -167,9 +167,9 @@
         this.reconstructGroups()
       },
       isShort (str) { return str.length > 2 || false },  
-      save (arg) {
+      save (...rest) {
         console.log('GO UPDATE.', this.formData)
-        const next = typeof(arg) === 'function' && arg
+        const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
         if (this.isProcessing) {
           return Promise.reject()
         } else {
@@ -248,7 +248,6 @@
     },
     watch: {
       isEditorDataMutated () {
-        this.isEditorDataMutated && console.log('setup handler')
         this.isEditorDataMutated && setupDataMutationState(this.$store, true, this.save)
       },
       item () { this.initValue() }, 
