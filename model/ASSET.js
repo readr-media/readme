@@ -26,22 +26,25 @@ const assets_options = map(ASSETS_TYPE, (s, k) => {
 })
 
 export const model = [
-  { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '60' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 } },
+  { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '100' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 } },
   { name: 'destination', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
-  { name: 'assetType', type: 'RadioItem', group: 'info', listWidth: { min: '80' }, isEditable: false, isListable: true,options: assets_options, order: { list: 4 }, },
-  { name: 'title', type: 'TextInput', group: 'basic', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, required: true },
+  { name: 'assetType', type: 'RadioItem', group: 'info', listWidth: { min: '60' }, isEditable: false, isListable: true,options: assets_options, order: { list: 2 }, },
+  { name: 'title', type: 'TextInput', group: 'basic', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, required: true, order: { list: 1 } },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 3 }, },
   
   { name: 'fileName', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'fileExtension', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'fileType', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'file', type: 'Uploader', group: 'basic', isEditable: true, isListable: false, },
 
-  { name: 'copyright', type: 'Dropdownlist', group: 'basic', listWidth: { min: '100' }, isEditable: true, isListable: true, isNumSentitive: true, options: copyright_options, fetchSource: copyRightOpts, required: true, order: { list: 2 }, default: '-1', defaultText: 'NA_COPYRIGHT' },
+  { name: 'copyright', type: 'Dropdownlist', group: 'basic', listWidth: { min: '130' }, isEditable: true, isListable: true, isNumSentitive: true, options: copyright_options, fetchSource: copyRightOpts, required: true, order: { list: 2 }, default: '-1', defaultText: 'NA_COPYRIGHT' },
 ]
 
 export const groups = [ 'info', 'basic' ]
-export const assetsEndpoint = '/api/asset/list?type=1'
+export const assetsEndpoint = '/api/asset/list'
+export const assetsCountEndpoint = '/api/asset/count'
 export const LIST_MAXRESULT = 15
+export const isSearchable = false
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },

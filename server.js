@@ -93,14 +93,13 @@ function render (req, res, next) {
   if (req.url.indexOf('/api/') === 0) {
     next()
     return
-  } else if (req.url.indexOf('/404') === 0) {
-    res.status(404).send('404 | Page Not Found')
-    return
   }
 
   const s = Date.now()
 
   const curr_host = get(req, 'headers.host') || ''
+  const exp_404 = /^\/404/
+  const exp_500 = /^\/500/
   const targ_exp = /(dev)|(localhost)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
 
@@ -121,7 +120,8 @@ function render (req, res, next) {
     if (err.url) {
       return res.redirect(err.url)
     } else if(err.code === 404) {
-      return res.status(404).send('404 | Page Not Found')
+      req.url = '/404'
+      render(req, res, next)           
     } else if (err.code === 403) {
       if (cookies.get('csrf')) {
         return res.status(403).send('You dont have any permission at this moment. Please ask admin for futher permission that you desire.')
@@ -132,7 +132,8 @@ function render (req, res, next) {
       // Render Error Page or Redirect
       console.error(`error during render : ${req.url}`)
       console.error(err.stack)
-      return res.status(500).send('500 | Internal Server Error')
+      req.url = '/500'
+      render(req, res, next)  
     }
   }
 
@@ -155,15 +156,21 @@ function render (req, res, next) {
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
-      // DOMAIN: config.DOMAIN,
       DOMAIN: get(curr_host.split(':'), 0),
-    } 
+    },
+    is404: exp_404.test(req.url),
+    is500: exp_500.test(req.url),
   }
   renderer.renderToString(context, (err, html) => {
     if (err) {
       return handleError(err)
     }
-    res.send(html)
+    const status = context.is404
+      ? 404
+      : context.is500
+      ? 500
+      : 200
+    res.status(status).send(html)
     if (!isProd) {
       console.log(`whole request: ${Date.now() - s}ms`)
     }

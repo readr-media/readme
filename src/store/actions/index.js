@@ -13,8 +13,8 @@ import * as actionsItem from 'src/store/actions/item'
 let models
 
 export default Object.assign({
-  ALERT_SWITCH: ({ commit, }, { active, message, callback, }) => {
-    commit('SET_ALERT_FLAG', { active, message, callback, })
+  ALERT_SWITCH: ({ commit, }, { active, message, textCancel, textConfirm, hint, callback, confirmHandler, cancelHandler, type }) => {
+    commit('SET_ALERT_FLAG', { active, message, hint, textCancel, textConfirm, callback, confirmHandler, cancelHandler, type })
   },
 
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {
@@ -23,8 +23,12 @@ export default Object.assign({
     })
   },
 
-  COMMON_LIGHTBOX_SWITCH: ({ commit, }, { active, callback, component, props, }) => {
-    commit('SET_COMMON_LIGHTBOX_FLAG', { active, callback, component, props })
+  COMMON_LIGHTBOX_SWITCH: ({ commit, }, { active, callback, component, custProps, }) => {
+    commit('SET_COMMON_LIGHTBOX_FLAG', { active, callback, component, custProps })
+  },
+
+  UPDATE_EDITOR_MUTATION_STATE: ({ commit, }, { status, handler }) => {
+    commit('SET_EDITOR_MUTATION_STATE', { status, handler })
   },
 
   FETCH_ASIDE_ITEMS: ({ commit, dispatch, state, }, { params, }) => {

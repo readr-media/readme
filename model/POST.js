@@ -63,7 +63,7 @@ export const model = [
   { name: 'authors', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: true, isListable: false, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, },
 
-  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5, editor: 1 }, },
+  { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5, editor: 1 }, required: true, },
   { name: 'content', type: 'ContentEditor', group: 'content', isEditable: true, isListable: false, order: { editor: 2 }, },
 
   // For post.type === review
@@ -89,6 +89,7 @@ export const groups = [ 'info', 'basic', 'content', 'share' ]
 export const isPreviewable = true
 export const previewHost = 'https://www.readr.tw/post'
 export const LIST_MAXRESULT = 15
+export const isSearchable = false
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'content', type: 'TextInput' },

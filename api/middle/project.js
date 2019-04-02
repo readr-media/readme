@@ -35,7 +35,7 @@ router.get('/list', (req, res) => {
   })
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', (req, res, next) => {
   debug('Got a project creating call.')
   debug(req.body)
 
@@ -58,10 +58,12 @@ router.post('/create', (req, res) => {
       console.error(`Error occurred during create a new project : ${url}`)
       console.error(error) 
     }
+    req.outcome = response
+    next()
   })
 })
 
-router.put('/update', (req, res) => {
+router.put('/update', (req, res, next) => {
   debug('Got a project updating call.')
   const url = `${apiHost}/project`
   debug(req.body)
@@ -82,14 +84,15 @@ router.put('/update', (req, res) => {
       console.error(`Error occurred during update project: ${url}`)
       console.error(error) 
     }
+    req.outcome = response
+    next()
   })
 })
 
-router.delete('/', (req, res) => {
+router.delete('/', (req, res, next) => {
   debug('Got a proj del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
-
   Promise.all(map(ids, id => new Promise(resolve => {
     const url = `${apiHost}/project/${id}`
     debug('MEMBER### DELETING PROJECT:', id)
@@ -108,14 +111,16 @@ router.delete('/', (req, res) => {
     console.error(error)    
   }))).then(() => {
     res.send({ status: 200, text: 'Done.' })
+    req.outcome = { status: 200 }
+    next()
   }).catch(err => {
     const errWrapped = handlerError(err)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during deleting project: ${ids}`)
     console.error(err)     
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
+    next()
   })
 })
 

@@ -1,8 +1,11 @@
 <template>
-  <div class="list-search" :class="{ 'with-filter': isFilterSetupped }">
+  <div class="list-search" 
+    :class="{ 'with-filter': isFilterSetupped, 'disabled': !$store.getters.isSearchable }"
+    :style="{ backgroundColor: bgcolor, }">
     <input class="list-search__input" type="text" ref="searchInput"
       v-model="currentSearchVal"
       :placeholder="filtersStr || $t('LIST.SEARCH')"
+      :style="{ backgroundColor: bgcolor, }"
       @focusin="toggleFilterVisible(true)"
       @focusout="toggleFilterVisible(false)"
       @keyup="setCurrVal"
@@ -82,6 +85,7 @@
       value: {
         type: String,
       },
+      bgcolor: {},
     },
     watch: {
       currentSearchVal () {
@@ -114,7 +118,8 @@
     background-position 15px 8px
     background-size 20px 20px
     background-repeat no-repeat
-
+    &.disabled
+      display none
     &.with-filter
       padding-right 55px
     &__input

@@ -1,6 +1,5 @@
 const Cookies = require('cookies')
 const config = require('../../config')
-const debug = require('debug')('READR-API:api/middle/member')
 const express = require('express')
 const jwtService = require('../../services')
 const router = express.Router()
@@ -9,8 +8,8 @@ const { OAuth2Client, } = require('google-auth-library')
 const { constructScope, isReqAllowed, } = require('../../services/perm')
 const { get, } = require('lodash')
 const { redisWriting, } = require('../redis')
-
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
+const debug = require('debug')('README:LOGIN')
 
 const login = (req, res) => {
   debug('About to send login req.', isReqAllowed(req))
@@ -23,6 +22,7 @@ const login = (req, res) => {
   }
   const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
   const url = `${apiHost}/login`
+  debug('GOING TO LOGIN!!')
   superagent
     .post(url)
     .send(req.body)

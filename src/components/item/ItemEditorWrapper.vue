@@ -16,6 +16,7 @@
                       :editorMode="type"
                       :modelName="modelName"
                       :refVals="formData"
+                      :isWarned="isWarned(obj.name)"
                       :itemVal.sync="formData[ obj.name ]"
                       :itemObj="obj"></Item>
                   </div>
@@ -26,7 +27,7 @@
         </div>
         <div class="panel__actions">
           <div class="preview btn" :class="{ block: isProcessing }"
-            v-if="$store.getters.isPreviewable && get(item, 'id')"
+            v-if="$store.getters.isPreviewable && previewHost"
             @click="preview">
             <span v-text="$t('EDITOR.PREVIEW')" v-show="!isProcessing"></span>
             <Spinner class="spinner" :show="isProcessing"></Spinner>
@@ -54,6 +55,7 @@
   import Item from './Item.vue'
   import Spinner from 'src/components/Spinner.vue'
   import WatchJS from 'melanke-watchjs'
+  import { setupDataMutationState, switchAlert } from 'src/util/actionDispatcher'
   import { decamelize, } from 'humps'
   import { find, filter, get, map, sortBy, } from 'lodash'
   import 'vue-datetime/dist/vue-datetime.css'
@@ -71,6 +73,8 @@
     },
     computed: {      
       buttonizedItems () { return filter(this.structure, obj => obj.isButtonized) },     
+      isEditorDataMutated () { return get(this.$store, 'state.isEditorItemMutated.value', false) },
+      previewHost () { return get(this.modelData, 'previewHost') }
     },
     data () {
       return {
@@ -88,10 +92,30 @@
       decamelize,
       get,
       preview () {
-        const host = get(this.modelData, 'previewHost')
-        const id = get(this.item, 'id')
-        debug('Go preview', [ host, id ])
-        host && id && window.open(`${host}/${id}?preview=true`, '_blank')
+        debug('Go preview')
+        if (!get(this.item, 'id')) {
+          switchAlert(this.$store, true, {
+            message: this.$t('ALERT.PREVIEW_REMINDER.NEVER_SAVE'),
+            textConfirm: this.$t('ALERT.PREVIEW_BACKTO_SAVE'),
+            type: 'info',
+            confirmHandler: () => {}
+          })      
+          return      
+        }
+        if (this.isEditorDataMutated) {
+          switchAlert(this.$store, true, {
+            message: this.$t('ALERT.PREVIEW_REMINDER.DATA_MUTATED'),
+            textConfirm: this.$t('ALERT.PREVIEW_BACKTO_SAVE'),
+            textCancel: this.$t('ALERT.PREVIEW_WITHOUT_SAVING'),
+            type: 'action',
+            cancelHandler: () => {
+              window.open(`${this.previewHost}/${get(this.item, 'id')}?preview=true`, '_blank')
+            },
+            confirmHandler: () => {}
+          })         
+        } else {
+          window.open(`${this.previewHost}/${get(this.item, 'id')}?preview=true`, '_blank')
+        }
       },
       reconstructGroups () {
         debug('reconstructGroups!', this.structure)
@@ -164,32 +188,35 @@
         }
         this.reconstructGroups()
       },
+      isWarned (itemName) {
+        return find(this.formdataErrorLog, { name: itemName })
+      },
       isShort (str) { return str.length > 2 || false },  
-      save () {
+      save (...rest) {
         console.log('GO UPDATE.', this.formData)
-        if (this.isProcessing) {
-          return Promise.reject()
-        } else {
-          this.isProcessing = true
-        }
+        const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
+
+        if (this.isProcessing) { return }
+        else { this.isProcessing = true }
+        
         if (this.type === 'update') {
-          return this.update(this.formData).then(res => {
+          this.update(this.formData).then(res => {
             this.isProcessing = false
-            return this.$emit('saved', res) && true
+            setupDataMutationState(this.$store, false)
+            return !next ? this.$emit('saved', res) && true : next()
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
-            return Promise.reject()
           })
         } else if (this.type === 'create') {
-          return this.add(this.formData).then(res => {
+          this.add(this.formData).then(res => {
             this.isProcessing = false
             debugAdd('res',  res)
-            return this.$emit('saved', res) && true
+            setupDataMutationState(this.$store, false)
+            return !next ? this.$emit('saved', res) && true : next()
           }).catch(err => {
             this.isProcessing = false
             debug('err', err)
-            return Promise.reject()
           })          
         }
       },
@@ -214,6 +241,9 @@
           debug('form:', form)
           resolve(true)
         }),
+      },
+      formdataErrorLog: {
+        default: () => []
       },
       item: {
         type: Object,
@@ -242,6 +272,9 @@
       },
     },
     watch: {
+      isEditorDataMutated () {
+        this.isEditorDataMutated && setupDataMutationState(this.$store, true, this.save)
+      },
       item () { this.initValue() }, 
       modelData () { this.initValue() }, 
     },

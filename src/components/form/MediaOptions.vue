@@ -24,7 +24,7 @@
               </div>
             </div>
             <div class="right">
-              <AssetPicker theme="grey" :value.sync="opt.image"></AssetPicker>
+              <AssetPicker theme="grey" :value.sync="opt.image" :assetType="[ 1, 2, 3 ]"></AssetPicker>
             </div>
             <div class="option-tools">
               <div class="tool del" @click="del(opt)">

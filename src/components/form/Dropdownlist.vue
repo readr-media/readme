@@ -1,5 +1,5 @@
 <template>
-  <select :name="name" v-model.number="selected" class="dropdown-selector">
+  <select :name="name" v-model.number="selected" class="dropdown-selector" :class="{ warned: isWarned }">
     <option v-text="defaultText ? $t(`EDITOR.DROPDOWN_LIST.${defaultText}`) : $t('EDITOR.DROPDOWN_LIST.HINT')" :value="defaultVal"></option>
     <option v-for="opt in source"
             :key="opt.id"
@@ -42,6 +42,7 @@
         type: Function,
         default: () => new Promise(resolve => resolve()),
       },
+      isWarned: {},
       name: {
         required: true,
       },
@@ -53,7 +54,8 @@
         debug(this.name, 'Mutation detected: selected.', this.selected)
         debug(this.name, `this.selected !== '-1'`, this.selected !== '-1' && this.selected !== -1)
         debug(this.name, `this.selected !== '-1' ? this.selected : undefined`, this.selected !== '-1' && this.selected !== -1 ? this.selected : undefined)
-        this.$emit('update:selectedItem', this.selected !== '-1'? `${this.selected}` : undefined )
+        // this.$emit('update:selectedItem', this.selected !== '-1'? `${this.selected}` : undefined )
+        this.$emit('update:selectedItem', `${this.selected}` )
       },
       selectedItem () {
         // !this.selected && (this.selected = this.selectedItem)
@@ -72,4 +74,6 @@
     font-size 1.125rem
     background-color #fff
     border-radius 4px
+    &.warned
+      border 1px solid #ff0000
 </style>

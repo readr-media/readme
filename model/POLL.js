@@ -61,6 +61,7 @@ export const model = [
 
 export const groups = [ 'info', 'basic', 'content', ]
 export const LIST_MAXRESULT = 15
+export const isSearchable = false
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'description', type: 'TextInput' },

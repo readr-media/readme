@@ -4,7 +4,7 @@ export default {
     return get(getters, 'modelData.filters')
   },
   isLoginPage (state) {
-    const route = get(state, 'route.path')
+    const route = get(state, 'route.path', '')
     return route.indexOf('login') > -1
   },
   isPreviewable (state, getters) {
@@ -15,6 +15,9 @@ export default {
       && get(state, 'route.params.subItem') !== 'new'
       && get(state, 'route.params.subItem') !== 'edit')
       || false
+  },
+  isSearchable (state, getters) {
+    return get(getters, 'modelData.isSearchable', false)
   },
   modelName (state) {
     return get(state, 'route.params.item', '').replace(/-/g, '_').toUpperCase()

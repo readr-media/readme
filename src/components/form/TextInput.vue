@@ -1,5 +1,5 @@
 <template>
-  <div class="text-input" :style="{ width, }">
+  <div class="text-input" :class="{ warned: isWarned }" :style="{ width, }">
     <input ref="input"
       v-model="current"
       :disabled="disabled"
@@ -55,6 +55,7 @@
         type: Boolean,
         default: () => false,
       },
+      isWarned: {},
       placeHolder: {
         type: String,
         default: () => '',
@@ -78,12 +79,15 @@
 </script>
 <style lang="stylus" scoped>
   .text-input
+    &.warned
+      input
+        border 1px solid #ff0000
     input
       border none
-      border-radius 4px
       width 100%
       height 34px
       font-size 1.125rem
+      border-radius 4px
       padding 0 10px
       vertical-align top
       background-color #ffffff

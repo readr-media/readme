@@ -53,10 +53,11 @@ import {
 
 const debug = require('debug')('CLIENT:QuillEditor')
 const debugEditorChange = require('debug')('CLIENT:QuillEditorChange')
-const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
+const openPicker = (store, callback, assetType) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
   active: true,
   component: AssetPickerPanel,
   callback,
+  custProps: { assetType, }
 })
 const setUpValue = (store, { active, type, value }) => store.dispatch('SET_VALUE', { active, type, value })
 
@@ -116,7 +117,7 @@ export default {
       // }
     },
     $_quillEditor_imageHandler () {
-      openPicker(this.$store, this.preparePreviewData)
+      openPicker(this.$store, this.preparePreviewData, [ 1 ])
     },
 
     $_quillEditor_onEditorChange (event) {
@@ -207,7 +208,7 @@ export default {
         max-width 950px
         box-shadow 0 0 15px rgba(255,255,255,0.75)
         >>> .ql-expand
-          background-image url(/public/icons/iconfinder_fullscreen_exit_118667.png)
+          background-image url(/public/icons/icon_minimize.png)
           background-size 70%
         >>> .ql-editor
           width 100%
@@ -262,16 +263,23 @@ export default {
       width 54px
       &:after
         content 'More'
-    >>> .ql-embed
-      background-image url(/public/icons/iconfinder_embedded_device_embedded_system_internet_embedding_embedded_systems_iot_embedded_4047376.png)
-      background-position center center
-      background-repeat no-repeat
-      background-size contain
-    >>> .ql-expand
-      background-image url(/public/icons/iconfinder_Fullscreen_1063900.png)
+    >>> .ql-code-block
+      background-image url(/public/icons/icon_code.png)
       background-position center center
       background-repeat no-repeat
       background-size 50%
+      svg
+        display none
+    >>> .ql-embed
+      background-image url(/public/icons/icon_embed.png)
+      background-position center center
+      background-repeat no-repeat
+      background-size 70%
+    >>> .ql-expand
+      background-image url(/public/icons/icon_maximize.png)
+      background-position center center
+      background-repeat no-repeat
+      background-size 70%
     >>> hr
       height 0px
       margin-top 5px

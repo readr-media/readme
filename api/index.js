@@ -3,6 +3,7 @@ const { authorize, constructScope, fetchPermissions } = require('./services/perm
 const { camelizeKeys } = require('humps')
 const { handlerError } = require('./comm')
 const { setupClientCache } = require('./middle/comm')
+const { tracer } = require('./middle/gcLogger/comm')
 const { verifyToken, } = require('./middle/member/comm')
 const CONFIG = require('./config')
 const bodyParser = require('body-parser')
@@ -57,18 +58,29 @@ router.use('/', (req, res, next) => {
   req.url_origin = req.url
   next()
 })
-router.use('/asset', require('./middle/assets'))
+router.use('/asset', require('./middle/assets'), tracer)
 router.use('/login', authVerify, require('./middle/member/login'), )
 router.use('/activate', verifyToken, require('./middle/member/activation'))
-router.use('/project', authVerify, require('./middle/project'))
+router.use('/project', authVerify, require('./middle/project'), tracer)
 router.use('/report', authVerify, require('./middle/report'))
 router.use('/memo', authVerify, require('./middle/memo'))
 router.use('/member', authVerify, require('./middle/member'))
 router.use('/members', authVerify, require('./middle/member'))
-router.use('/post', [ authVerify, authorize ], require('./middle/post'))
-router.use('/poll', [ authVerify, authorize ], require('./middle/poll'))
+router.use('/post', [ authVerify, authorize ], require('./middle/post'), tracer)
+router.use('/poll', [ authVerify, authorize ], require('./middle/poll'), tracer)
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
+router.use('/trace', (req, res, next) => {
+  debug('trace', req.url)
+  if  (CONFIG.GCP_PROJECT_ID && CONFIG.GCP_KEYFILE && CONFIG.GCP_STACKDRIVER_LOG_NAME) {
+    next()
+  } else {
+    /**
+     * have to setup config GCP_PROJECT_ID, GCP_KEYFILE and GCP_STACKDRIVER_LOG_NAME to activate tracing.
+     */
+    res.status(404).send('404 | Not found.').end()
+  }
+}, require('./middle/gcLogger'))
 
 router.get('/available-ms', (req, res) => {
   console.log('Going to give available models for host:', req.identifier)

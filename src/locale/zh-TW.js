@@ -52,8 +52,28 @@ export default {
     'LOGOUT': '登出',
   },
   'ALERT': {
-    'CONFIRM': '確定',
+    'CONFIRM': '我知道了',
     'CANCEL': '取消',
+    'REPORTED': '錯誤問題已回報，謝謝合作。',
+    'UNIDENTIFIED_ISSUE': {
+      'PREFIX': '系統出現錯誤無法儲存，請',
+      'INFIX': '回報管理員',
+      'SUFFIX': '喔。',
+    },
+    'GOING_TO_CLOSE_ITSELF': '本視窗將於 {count} 秒後關閉',
+    'LEAVING_REMINDER': '準備離開嗎？記得先儲存哦。',
+    'PREVIEW_REMINDER': {
+      'DATA_MUTATED': '您有資料變動，預覽前請先儲存，否則無法預覽最新頁面。',
+      'NEVER_SAVE': '儲存後才能進行預覽。',
+    },
+    'SAVE_REMINDER': '部分必填欄位尚未填寫以致無法儲存，返回頁面完成填寫嗎？',
+    'SAVE': '儲存',
+    'LEAVE_WITHOUT_SAVING': '不儲存離開',
+    'PREVIEW_WITHOUT_SAVING': '繼續預覽',
+    'PREVIEW_BACKTO_SAVE': '前往儲存',
+    'KEEP_FILLING': '繼續填寫',
+    'DATETIME_VERIFIED_IN_FAIL': '請選擇適當的時間。',
+    'REQUIRED_ITEM_EMPTY': '必填項目未填。'
   },
   'PROJECT': {
     'NEW': '新增專題',
@@ -196,6 +216,8 @@ export default {
     'SAVE': '存檔',
     'CANCEL': '取消',  
     'PREVIEW': '預覽',
+    'UNAUTHORIZED_HOST': '你使用了不被信任的網站資源，目前僅接受來自以下網站的資源，且須通過 https 協定。',
+    'UNAUTHORIZED_HOST_HINT': '目前支援的網站：{hosts}',    
     'GROUPS': {
       'ADVANCED': '進階設定',
       'BASIC': '基本設定',
@@ -345,14 +367,15 @@ export default {
     }        
   },
   'ASSET': {
-    'ID': 'ID',
-    'TITLE': '檔名',
+    'ID': '編號',
+    'TITLE': '標題',
     'ASSET_TYPE': '類別',
     'ASSET_TYPE_IMAGE': '圖片',
     'ASSET_TYPE_VIDEO': '影片',
     'ASSET_TYPE_AUDIO': '音檔',
     'ASSET_TYPE_NEVER': '不明',
     'FILE': '素材',
+    'UPDATED_AT': '更新時間',
     'COPYRIGHT': '財權聲明',
     'COPYRIGHT_COPYRIGHT': 'copyright',
     'COPYRIGHT_CC_BY_SA_3': 'cc-by-sa3.0',
@@ -368,7 +391,9 @@ export default {
       'AUTHOR': '請輸入作者',
       'TAGS': '#',
       'ID': '請輸入 ID',
-    }
+    },
+    'USING_UNSUPPOERTED_FILE_FORMAT': '哎呀！你使用了陌生的檔案格式，目前沒有支援，請改用以下格式。',
+    'USING_UNSUPPOERTED_FILE_FORMAT_HINT': '目前支援類型：{format}'
   },
   'NAVIGATION': {
     'MANAGEMENT': '管理',
@@ -418,5 +443,12 @@ export default {
   },
   'MANAGEMENT': {
 
+  },
+  'PAGE_NOT_FOUND': {
+    'GO_HOME': '回首頁',
+    'MESSAGE': '此頁面不存在'
+  },
+  'SYSTEM_ERROR': {
+    'MESSAGE': '系統忙碌中，請重新整理或是稍後再試',
   },
 }

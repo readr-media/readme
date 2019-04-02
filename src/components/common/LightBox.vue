@@ -1,7 +1,7 @@
 <template>
   <div class="common-lightbox" v-if="isActive">
     <div class="common-lightbox__container">
-      <div :is="component" :callback="callback"></div>
+      <div :is="component" :callback="callback" :custProps="custProps"></div>
       <div class="common-lightbox__close" @click="switchOff"></div>
     </div>
   </div>
@@ -19,7 +19,8 @@
     },
     data () {
       return {
-        callback: () => {}
+        callback: () => {},
+        custProps: {},
       }
     },
     methods: {
@@ -34,6 +35,7 @@
           preventScroll.on()
           this.callback = get(this.$store, 'state.commonLightboxFlag.callback')
           this.component = get(this.$store, 'state.commonLightboxFlag.component')
+          this.custProps = get(this.$store, 'state.commonLightboxFlag.custProps')
         } else {
           preventScroll.off()
         }

@@ -1,5 +1,10 @@
 <template>
-  <div id="app" class="app" :class="{ login: $store.getters.isLoginPage }">
+  <div id="app" class="app"
+    :class="{
+      'login': $store.getters.isLoginPage,
+      'page-not-found': isPageNotFound,
+      'system-error': isSystemError,
+    }">
     <ReadMeHeader class="app-header"></ReadMeHeader>
     <ReadMeAside class="app-aside"></ReadMeAside>
     <Alert></Alert>
@@ -17,6 +22,9 @@ import LightBox from 'src/components/common/LightBox.vue'
 import ReadMeHeader from 'src/components/header/ReadMeHeader.vue'
 import ReadMeAside from 'src/components/aside/ReadMeAside.vue'
 import SystemInfo from 'src/components/SystemInfo.vue'
+import Tap from 'tap.js'
+import { isAlink, logTrace, } from 'src/util/services'
+import { get } from 'lodash'
 
 export default {
   components: {
@@ -26,8 +34,36 @@ export default {
     ReadMeAside,
     SystemInfo,
   },
+  computed: {
+    me () {
+      return get(this.$store, 'state.profile.id')
+    },
+    isPageNotFound () {
+      const exp_404 = /^\/404/
+      return exp_404.test(this.$route.fullPath)
+    },
+    isSystemError () {
+      const exp_500 = /^\/500/
+      return exp_500.test(this.$route.fullPath)
+    },
+    useragent () {
+      return get(this.$store, 'state.useragent')
+    },  
+  },
   mounted () {
     this.$store.dispatch('UPDATE_CLIENT_SIDE_MOUNTED')
+    const globalTapevent = new Tap(document)
+    document.addEventListener('tap', event => {
+      const checkAlink = isAlink(event.target)
+      logTrace({
+        category: 'whole-site',
+        description: 'ele clicked',
+        eventType: 'click',
+        sub: this.me,
+        target: event.target,
+        useragent: this.useragent,
+      })
+    })      
   },
 }
 </script>
@@ -71,6 +107,11 @@ button
     left 0
     top 0
     z-index 1
+  &.page-not-found, &.system-error
+    padding-top 0
+    padding-left 0
+    .app-header, .app-aside
+      display none
   &.login
     padding-left 0
     padding-top 192px

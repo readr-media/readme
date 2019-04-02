@@ -13,6 +13,11 @@ export function createStore () {
         message: '',
         active: false,
         type: 'info',
+        textCancel: '',
+        textConfirm: '',
+        hint: '',
+        cancelHandler: () => {},
+        callback: () => {},
       },
       asideItems: [],
       asideNav: [],
@@ -20,7 +25,11 @@ export function createStore () {
       commonLightboxFlag: {
         active: false,
         component: {},
-        props: {},
+        custProps: {},
+      },
+      isEditorItemMutated: {
+        value: false,
+        handler: () => {}
       },
       modelData: {},
       list: [],

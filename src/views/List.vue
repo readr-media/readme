@@ -45,6 +45,7 @@
   import TextInput from 'src/components/form/TextInput.vue'
   import WrapperContainer from 'src/components/wrapper/WrapperContainer.vue'
   import { DEFAULT_LIST_MAXRESULT, } from 'src/constants'
+  import { switchAlert } from 'src/util/actionDispatcher'
   import { find, get, map, } from 'lodash'
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
@@ -65,6 +66,7 @@
     endpoint,
     type: 'LITING_PAGE'
   })
+  const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
 
   export default {
     name: 'List',
@@ -85,6 +87,7 @@
           || get(this.$route, 'params.subItem') === 'edit'
           || get(this.$route, 'params.action') === 'edit'
       },
+      isEditorDataMutated () { return get(this.$store, 'state.isEditorItemMutated.value', false) },
       isSubItem () {
         return (get(this.$route, 'params.subItem') && get(this.$route, 'params.subItem') !== 'new' && get(this.$route, 'params.subItem') !== 'edit') || false
       },
@@ -121,6 +124,11 @@
         filters: {},
         filterSearched: '',
         filterChecksCurrent: {},
+        leavingReminder: {
+          message: this.$t('ALERT.LEAVING_REMINDER'),
+          textConfirm: this.$t('ALERT.SAVE'),
+          textCancel: this.$t('ALERT.LEAVE_WITHOUT_SAVING'),
+        },
         isFilterActive: false,
         isSearchFocused: false,
         isSpinnerActive: false,
@@ -148,6 +156,39 @@
         this.isSearchFocused = false
       },
       get,
+      editorDataMutatedHandler (next) {
+        const handler = get(this.$store, 'state.isEditorItemMutated.handler', () => {})
+        return handler(next)
+      },      
+      leavingHandler (...rest) {
+        const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
+        if (!this.isEditorDataMutated) {
+          next && next()
+        } else {
+          if (next) {
+            switchAlert(this.$store, true, {
+              message: this.leavingReminder.message,
+              textConfirm: this.leavingReminder.textConfirm,
+              textCancel: this.leavingReminder.textCancel,
+              type: 'action',
+              cancelHandler: () => {
+                setupDataMutationState(this.$store, false)
+                next()
+              },
+              confirmHandler: () => {
+                this.editorDataMutatedHandler(next)
+              }
+            }) 
+          } else {
+            /**
+             * This is supposed to occur in windows.onbeforeunload.
+             */
+            const event = get(rest, '0') || window.evnet
+            event && (event.returnValue = this.$t('ALERT.LEAVING_REMINDER'))
+            return this.$t('ALERT.LEAVING_REMINDER')
+          }
+        }
+      },
       refresh ({ params = {}, }) {
         debug('Goin to refresh!')
         this.filterSearched && (params.keyword = this.filterSearched)
@@ -195,17 +236,24 @@
     },
     beforeMount () {
       fetchModelData(this.$store)
-    },   
+    },  
+    beforeRouteUpdate (to, from, next) {
+      next(false) // dont revise the url bar
+      this.leavingHandler(next, to)
+    },
+    beforeRouteLeave (to, from, next) {
+      this.leavingHandler(next, to)
+    }, 
     mounted () {
       this.isFilterActive = true
     },
     watch: {
-      '$route': function (newRoute, oldRoute) {        
+      '$route': function (newRoute, oldRoute) {
         if (newRoute.params.item !== oldRoute.params.item) {
           /**
           *  As soon as the route changes and the model get different, we fetch the proper model data at first.
           */
-          fetchModelData(this.$store)
+          fetchModelData(this.$store)          
         }
       },
       '$store.getters.structure': function (newStructure, oldStructure) {
@@ -234,6 +282,11 @@
           this.refreshItemsCount({})
         ])
       },
+      isEditorDataMutated () {
+        this.isEditorDataMutated
+          ? window.addEventListener('beforeunload', this.leavingHandler)
+          : window.removeEventListener('beforeunload', this.leavingHandler)
+      }
     },
   }
 </script>

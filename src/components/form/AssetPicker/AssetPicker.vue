@@ -10,7 +10,7 @@
         <div class="size"><span v-text="calcFileSize(filesize)"></span></div>
       </div>
     </div>
-    <div class="asset-picker__wrapper" :class="{ grey: theme === 'grey' }" v-else>
+    <div class="asset-picker__wrapper" :class="{ grey: theme === 'grey', warned: isWarned }" v-else>
       <template v-if="!isLoading">
         <div class="asset-picker__upload-button"></div>
         <div class="asset-picker__desc"><span v-text="$t('EDITOR.ASSET_PICKER.DESCRIPTION')"></span></div>
@@ -30,10 +30,11 @@
   import { calcFileSize } from 'src/util/comm'
   import { get, last } from 'lodash'
   const debug = require('debug')('CLIENT:AssetPicker')
-  const openPicker = (store, callback) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
+  const openPicker = (store, callback, assetType) => store.dispatch('COMMON_LIGHTBOX_SWITCH', {
     active: true,
     component: AssetPickerPanel,
     callback,
+    custProps: { assetType }
   })
   export default {
     name: 'AssetPicker',
@@ -86,7 +87,7 @@
         return   
       },
       openPicker () {
-        openPicker(this.$store, this.preparePreviewData)
+        openPicker(this.$store, this.preparePreviewData, this.assetType)
       },
       renmove () {
         this.$emit('update:value', '')
@@ -103,6 +104,8 @@
       })
     },
     props: {
+      assetType: {},
+      isWarned: {},
       theme: {},
       value: {}
     }
@@ -130,8 +133,11 @@
       align-items center
       flex-direction column
       cursor pointer
+      border-radius 4px
       &.grey
         background-color #f7f7f7      
+      &.warned
+        border 1px solid #ff0000
     &__preview
       .content
         height 185px

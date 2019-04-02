@@ -5,11 +5,10 @@ const { handlerError } = require('../../comm')
 const Cookies = require('cookies')
 const config = require('../../config')
 const axios = require('axios')
-const debug = require('debug')('README:api:project')
+const debug = require('debug')('README:api:assets')
 const express = require('express')
 const fs = require('fs')
 const jwtService = require('../../services')
-const numeral = require('numeral')
 const multer  = require('multer')
 const router = express.Router()
 const upload = multer({ dest: 'tmp/' })
@@ -33,10 +32,9 @@ const checkPermission = (req, res, next) => {
 }
 
 router.use('/list', checkPermission, (req, res) => {
-  debug('Got a req for assets list.')
-  debug('req.query.type', req.query.type)
+  debug('Got a req for assets list.', req.url)
 
-  const url = `${apiHost}/asset?${req.query.type ? `asset_type=[${req.query.type}]`: ''}`
+  const url = `${apiHost}/asset${req.url}`
   axios.get(url, {
     timeout: config.API_TIMEOUT,
   }).then(response => {
@@ -55,7 +53,7 @@ router.use('/list', checkPermission, (req, res) => {
   })
 })
 
-router.post('/create', authVerify, (req, res) => {
+router.post('/create', authVerify, async (req, res, next) => {
   debug('Got an asset post req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
   const user = req.user.id
@@ -75,37 +73,32 @@ router.post('/create', authVerify, (req, res) => {
   }
 
   const file = Object.assign({}, get(req, 'body.file'), fileInfo)
-  transferFileToStorage(file).then(() => (
-    axios
-    .post(url, payload)
-    .then(response => {
-      debug('Creating asset successfully.')
-      res.send({
-        message: 'Done.',
-        url: fileInfo.fileDestinations
-      })
-    })
-    .catch(err => {
-      const errWrapped = handlerError(err)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
-      console.error('Error occurred during insert new asset:', payload)
-      console.error(err) 
-    })    
-  )).catch(error => {
+  const transferingFileReport = await transferFileToStorage(file)
+  .then(() => ({ status: 200 }))
+  .catch(error => {
     const errWrapped = handlerError(error)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
-    console.error(`Error occurred during transfering file : ${file}`)
-    console.error(error)     
+    console.error(`Error occurred during transfering file : ${file} \n`, error)
+    return { status: errWrapped.status, text: errWrapped.text }
   })
+
+  if (get(transferingFileReport, 'status') === 200) {
+    const creatingReport = await axios.post(url, payload)
+    .then(() => ({ status: 200 }))
+    .catch(error => {
+      const errWrapped = handlerError(error)
+      console.error('Error occurred during insert new asset:', payload, '\n', error)
+      return { status: errWrapped.status, text: errWrapped.text }      
+    })
+    res.status(creatingReport.status).send(Object.assign(creatingReport, { url: fileInfo.fileDestinations }))
+    req.outcome = creatingReport
+  } else {
+    res.status(transferingFileReport.status).send(transferingFileReport)
+    req.outcome = transferingFileReport
+  }
+  next()
 })
 
-router.put('/update', authVerify, (req, res) => {
+router.put('/update', authVerify, (req, res, next) => {
   debug('Got an asset update req.')
   const fileInfo = constructFileInfo(get(req, 'body.file'))
   const user = req.user.id
@@ -134,24 +127,26 @@ router.put('/update', authVerify, (req, res) => {
         message: 'Done.',
         url: fileInfo.fileDestinations
       })
+      req.outcome = response
+      next()
     })
     .catch(err => {
       const errWrapped = handlerError(err)
-      res.status(errWrapped.status).send({
-        status: errWrapped.status,
-        text: errWrapped.text
-      })
+      const outcome = { status: errWrapped.status, text: errWrapped.text }
       console.error('Error occurred during updateing an asset:', payload)
       console.error(err) 
+      res.status(errWrapped.status).send(outcome)
+      req.outcome = outcome
+      next()
     })      
   }).catch(error => {
     const errWrapped = handlerError(error)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during transfering file : ${file}`)
-    console.error(error)     
+    console.error(error)  
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
+    next()   
   })
 })
 
@@ -181,21 +176,25 @@ router.delete('/revert', checkPermission, (req, res, next) => {
     res.status(400).send('Bad request.')
   }
 })
-router.delete('/', authVerify, (req, res) => {
+router.delete('/', authVerify, (req, res, next) => {
   debug('Got an asset del call.')
   debug(req.body)
   const ids = get(req, 'body.ids', [])
   axios
   .delete(`${apiHost}/asset?ids=[${ids.join(',')}]`)
-  .then(() => res.send({ status: 200, text: 'Done.' }))
+  .then(response => {
+    res.send({ status: 200, text: 'Done.' })
+    req.outcome = response
+    next()
+  })
   .catch(err => {
     const errWrapped = handlerError(err)
-    res.status(errWrapped.status).send({
-      status: errWrapped.status,
-      text: errWrapped.text
-    })
+    const outcome = { status: errWrapped.status, text: errWrapped.text }
     console.error(`Error occurred during deleting assets: ${ids}`)
     console.error(err)     
+    res.status(errWrapped.status).send(outcome)
+    req.outcome = outcome
+    next()
   })
 })
 
@@ -241,6 +240,28 @@ router.get('/load', (req, res) => {
   } else {
     res.status(404).send('Not Found.')
   }
+})
+
+router.use('/count', (req, res) => {
+  debug('Got an assets count req.')
+  const url = `${apiHost}/asset/count${req.url}`
+  debug('url', url)
+  axios.get(url, {
+    timeout: config.API_TIMEOUT,
+  }).then(response => {
+    debug('Get asset count from api successfully.')
+    debug(response.data)
+    res.json(camelizeKeys(response.data))
+  })
+  .catch(error => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during fetching data from : ${url}`)
+    console.error(error) 
+  })
 })
 
 module.exports = router
