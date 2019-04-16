@@ -14,7 +14,7 @@ pipeline:
     when:
       event: [push]
       branch: [dev, master]
-  
+
   get_dev_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
@@ -32,7 +32,6 @@ pipeline:
     commands:
     - gcloud source repos clone default default
     - cp default/k8s-deploy/readr-prod/readme/config.js api/
-    - cp default/readme/production/.kube.yml ./.kube.yml
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
