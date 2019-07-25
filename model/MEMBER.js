@@ -20,8 +20,8 @@ const active_options = [
 export const model = [
   { name: 'id', group: 'info', type: 'TextInput', listWidth: { min: '60' }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0, editor: 0 }, },
   { name: 'active', group: 'info', type: 'RadioItem', listWidth: { min: '80' }, isEditable: false, isListable: true, options: active_options, order: { list: 3, editor: 1 }, isButtonized: true },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 5, editor: 5 }, },
-  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { list: 5, editor: 5 }, },
+  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: true, isDatetimeSentitive: true, order: { editor: 5 }, },
 
   { name: 'nickname', group: 'basic', type: 'TextInput', listWidth: { min: '200' }, isEditable: true, isListable: true, isInitialiazible: true, isEditEntry: true, order: { list: 1 } },
   { name: 'mail', group: 'basic', type: 'TextInput', listWidth: { min: '250', max: '10000' }, isEditable: false, isListable: true, isInitialiazible: true, isEditEntry: true, order: { list: 2 } },
