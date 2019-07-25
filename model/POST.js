@@ -7,7 +7,7 @@ const fetchSource = store => {
   return store.dispatch('FETCH_LIST', {
     params: {
       maxResult: 500,
-      sort: '-updated_at',
+      sort: '-createdAt',
     },
     endpoint: 'project',
   }).then(res => {
@@ -41,7 +41,7 @@ const authorAutoComplete = (store, keyword) => {
 }
 const typeOpts = (store, { vueInstance }) => new Promise(resolve => {
   const opts = map(POST_TYPE, (v, k) => ({ id: v, text: vueInstance.$t(`POST.TYPE_${k}`), }))
-  remove(opts, opt => opt.id === 2 || opt.id === 3)
+  remove(opts, opt => opt.id === 2 || opt.id === 3 || opt.id === 5)
   resolve(opts)
 })
 
@@ -52,8 +52,8 @@ const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '100', }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
   { name: 'publishStatus', type: 'RadioItem', group: 'info', listWidth: { min: '94' }, isEditable: false, isListable: true, options: publish_status_options, isButtonized: true, isSchedulable: true, order: { list: 3 },  },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 4 }, },
-  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { list: 4 }, },
+  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: true, isDatetimeSentitive: true, },
   { name: 'publishedAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
   { name: 'updatedBy', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true, },
 

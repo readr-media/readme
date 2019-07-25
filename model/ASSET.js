@@ -1,4 +1,4 @@
-import { get, map } from 'lodash'
+import { map } from 'lodash'
 const COPYRIGHT_TYPE = {
   COPYRIGHT: 1,
   CC: 2,
@@ -16,11 +16,11 @@ const copyRightOpts = (store, { vueInstance }) => new Promise(resolve => {
 const copyright_options = map(COPYRIGHT_TYPE, (s, k) => {
   return { name: k, value: s, }
 })
-const assetsOpts = (store, { vueInstance }) => new Promise(resolve => {
-  const opts = map(COPY_RIGHT, (v, k) => ({ id: v, text: vueInstance.$t(`ASSET.${k}`), }))
-  remove(opts, opt => opt.id === 2 || opt.id === 3)
-  resolve(opts)
-})
+// const assetsOpts = (store, { vueInstance }) => new Promise(resolve => {
+//   const opts = map(COPY_RIGHT, (v, k) => ({ id: v, text: vueInstance.$t(`ASSET.${k}`), }))
+//   remove(opts, opt => opt.id === 2 || opt.id === 3)
+//   resolve(opts)
+// })
 const assets_options = map(ASSETS_TYPE, (s, k) => {
   return { name: k, value: s, }
 })
@@ -30,8 +30,9 @@ export const model = [
   { name: 'destination', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'assetType', type: 'RadioItem', group: 'info', listWidth: { min: '60' }, isEditable: false, isListable: true,options: assets_options, order: { list: 2 }, },
   { name: 'title', type: 'TextInput', group: 'basic', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, required: true, order: { list: 1 } },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 3 }, },
-  
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { list: 3 }, },
+  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: true, isDatetimeSentitive: true, },
+
   { name: 'fileName', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'fileExtension', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },
   { name: 'fileType', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: true },

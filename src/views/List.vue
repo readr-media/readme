@@ -50,7 +50,7 @@
 
   const DEFAULT_MAXRESULT = DEFAULT_LIST_MAXRESULT
   const DEFAULT_PAGE = 1
-  const DEFAULT_SORT = '-updated_at'
+  const DEFAULT_SORT = '-created_at'
 
   const debug = require('debug')('CLIENT:List')
   const fetchModelData = store => store.dispatch('FETCH_MODEL_DATA')

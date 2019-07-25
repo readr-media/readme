@@ -40,8 +40,8 @@ const isSupposedToShowedWithFrequency = data => get(data, 'frequency') === '0' |
 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '60' }, isEditable: false, isListable: true, isNumSentitive: true, isEditEntry: true, order: { list: 0, editor: 0 }, },
-  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, order: { list: 4, editor: 5 }, },
-  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: true, isDatetimeSentitive: true, order: { editor: 5 }, },
+  { name: 'createdAt', type: 'Datetime', group: 'info', isEditable: false, isListable: true, isDatetimeSentitive: true, order: { list: 4, editor: 5 }, },
+  { name: 'updatedAt', type: 'Datetime', group: 'info', listWidth: { min: '140' }, isEditable: false, isListable: false, isDatetimeSentitive: true, order: { editor: 5 }, },
   { name: 'createdBy', type: 'TextInput', group: 'info', isEditable: false, isListable: false, isHidden: false, order: { editor: 5 }, },
   { name: 'publishedAt', type: 'Datetime', group: 'info', isEditable: false, isListable: false, isDatetimeSentitive: true, isButtonizedWith: true, },
   { name: 'status', type: 'RadioItem', group: 'info', listWidth: { min: '50' }, isEditable: false, isListable: true, options: publish_status_options, order: { list: 2, editor: 0 }, isButtonized: true, isSchedulable: true, },
