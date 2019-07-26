@@ -38,11 +38,10 @@ pipeline:
       branch: [master]
 
   builds:
-    image: node:9.2.0-alpine
+    image: node:10.16.0-alpine  # alpine=3.9
     commands:
     - apk update
-    - apk add vips-dev fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ --repository https://dl-3.alpinelinux.org/alpine/edge/main
-    - apk add --no-cache python build-base make
+    - apk add vips-dev fftw-dev build-base python --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/community/ --repository https://dl-3.alpinelinux.org/alpine/edge/main
     - yarn install
     - yarn run build
     when:
@@ -59,7 +58,7 @@ pipeline:
     when:
       event: [push]
       branch: [dev, master]
-  
+
   deploy_dev:
     image: nytimes/drone-gke:develop
     zone: asia-east1-a
