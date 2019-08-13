@@ -68,6 +68,7 @@ router.use('/member', authVerify, require('./middle/member'))
 router.use('/members', authVerify, require('./middle/member'))
 router.use('/post', [ authVerify, authorize ], require('./middle/post'), tracer)
 router.use('/poll', [ authVerify, authorize ], require('./middle/poll'), tracer)
+router.use('/promotion', authVerify, require('./middle/promotion'), tracer)
 router.use('/tags', authVerify, require('./middle/tags'))
 router.use('/token', require('./middle/services/token'))
 router.use('/trace', (req, res, next) => {
