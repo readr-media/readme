@@ -13,6 +13,7 @@ const items = [
   // { nav: 'management', name: 'memo', type: 'list', },  
   // { nav: 'management', name: 'report', type: 'list', },
   { nav: 'management', name: 'asset', type: 'list', },
+  { nav: 'management', name: 'promotion', type: 'list', },
   { nav: 'management', name: 'ad', type: 'wrapper', },
   { nav: 'management', name: 'tag', type: 'wrapper', },
   { nav: 'management', name: 'member', type: 'list', },
