@@ -37,9 +37,8 @@ router.post('/create', (req, res, next) => {
   debug(req.body)
   // res.send('ok')
   const url = `${apiHost}/post`
-  req.body.author = req.user.id
+  req.body.updated_by = req.user.id
   const payload = Object.assign({}, req.body)
-
   superagent
   .post(url)
   .send(payload)
