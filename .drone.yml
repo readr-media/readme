@@ -38,7 +38,8 @@ pipeline:
       branch: [master]
 
   builds:
-    image: node:10.16.0-alpine  # alpine=3.9
+    image: node:10-alpine  # alpine=3.9
+    pull: true
     commands:
     - apk update
     - apk add vips-dev fftw-dev build-base python --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/community/ --repository https://dl-3.alpinelinux.org/alpine/edge/main
