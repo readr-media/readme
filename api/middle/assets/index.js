@@ -34,7 +34,7 @@ const checkPermission = (req, res, next) => {
 router.use('/list', checkPermission, (req, res) => {
   debug('Got a req for assets list.', req.url)
 
-  const url = `${apiHost}/asset${req.url}`
+  const url = `${apiHost}/asset${req.url.slice(1)}`
   axios.get(url, {
     timeout: config.API_TIMEOUT,
   }).then(response => {
