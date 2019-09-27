@@ -88,7 +88,8 @@
       assetGenedHandler (res) {
         debug('Got a new asset!!!!!', res)
         const assetDestinations = get(res, 'body.url')
-        setTimeout(() => this.callback(assetDestinations).then(() => switchOff(this.$store) ), 1000)
+        const assetTitle = get(res, 'params.title')
+        setTimeout(() => this.callback(assetDestinations, assetTitle).then(() => switchOff(this.$store) ), 1000)
       },
       choose (index) {
         debug('select!', index)
