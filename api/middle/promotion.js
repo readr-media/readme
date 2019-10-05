@@ -12,7 +12,7 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 
 
 router.use('/list', (req, res) => {
-  const url = `${apiHost}/promotions${req.url.slice(1)}&active=$in:1`
+  const url = `${apiHost}/promotions${req.url.slice(1)}&active=$in:1&total=true`
 
   superagent
     .get(url)
