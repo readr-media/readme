@@ -7,7 +7,9 @@ const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
   debug('endpoint', endpoint)
   return listFunc.fetchList({ params, endpoint, }).then(({ status, body, }) => {
     if (status === 200 && type === 'LITING_PAGE') {
+      const count = get(body, 'meta.total')
       commit('SET_LIST', { items: get(body, 'items'), })
+      count && commit('SET_LIST_ITEMS_COUNT', { count })
     }
     return { status, items: get(body, 'items'), }
   })

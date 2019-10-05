@@ -214,8 +214,10 @@
         this.filterSearched && (params.keyword = this.filterSearched)
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
-        })        
-        fetchItemsCount(this.$store, params, this.modelRaw)
+        })
+        if (this.model !== 'promotion') {
+          fetchItemsCount(this.$store, params, this.modelRaw)
+        }
       },
       search () {
         this.filterSearched = this.searchVal
