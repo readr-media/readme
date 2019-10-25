@@ -162,14 +162,22 @@
         if (this.itemObj.autocomplete && newValue) {
           this.itemObj.autocomplete(this.$store, newValue).then(({ items, }) => {
             const list= [
-              ...map(items, a => ({
-                name: get(a, get(this.itemObj, 'map.name')),
-                value: get(a, get(this.itemObj, 'map.value')),
-              }))
+              ...map(items, a => {
+                let itemStructure = {}
+                const keys = Object.keys(get(this.itemObj, 'map') || {})
+                keys.map(key => {
+                  if (key === 'optionalProperty') {
+                    itemStructure = Object.assign(get(this.itemObj, 'map.optionalProperty'), itemStructure)
+                  } else {
+                    itemStructure[key] = get(a, get(this.itemObj, `map.${key}`))
+                  }
+                })
+                return itemStructure
+              })
             ]
             this.autocompleteArr = list
           })
-        }        
+        }
       },
       '$route.fullPath': function () {
         this.isOriginDataSetup = false

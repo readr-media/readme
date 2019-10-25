@@ -13,8 +13,8 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 router.use('/list', (req, res) => {
   const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5]}`
   debug('Got a /post call:')
-  debug(req.url)
-  
+  debug(url)
+  console.log('------------ url', url)
   superagent
   .get(url)
   .end((error, response) => {
@@ -64,7 +64,7 @@ router.put('/update', (req, res, next) => {
   debug('req.body', req.body)
   const payload = Object.assign({}, req.body)
   payload.updated_by = req.user.id
-
+  console.log('------ payload', payload)
   superagent
   .put(url)
   .send(payload)
