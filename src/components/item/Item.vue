@@ -23,6 +23,11 @@
         :currSelected.sync="value"></RadioItem>
     </template>
     <QuillEditor v-else-if="itemObj.type === 'ContentEditor'" :content.sync="value" />
+    <TextAuthorItem v-else-if="itemObj.type === 'TextAuthorItem'"
+      :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :currAuthorValues.sync="value"
+      :currInput.sync="currTagInput"
+      :autocomplete="autocompleteArr"></TextAuthorItem>
     <TextTagItem v-else-if="itemObj.type === 'TextTagItem'"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currTagValues.sync="value"
@@ -72,6 +77,7 @@
   import RadioItem from 'src/components/form/RadioItem.vue'
   import QuillEditor from 'src/components/form/Quill/QuillEditor.vue'
   import Spinner from 'src/components/Spinner.vue'
+  import TextAuthorItem from 'src/components/form/TextAuthorItem.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
@@ -96,6 +102,7 @@
       RadioItem,
       Spinner,
       TextareaInput,
+      TextAuthorItem,
       TextInput,
       TextTagItem,
       Uploader,      
@@ -162,14 +169,22 @@
         if (this.itemObj.autocomplete && newValue) {
           this.itemObj.autocomplete(this.$store, newValue).then(({ items, }) => {
             const list= [
-              ...map(items, a => ({
-                name: get(a, get(this.itemObj, 'map.name')),
-                value: get(a, get(this.itemObj, 'map.value')),
-              }))
+              ...map(items, a => {
+                let itemStructure = {}
+                const keys = Object.keys(get(this.itemObj, 'map') || {})
+                keys.map(key => {
+                  if (key === 'optionalProperty') {
+                    itemStructure = Object.assign(get(this.itemObj, 'map.optionalProperty'), itemStructure)
+                  } else {
+                    itemStructure[key] = get(a, get(this.itemObj, `map.${key}`))
+                  }
+                })
+                return itemStructure
+              })
             ]
             this.autocompleteArr = list
           })
-        }        
+        }
       },
       '$route.fullPath': function () {
         this.isOriginDataSetup = false
