@@ -2,6 +2,7 @@
   <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))" class="editor-item">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
+      :lengthLimit="itemObj.lengthLimit"
       :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :isWarned="isWarned"
       :value.sync="value"></TextInput>
@@ -12,6 +13,7 @@
       :value.sync="value"></DatetimeItem>
     <TextareaInput v-else-if="itemObj.type === 'TextareaInput'"
       :autoHeightActive="itemObj.autoHeightActive"
+      :lengthLimit="itemObj.lengthLimit"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :value.sync="value"></TextareaInput>
     <template v-else-if="itemObj.type === 'RadioItem'">
@@ -27,7 +29,8 @@
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currAuthorValues.sync="value"
       :currInput.sync="currTagInput"
-      :autocomplete="autocompleteArr"></TextAuthorItem>
+      :autocomplete="autocompleteArr"
+      :isWarned="isWarned"></TextAuthorItem>
     <TextTagItem v-else-if="itemObj.type === 'TextTagItem'"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currTagValues.sync="value"

@@ -118,8 +118,8 @@
             preForm[ item.name ] = this.me
           }
           if (item.required
-            && ((!preForm[ item.name ] && preForm[ item.name ] !== 0) 
-              || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
+            && (((!preForm[ item.name ] || preForm[ item.name ].length === 0) && preForm[ item.name ] !== 0) 
+              || ((item.type === 'Dropdownlist' || item.type === 'TextAuthorItem') && preForm[ item.name ] == -1))) {
             debug(item.name, item.required, preForm[ item.name ])
             this.formdataErrorLog.push({
               name: item.name,
