@@ -151,7 +151,7 @@
     }
   }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
   .input-tag-container
     background-color #fff
     cursor text

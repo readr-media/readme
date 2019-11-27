@@ -206,7 +206,6 @@
       },
       isShort (str) { return str.length > 2 || false },  
       save (...rest) {
-        console.log('GO UPDATE.', this.formData)
         const next = typeof(get(rest, '0')) === 'function' && get(rest, '0')
 
         if (this.isProcessing) { return }

@@ -56,6 +56,7 @@
         default: () => false,
       },
       isWarned: {},
+      lengthLimit: {},
       placeHolder: {
         type: String,
         default: () => '',
@@ -71,7 +72,10 @@
       fontWeight: {},
     },
     watch: {
-      current: function () {
+      current (value) {
+        if (this.lengthLimit && typeof value === 'string' && value.length > this.lengthLimit) {
+          this.current = value.substring(0, this.lengthLimit)
+        }
         this.$emit('update:value', validator.trim(`${this.current}` || '') || undefined)
       },
     },

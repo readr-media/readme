@@ -1,5 +1,5 @@
 <template>
-  <div class="input-tag-container" @click="focus">
+  <div class="input-tag-container" :class="{ warned: isWarned }" @click="focus">
     <div v-for="(author, index) in authors" :key="index" class="input__tag">
       <div class="input__tag__container">
         <span v-text="getAuthorVal(author)"></span>
@@ -133,6 +133,7 @@
         type: Boolean,
         default: false
       },
+      isWarned: {},
     },
     watch: {
       autocomplete: function () {
@@ -151,14 +152,16 @@
     }
   }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
   .input-tag-container
     background-color #fff
     cursor text
     text-align left
-    -webkit-appearance textfield
+    // -webkit-appearance textfield
     padding 0 5px
     border-radius 4px
+    &.warned
+      border 1px solid #ff0000
     .input
       &__tag
         margin 5px 5px 5px 0
