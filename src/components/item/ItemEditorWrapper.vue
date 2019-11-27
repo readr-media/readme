@@ -149,6 +149,18 @@
         if (this.type === 'update') {
           map(this.structure, item => {
             switch (item.type) {
+              case 'TextAuthorItem':
+                this.formData[ item.name ] = [
+                  ...map(get(this.item, item.name), a => {
+                    return ({
+                      name: get(a, get(item, 'map.name')),
+                      value: get(a, get(item, 'map.value')),
+                      authorType: get(a, 'authorType'),
+                      memberId: get(a, 'id'),
+                    })
+                  })
+                ]
+                break
               case 'TextTagItem':
                 this.formData[ item.name ] = [
                   ...map(get(this.item, item.name), a => ({
@@ -176,6 +188,7 @@
                 case 'TextareaInput':
                   this.formData[ item.name ] = ''
                   break
+                case 'TextAuthorItem':
                 case 'TextTagItem':
                   this.formData[ item.name ] = []
                   break
