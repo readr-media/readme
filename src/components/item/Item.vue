@@ -171,20 +171,18 @@
         debug('Data changed from ', oldValue, ' to ', newValue, '!')
         if (this.itemObj.autocomplete && newValue) {
           this.itemObj.autocomplete(this.$store, newValue).then(({ items, }) => {
-            const list= [
-              ...map(items, a => {
-                let itemStructure = {}
-                const keys = Object.keys(get(this.itemObj, 'map') || {})
-                keys.map(key => {
-                  if (key === 'optionalProperty') {
-                    itemStructure = Object.assign(get(this.itemObj, 'map.optionalProperty'), itemStructure)
-                  } else {
-                    itemStructure[key] = get(a, get(this.itemObj, `map.${key}`))
-                  }
-                })
-                return itemStructure
+            const list = map(items, item => {
+              let itemStructure = {}
+              const keys = Object.keys(get(this.itemObj, 'map') || {})
+              map(keys, key => {
+                if (key === 'optionalProperty') {
+                  itemStructure = Object.assign(itemStructure, get(this.itemObj, 'map.optionalProperty'))
+                } else {
+                  itemStructure[key] = get(item, get(this.itemObj, `map.${key}`))
+                }
               })
-            ]
+              return itemStructure
+            })
             this.autocompleteArr = list
           })
         }
