@@ -2,6 +2,7 @@
   <div v-if="isMounted && (itemObj.isEditable || (itemObj.isInitialiazible && editorMode === 'create'))" class="editor-item">
     <TextInput v-if="itemObj.type === 'TextInput'"
       backgroundColor="#fff"
+      :lengthLimit="itemObj.lengthLimit"
       :placeHolder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :isWarned="isWarned"
       :value.sync="value"></TextInput>
@@ -12,6 +13,7 @@
       :value.sync="value"></DatetimeItem>
     <TextareaInput v-else-if="itemObj.type === 'TextareaInput'"
       :autoHeightActive="itemObj.autoHeightActive"
+      :lengthLimit="itemObj.lengthLimit"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :value.sync="value"></TextareaInput>
     <template v-else-if="itemObj.type === 'RadioItem'">
@@ -23,6 +25,12 @@
         :currSelected.sync="value"></RadioItem>
     </template>
     <QuillEditor v-else-if="itemObj.type === 'ContentEditor'" :content.sync="value" />
+    <TextAuthorItem v-else-if="itemObj.type === 'TextAuthorItem'"
+      :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
+      :currAuthorValues.sync="value"
+      :currInput.sync="currTagInput"
+      :autocomplete="autocompleteArr"
+      :isWarned="isWarned"></TextAuthorItem>
     <TextTagItem v-else-if="itemObj.type === 'TextTagItem'"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currTagValues.sync="value"
@@ -72,6 +80,7 @@
   import RadioItem from 'src/components/form/RadioItem.vue'
   import QuillEditor from 'src/components/form/Quill/QuillEditor.vue'
   import Spinner from 'src/components/Spinner.vue'
+  import TextAuthorItem from 'src/components/form/TextAuthorItem.vue'
   import TextInput from 'src/components/form/TextInput.vue'
   import TextareaInput from 'src/components/form/TextareaInput.vue'
   import TextTagItem from 'src/components/form/TextTagItem.vue'
@@ -96,6 +105,7 @@
       RadioItem,
       Spinner,
       TextareaInput,
+      TextAuthorItem,
       TextInput,
       TextTagItem,
       Uploader,      
@@ -161,15 +171,21 @@
         debug('Data changed from ', oldValue, ' to ', newValue, '!')
         if (this.itemObj.autocomplete && newValue) {
           this.itemObj.autocomplete(this.$store, newValue).then(({ items, }) => {
-            const list= [
-              ...map(items, a => ({
-                name: get(a, get(this.itemObj, 'map.name')),
-                value: get(a, get(this.itemObj, 'map.value')),
-              }))
-            ]
+            const list = map(items, item => {
+              let itemStructure = {}
+              const keys = Object.keys(get(this.itemObj, 'map') || {})
+              map(keys, key => {
+                if (key === 'optionalProperty') {
+                  itemStructure = Object.assign(itemStructure, get(this.itemObj, 'map.optionalProperty'))
+                } else {
+                  itemStructure[key] = get(item, get(this.itemObj, `map.${key}`))
+                }
+              })
+              return itemStructure
+            })
             this.autocompleteArr = list
           })
-        }        
+        }
       },
       '$route.fullPath': function () {
         this.isOriginDataSetup = false

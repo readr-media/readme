@@ -1,24 +1,24 @@
 <template>
-  <div class="input-tag-container" @click="focus">
-    <div v-for="(tag, index) in tags" :key="index" class="input__tag">
+  <div class="input-tag-container" :class="{ warned: isWarned }" @click="focus">
+    <div v-for="(author, index) in authors" :key="index" class="input__tag">
       <div class="input__tag__container">
-        <span v-text="getTagVal(tag)"></span>
+        <span v-text="getAuthorVal(author)"></span>
         <a v-if="!readOnly && removeBtnActive" @click.prevent.stop="remove(index)" class="input__tag__remove"></a>
       </div>
     </div>
     <div class="input__wrapper">
       <input type="text" class="input" ref="input"
-        :disabled="isTagsExceedLimit"
+        :disabled="isAuthorsExceedLimit"
         :placeholder="placeholder"
         v-model="currInput"     
         @keyup.stop.prevent="keyupHandeler"
-        @keydown.8="removeLastTag"
+        @keydown.8="removeLastAuthor"
         @keypress="keypressHandler">
       <div class="autocomplete" :class="{ active: currInput }" ref="autocomplete" tabIndex="0">
         <span class="autocomplete__item"
           v-for="(item, index) in autocomplete"
           v-text="get(item, 'name')"
-          @click="selectTag(index)"
+          @click="selectAuthor(index)"
           :key="`autocom-item-${get(item, 'name')}-${index}-${Date.now()}`"
           :class="{ selected: currAutocompleteIndex === index }"></span>
       </div>
@@ -29,9 +29,9 @@
   import { find, get } from 'lodash'
   import { isDescendant } from 'src/util/comm'
 
-  const debug = require('debug')('CLIENT:TextTagItem')
+  const debug = require('debug')('CLIENT:TextAuthorItem')
   export default {
-    name: 'TextTagItem',
+    name: 'TextAuthorItem',
     data () {
       return {
         currInput: '',
@@ -40,11 +40,11 @@
       }
     },
     computed: {
-      tags () {
-        return this.currTagValues
+      authors () {
+        return this.currAuthorValues
       },
-      isTagsExceedLimit () {
-        return this.tags ? this.tags.length >= this.tagLimitNum : false
+      isAuthorsExceedLimit () {
+        return this.authors ? this.authors.length >= this.authorLimitNum : false
       }
     },
     methods: {
@@ -63,9 +63,9 @@
       keypressHandler (e) {
         if (e && this.keys.indexOf(e.keyCode) === -1) { return }
         if (this.currInput) {
-          if (this.tags.indexOf(this.currInput) === -1) {
+          if (this.authors.indexOf(this.currInput) === -1) {
             const item = find(this.autocomplete, (i) => get(i, 'name').indexOf(this.currInput) > -1)
-            item && this.tags.push(item)
+            item && this.authors.push(item)
             this.currInput = ''
           }
         }
@@ -79,7 +79,7 @@
         this.$refs[ 'input' ].focus()
       },
       get,
-      getTagVal (rawVal) {
+      getAuthorVal (rawVal) {
         return typeof(rawVal) !== 'string' ? get(rawVal, 'name') : rawVal
       },
       browser (e) {     
@@ -94,7 +94,7 @@
             this.currAutocompleteIndex -= this.currAutocompleteIndex > 0 ? 1 : 0
           } if (e.keyCode === 13) {
             const item = this.autocomplete[ this.currAutocompleteIndex ]
-            item && this.tags.push(item)
+            item && this.authors.push(item)
             this.currInput = ''
             this.$refs[ 'input' ].focus()
           }
@@ -102,19 +102,19 @@
         debug('browser the autocomplete item.', e.keyCode)
       },
       remove (index) {
-        this.tags.splice(index, 1)
+        this.authors.splice(index, 1)
         this.$forceUpdate()
       },
-      removeLastTag (e) {
+      removeLastAuthor (e) {
         if (this.currInput) { return }
         e.stopPropagation()
         e.preventDefault()
-        this.tags.pop()
+        this.authors.pop()
         this.$forceUpdate()
       },
-      selectTag (index) {
+      selectAuthor (index) {
         const item = this.autocomplete[ index ]
-        item && this.tags.push(item)
+        item && this.authors.push(item)
         this.currInput = ''
         this.$refs[ 'input' ].focus()        
       }
@@ -124,8 +124,8 @@
       placeholder: String,
       autocomplete: Array,
       readOnly: Boolean,
-      currTagValues: Array,
-      tagLimitNum: {
+      currAuthorValues: Array,
+      authorLimitNum: {
         type: Number,
         default: Infinity,
       },
@@ -133,18 +133,19 @@
         type: Boolean,
         default: false
       },
+      isWarned: {},
     },
     watch: {
       autocomplete: function () {
         debug('autocomplete change detected.', this.autocomplete)
         this.currAutocompleteIndex = 0
       },
-      tags () {
-        debug('tags change detected.')
-        this.$emit('update:currTagValues', this.tags)
+      authors () {
+        debug('authors change detected.')
+        this.$emit('update:currAuthorValues', this.authors)
       },
-      isTagsExceedLimit () {
-        if (this.isTagsExceedLimit) {
+      isAuthorsExceedLimit () {
+        if (this.isAuthorsExceedLimit) {
           this.$refs[ 'input' ].blur()
         }
       }
@@ -156,9 +157,11 @@
     background-color #fff
     cursor text
     text-align left
-    -webkit-appearance textfield
+    // -webkit-appearance textfield
     padding 0 5px
     border-radius 4px
+    &.warned
+      border 1px solid #ff0000
     .input
       &__tag
         margin 5px 5px 5px 0

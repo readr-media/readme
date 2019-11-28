@@ -59,8 +59,8 @@ export const model = [
 
   { name: 'type', type: 'Dropdownlist', group: 'basic', listWidth: { min: '60' }, isEditable: true, isListable: true, isNumSentitive: true, options: type_options, fetchSource: typeOpts, required: true, order: { list: 2 }, },
   { name: 'projectId', type: 'Dropdownlist', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, fetchSource, default: '0', defaultText: 'NA' },
-  { name: 'author', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: false, isListable: false, isHidden: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
-  { name: 'authors', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: true, isListable: true, map: { name: 'nickname', value: 'id',  }, autocomplete: authorAutoComplete, order: { list: 1 }, },
+  // { name: 'author', type: 'TextTagItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: false, isListable: false, isHidden: true, map: { name: 'nickname', value: 'id', }, autocomplete: authorAutoComplete, order: { list: 1 }, },
+  { name: 'authors', type: 'TextAuthorItem', group: 'basic', listWidth: { min: '130', max: '200' }, isEditable: true, isListable: true, required: true, map: { name: 'nickname', value: 'id', member_id: 'id', optionalProperty: { author_type: 0 } }, autocomplete: authorAutoComplete, order: { list: 1 }, },
   { name: 'postOrder', type: 'TextInput', group: 'basic', isEditable: true, isListable: false, isNumSentitive: true, },
 
   { name: 'title', type: 'TextInput', group: 'content', listWidth: { min: '340', max: '10000' }, isEditable: true, isListable: true, isEditEntry: true, order: { list: 1.5, editor: 1 }, required: true, },
@@ -79,8 +79,8 @@ export const model = [
   { name: 'tags', type: 'TextTagItem', group: 'content', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
   
   // For post.type === news
-  { name: 'ogTitle', type: 'TextInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
-  { name: 'ogDescription', type: 'TextareaInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, },
+  { name: 'ogTitle', type: 'TextInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, lengthLimit: 256 },
+  { name: 'ogDescription', type: 'TextareaInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, lengthLimit: 256 },
   { name: 'ogImage', type: 'AssetPicker', group: 'share', isEditable: true, isListable: false, acceptedFileTypes: [ 'image/*' ], },
 
 ]

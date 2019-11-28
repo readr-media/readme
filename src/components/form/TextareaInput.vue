@@ -10,6 +10,10 @@
         height: autoHeightActive ? autoHeight : height,
       }"      
       :placeholder="placeholder"></textarea>
+    <div v-if="lengthLimit" class="remaining">
+      <p v-if="remainingLength > 0">剩餘 <span v-text="remainingLength" /> 字</p>
+      <p v-else class="warning">已達字數上限</p>
+    </div>
   </div>
 </template>
 <script>
@@ -21,6 +25,11 @@
       return {
         current: '',
         autoHeight: '',
+      }
+    },
+    computed: {
+      remainingLength () {
+        return this.lengthLimit - this.current.length
       }
     },
     methods: {
@@ -36,6 +45,7 @@
     },
     props: {
       backgroundColor: {},
+      lengthLimit: {},
       placeholder: {},
       value: {},
       height: {
@@ -47,8 +57,11 @@
       },
     },
     watch: {
-      current: function () {
+      current (value) {
         debug('Mutation detected: current', this.current)
+        if (this.lengthLimit && typeof value === 'string' && value.length > this.lengthLimit) {
+          this.current = value.substring(0, this.lengthLimit)
+        }
         this.$emit('update:value', validator.trim(`${this.current}` || '') || undefined)
       }
     }
@@ -56,6 +69,7 @@
 </script>
 <style lang="stylus" scoped>
   .textarea-container
+    position relative
     width 100%
     min-height 100%
     background-color #fff
@@ -75,4 +89,12 @@
       &::-webkit-input-placeholder
         color #bdbdbd
         font-weight 100
+  .remaining
+    position absolute
+    right 5px
+    bottom 5px
+    p
+      margin 0
+      &.warning
+        color red
 </style>

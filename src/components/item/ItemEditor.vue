@@ -108,6 +108,9 @@
             debug('Going to delete item that is not editable!', item.name)
             delete preForm[ item.name ]
           }
+          if (item.type === 'TextAuthorItem' && get(item, 'map.isValArraySensitive')) {
+            preForm[ item.name ] = map(get(preForm, item.name, []), author => author.value)
+          }
           if (item.type === 'TextTagItem' && get(item, 'map.isValArraySensitive')) {
             preForm[ item.name ] = map(get(preForm, item.name, []), tag => tag.value)
           }
@@ -115,8 +118,8 @@
             preForm[ item.name ] = this.me
           }
           if (item.required
-            && ((!preForm[ item.name ] && preForm[ item.name ] !== 0) 
-              || (item.type === 'Dropdownlist' && preForm[ item.name ] == -1))) {
+            && (((!preForm[ item.name ] || preForm[ item.name ].length === 0) && preForm[ item.name ] !== 0) 
+              || ((item.type === 'Dropdownlist' || item.type === 'TextAuthorItem') && preForm[ item.name ] == -1))) {
             debug(item.name, item.required, preForm[ item.name ])
             this.formdataErrorLog.push({
               name: item.name,
