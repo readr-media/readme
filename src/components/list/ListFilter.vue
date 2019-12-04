@@ -52,7 +52,7 @@
         filters: {},
         filtersStr: '',
         isFilterHovered: false,
-        isFilterFocused: false,
+        isFilterFocused: false
       }
     },
     methods: {
@@ -86,17 +86,19 @@
         type: String,
       },
       bgcolor: {},
+      // filters: {}
     },
     watch: {
       currentSearchVal () {
         this.$emit('update:value', this.currentSearchVal)
       },
       filters: {
-        handler: function () {
+        handler () {
           this.filtersStr = map(filter(this.filters, (f, k) => {
             find(this.$store.getters.filters, { name: k }).type !== 'Datetime'
           }), f => f).join(', ')
-          this.$emit('update:filters', this.filters)
+          // this.$emit('update:filters', this.filters)
+          this.$emit('update', this.filters)
         },
         deep: true
       },

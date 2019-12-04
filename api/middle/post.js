@@ -31,6 +31,27 @@ router.use('/list', (req, res) => {
     }
   })
 })
+router.use('/filter', (req, res) => {
+  const url = `${apiHost}/posts/filter${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5]}`
+  debug('Got a /post/filter call:')
+  debug(url)
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch posts/filter from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(error) 
+    }
+  })
+})
 router.post('/create', (req, res, next) => {
   debug('Got a post creating call.')
   debug(req.body)

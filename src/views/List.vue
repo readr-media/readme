@@ -8,7 +8,8 @@
           </div>
           <div class="list__wrapper right">
             <div class="list__search" v-if="isFilterActive">
-              <ListFilter :value.sync="searchVal" :filters.sync="filters" :key="key"></ListFilter>
+              <!-- <ListFilter :value.sync="searchVal" :filters.sync="filters" :key="key"></ListFilter> -->
+              <ListFilter :value.sync="searchVal" @update="filters = $event" :key="key"></ListFilter>
             </div>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
@@ -66,6 +67,18 @@
     endpoint,
     type: 'LITING_PAGE'
   })
+
+  const fetchFilteredList = (store, params, endpoint) => store.dispatch('FETCH_FILTERED_LIST', {
+    params: Object.assign({
+      maxResult: DEFAULT_MAXRESULT,
+      memberId: get(store, 'state.profile.id'),
+      page: DEFAULT_PAGE,
+      sort: DEFAULT_SORT,
+      fields: [ 'nickname', 'id' ]
+    }, params),
+    endpoint
+  })
+
   const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
 
   export default {
@@ -118,6 +131,9 @@
           return this.$t(`NAVIGATION.${this.model.toUpperCase()}`)
         }
       },
+      isFiltered () {
+        return this.$store.state.isFiltered
+      }
     },
     data () {
       return {
@@ -189,9 +205,14 @@
           }
         }
       },
-      refresh ({ params = {}, }) {
+      refresh ({ params = {} }) {
+        console.log(params);
+        
         debug('Goin to refresh!')
+        this.isSpinnerActive = true
+        // todo
         this.filterSearched && (params.keyword = this.filterSearched)
+
         this.page = params.page || this.page
         if (params.page) {
           this.page = params.page
@@ -200,15 +221,23 @@
         }
 
         params.maxResult = this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+        // todo
         params.id = this.isSubItem || undefined
+
         map(this.filterChecksCurrent, (filter, key) => {
           if (filter) { params[ key ] = true }
         })
         debug('params.maxResult', params.maxResult)
         debug('this.model', this.modelRaw)
-        return fetchList(this.$store, params, this.modelRaw).then(() => {
-          this.isSpinnerActive = false
-        })
+        if (this.isFiltered) {
+          fetchFilteredList(this.$store, params, this.modelRaw).then(() => {
+            this.isSpinnerActive = false
+          })
+        } else {
+          return fetchList(this.$store, params, this.modelRaw).then(() => {
+            this.isSpinnerActive = false
+          })
+        }
       },
       refreshItemsCount ({ params = {}, }) {
         this.filterSearched && (params.keyword = this.filterSearched)
@@ -219,22 +248,27 @@
           fetchItemsCount(this.$store, params, this.modelRaw)
         }
       },
-      search () {
+      search (params) {
+        // todo
         this.filterSearched = this.searchVal
         // this.isFilterApplied = true
         Promise.all([
-          this.refresh({
-            params: {
-              keyword: this.filterSearched || '',
-            }
-          }),
-          this.refreshItemsCount({
-            params: {
-              keyword: this.filterSearched || '',
-            }
-          })
+          this.refresh({ params })
+          // this.refresh({
+          //   params: {
+          //     keyword: this.filterSearched || '',
+          //   }
+          // }),
+          // this.refreshItemsCount({
+          //   params: {
+          //     keyword: this.filterSearched || '',
+          //   }
+          // })
         ])
       },
+      handleStringSpace (string) {
+        return string.replace(/(^\s*)|(\s*$)/g, '').replace(/\s+/, ',')
+      }
     },
     beforeMount () {
       fetchModelData(this.$store)
@@ -288,7 +322,31 @@
         this.isEditorDataMutated
           ? window.addEventListener('beforeunload', this.leavingHandler)
           : window.removeEventListener('beforeunload', this.leavingHandler)
-      }
+      },
+      filters: {
+        handler (params) {
+          if (Object.keys(params).length === 0) {
+            // todo
+            if (this.isFiltered) {
+              console.log('normal');
+              this.$store.commit('TOGGLE_FILTERED', false)
+            }
+          } else {
+            console.log('filter');
+            this.$store.commit('TOGGLE_FILTERED', true)
+          }
+          if (params.title) {
+            // 先移除左右空格，剩下的（字與字之間的）空格再代換成逗號
+            params.title = this.handleStringSpace(params.title)
+          }
+          if (params.content) {
+            params.content = this.handleStringSpace(params.content)
+          }
+          this.$store.commit('SET_FILTER_PARAMS', params)
+          this.search(params)
+        },
+        deep: true
+      },
     },
   }
 </script>

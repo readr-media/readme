@@ -46,4 +46,10 @@ export default Object.assign({
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
   },
+  TOGGLE_FILTERED: (state, isFiltered) => {
+    state[ 'isFiltered' ] = isFiltered
+  },
+  SET_FILTER_PARAMS: (state, params) => {
+    state[ 'filterParams' ] = params
+  }
 }, mutationsMember, mutationsList, mutationsItem)
