@@ -49,7 +49,7 @@
       return {
         isProcessing: false,
         val: '',
-        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com' ]
+        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com', 'plotdb.io' ]
       }
     },
     methods: {
