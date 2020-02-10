@@ -2,8 +2,7 @@
   <UploaderLayout :class="{ full: !isEmpty }">
     <template v-if="!isEmpty">
       <div class="uploader__item--remover" @click="removeFile"></div>
-      <MidiaPreviewer class="uploader__item--previewer"
-        :file="file"></MidiaPreviewer>
+      <MidiaPreviewer class="uploader__item--previewer" :file="file"></MidiaPreviewer>
       <div class="uploader__item--info">
         <div class="name"><span v-text="itemName"></span></div>
         <div class="size"><span v-text="calcFileSize(itemSize)"></span></div>
@@ -18,10 +17,12 @@
       :name="name"
       :labelIdle="`${uploadButton}${$t('EDITOR.UPLOADER.TOOLTIP')}`"
       :acceptedFileTypes="acceptedFileTypes"
+      maxFileSize="10MB"
       :files="filesUploaded"
       @updatefiles="onupdatefiles"
       @addfile="addfile"
-      @init="init"/>
+      @init="init"
+    />
     <div class="uploader__spinner" v-show="isLoading"><Spinner :show="isLoading"></Spinner></div>
   </UploaderLayout>
 </template>
@@ -36,7 +37,8 @@
   import vueFilePond from 'vue-filepond'
   import 'filepond/dist/filepond.min.css'
   import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
-  const FilePond = vueFilePond(FilePondPluginFileValidateType)
+  import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
+  const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize)
 
   const axios = require('axios')
   const debug = require('debug')('CLIENT:Uploader')
@@ -146,10 +148,17 @@
           this.itemSize = 0
           this.isEmpty = true
           debug('message', error)
-          if (get(file, 'main') === 'File is of invalid type') {
-            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
-          } else {
-            switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.ERROR'), () => {})
+          const status = get(file, 'main')
+          switch (status) {
+            case 'File is of invalid type':
+              switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.INCORRECT_FILE_TYPE'), () => {})
+              break
+            case 'File is too large':
+              switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.SIZE_LIMIT'), () => {})
+              break
+            default:
+              switchAlert(this.$store, true, this.$t('EDITOR.UPLOADER.ERROR'), () => {})
+              break
           }
           this.$refs.pond.removeFile()
           console.error(file)
