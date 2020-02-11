@@ -17,7 +17,7 @@
       :name="name"
       :labelIdle="`${uploadButton}${$t('EDITOR.UPLOADER.TOOLTIP')}`"
       :acceptedFileTypes="acceptedFileTypes"
-      maxFileSize="10MB"
+      :maxFileSize="UPLOADER_SIZE_LIMIT"
       :files="filesUploaded"
       @updatefiles="onupdatefiles"
       @addfile="addfile"
@@ -32,6 +32,7 @@
   import UploaderLayout from './UploaderLayout.vue'
   import { calcFileSize } from 'src/util/comm'
   import { get } from 'lodash'
+  import { UPLOADER_SIZE_LIMIT } from 'api/config.js'
 
   /** import file uploader lib */
   import vueFilePond from 'vue-filepond'
@@ -123,6 +124,7 @@
           load: './api/asset/load?a=',      
           fetch: './api/asset/fetch?a=',       
         },
+        UPLOADER_SIZE_LIMIT
       }
     },
     methods: {
