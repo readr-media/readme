@@ -137,10 +137,10 @@
         type: Function,
         default: () => {},
       },
-      refreshItemsCount: {
-        type: Function,
-        default: () => {},
-      },
+      // refreshItemsCount: {
+      //   type: Function,
+      //   default: () => {},
+      // },
       currPage: {
         type: Number,
         default: 1,
@@ -148,15 +148,15 @@
     },
     watch: {
       curr_page () {
-        if (this.$store.state.isFiltered) {
-          this.refresh({
-            params: Object.assign(this.$store.state.filterParams, { page: this.curr_page })
-          })
-        } else {
-          this.refresh({
-            params: { page: this.curr_page }
-          })
-        }
+        // if (this.$store.state.isFiltered) {
+        //   this.refresh({
+        //     params: Object.assign(this.$store.state.filterParams, { page: this.curr_page })
+        //   })
+        // } else {
+        this.refresh({
+          params: { page: this.curr_page }
+        })
+        // }
       },
       '$store.getters.structure': function (newVals, oldVals) {
         if (newVals !== oldVals) {

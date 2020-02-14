@@ -42,23 +42,23 @@ const DEL_ITEMS = ({ commit, }, { params, endpoint, }) => {
   })
 }
 
-const GET_ITEMS_COUNT = ({ commit, }, { params, endpoint, }) => {
-  return itemFunc.getItemCount({ params, endpoint, }).then(({ status, body, }) => {
-    debug('{ params, endpoint }', { params, endpoint })
-    if (status === 200) {
-      commit('SET_LIST_ITEMS_COUNT', { count: get(body, 'meta.total') })
-    }    
-    return { status, }
-  }).catch(err => {
-    debug('Error ocurred!', err)
-    return Promise.reject(err)
-  })
-}
+// const GET_ITEMS_COUNT = ({ commit, }, { params, endpoint, }) => {
+//   return itemFunc.getItemCount({ params, endpoint, }).then(({ status, body, }) => {
+//     debug('{ params, endpoint }', { params, endpoint })
+//     if (status === 200) {
+//       commit('SET_LIST_ITEMS_COUNT', { count: get(body, 'meta.total') })
+//     }    
+//     return { status, }
+//   }).catch(err => {
+//     debug('Error ocurred!', err)
+//     return Promise.reject(err)
+//   })
+// }
 
 export {
   UPDATE_ITEM,
   POST_ITEM,
   // DEL_ITEM,
   DEL_ITEMS,
-  GET_ITEMS_COUNT,
+  // GET_ITEMS_COUNT,
 }

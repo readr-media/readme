@@ -10,7 +10,7 @@ const superagent = require('superagent')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.get('/list', (req, res) => {
-  const url = `${apiHost}/project${req.url}`
+  const url = `${apiHost}/project${req.url.slice(1)}`
 
   debug('Got a /project/list call:')
   debug(req.url)
@@ -20,7 +20,7 @@ router.get('/list', (req, res) => {
   .get(url)
   .end((error, response) => {
     if (!error && response) {
-      debug('Fetch project list from api successfully.')
+      debug('Fetch /project/list from api successfully.')
       // debug(response.body)
       res.send(camelizeKeys(response.body))
     } else {
@@ -29,8 +29,31 @@ router.get('/list', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(`Error occurred during fetch data from: ${url}`)
       console.error(error) 
+    }
+  })
+})
+
+router.use('/filter', (req, res) => {
+  const url = `${apiHost}/project/filter${req.url.slice(1)}`
+  
+  debug('Got a /project/filter call:')
+  debug(url)
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch /project/filter from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from: ${url}`)
+      console.error(error)
     }
   })
 })

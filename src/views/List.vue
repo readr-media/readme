@@ -8,8 +8,7 @@
           </div>
           <div class="list__wrapper right">
             <div class="list__search" v-if="isFilterActive">
-              <!-- <ListFilter :value.sync="searchVal" :filters.sync="filters" :key="key"></ListFilter> -->
-              <ListFilter :value.sync="searchVal" @update="filters = $event" :key="key"></ListFilter>
+              <ListFilter :value.sync="searchVal" :filtersVals.sync="filters" :key="key" />
             </div>
             <div class="list__toolbox">
               <div class="btn back" @click="back" v-if="isSubItem"><span v-text="$t('LIST.BACK')"></span></div>
@@ -27,12 +26,13 @@
             </div>
           </div>
         </template>
-      </div>      
+      </div>
+      <!-- :refreshItemsCount="refreshItemsCount" -->
       <ListContainer class="list__container"
         :flag="model"
         :backToParent="backToParent"
         :refresh="refresh"
-        :refreshItemsCount="refreshItemsCount">
+      >
         <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive"><Spinner :show="true"></Spinner></div>
       </ListContainer>
     </template>
@@ -54,8 +54,8 @@
   const DEFAULT_SORT = '-created_at'
 
   const debug = require('debug')('CLIENT:List')
-  const fetchModelData = store => store.dispatch('FETCH_MODEL_DATA')
-  const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
+  const fetchModelData = (store) => store.dispatch('FETCH_MODEL_DATA')
+  // const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
   const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
     params: Object.assign({
       maxResult: DEFAULT_MAXRESULT,
@@ -76,7 +76,8 @@
       sort: DEFAULT_SORT,
       fields: [ 'nickname', 'id' ]
     }, params),
-    endpoint
+    endpoint,
+    // type: 'LITING_PAGE'
   })
 
   const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
@@ -139,7 +140,7 @@
       return {
         filters: {},
         filterSearched: '',
-        filterChecksCurrent: {},
+        // filterChecksCurrent: {},
         leavingReminder: {
           message: this.$t('ALERT.LEAVING_REMINDER'),
           textConfirm: this.$t('ALERT.SAVE'),
@@ -206,12 +207,15 @@
         }
       },
       refresh ({ params = {} }) {
-        console.log(params);
-        
-        debug('Goin to refresh!')
+        debug('Going to refresh!')
+        console.log('refresh')
+
         this.isSpinnerActive = true
-        // todo
-        this.filterSearched && (params.keyword = this.filterSearched)
+
+        if (this.filterSearched) {
+          params.title = this.filterSearched
+        }
+        // this.filterSearched && (params.keyword = this.filterSearched)
 
         this.page = params.page || this.page
         if (params.page) {
@@ -220,61 +224,83 @@
           params.page = this.page
         }
 
-        params.maxResult = this.modelData ? this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT : DEFAULT_LIST_MAXRESULT
+        params.maxResult = this.modelData ? (this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT) : DEFAULT_LIST_MAXRESULT
         // todo
         params.id = this.isSubItem || undefined
 
-        map(this.filterChecksCurrent, (filter, key) => {
-          if (filter) { params[ key ] = true }
-        })
+        // map(this.filterChecksCurrent, (filter, key) => {
+        //   if (filter) { params[ key ] = true }
+        // })
         debug('params.maxResult', params.maxResult)
         debug('this.model', this.modelRaw)
-        if (this.isFiltered) {
-          fetchFilteredList(this.$store, params, this.modelRaw).then(() => {
-            this.isSpinnerActive = false
-          })
-        } else {
-          return fetchList(this.$store, params, this.modelRaw).then(() => {
-            this.isSpinnerActive = false
-          })
+
+        switch (this.modelRaw) {
+          case 'poll':
+          case 'promotion':
+            fetchList(this.$store, params, this.modelRaw).then(() => {
+              this.isSpinnerActive = false
+            })
+            break
+          default:
+            fetchFilteredList(this.$store, params, this.modelRaw).then(() => {
+              // todo
+              this.isSpinnerActive = false
+            })
+            break
         }
+        
+        // if (this.isFiltered) {
+        // fetchFilteredList(this.$store, params, this.modelRaw).then(() => {
+        //   this.isSpinnerActive = false
+        // })
+        // } else {
+        //   console.log('refresh');
+          
+        //   return fetchList(this.$store, params, this.modelRaw).then(() => {
+        //     this.isSpinnerActive = false
+        //   })
+        // }
       },
-      refreshItemsCount ({ params = {}, }) {
-        this.filterSearched && (params.keyword = this.filterSearched)
-        map(this.filterChecksCurrent, (filter, key) => {
-          if (filter) { params[ key ] = true }
-        })
-        if (this.model !== 'promotion') {
-          fetchItemsCount(this.$store, params, this.modelRaw)
-        }
-      },
+      // refreshItemsCount ({ params = {}, }) {
+      //   // this.filterSearched && (params.keyword = this.filterSearched)
+      //   // map(this.filterChecksCurrent, (filter, key) => {
+      //   //   if (filter) { params[ key ] = true }
+      //   // })
+      //   if (this.model !== 'promotion') {
+      //     // fetchItemsCount(this.$store, params, this.modelRaw)
+      //   }
+      // },
       search (params) {
         // todo
         this.filterSearched = this.searchVal
         // this.isFilterApplied = true
-        Promise.all([
-          this.refresh({ params })
-          // this.refresh({
-          //   params: {
-          //     keyword: this.filterSearched || '',
-          //   }
-          // }),
-          // this.refreshItemsCount({
-          //   params: {
-          //     keyword: this.filterSearched || '',
-          //   }
-          // })
-        ])
+        // Promise.all([
+        //   this.refresh({ params })
+        //   // this.refresh({
+        //   //   params: {
+        //   //     keyword: this.filterSearched || '',
+        //   //   }
+        //   // }),
+        //   // this.refreshItemsCount({
+        //   //   params: {
+        //   //     keyword: this.filterSearched || '',
+        //   //   }
+        //   // })
+        // ])
+        this.refresh({ params })
       },
       handleStringSpace (string) {
         return string.replace(/(^\s*)|(\s*$)/g, '').replace(/\s+/, ',')
       }
     },
     beforeMount () {
+      console.log('fetch model data - beforeMount');
       fetchModelData(this.$store)
     },  
     beforeRouteUpdate (to, from, next) {
-      next(false) // dont revise the url bar
+      // dont revise the url bar
+      next(false)
+
       this.leavingHandler(next, to)
     },
     beforeRouteLeave (to, from, next) {
@@ -286,22 +312,27 @@
     watch: {
       '$route': function (newRoute, oldRoute) {
         if (newRoute.params.item !== oldRoute.params.item) {
+          console.log('fetch model data - route');
           /**
-          *  As soon as the route changes and the model get different, we fetch the proper model data at first.
-          */
-          fetchModelData(this.$store)          
+           * As soon as the route changes and the model get different, we fetch the proper model data at first.
+           */
+          fetchModelData(this.$store)
         }
       },
       '$store.getters.structure': function (newStructure, oldStructure) {
         debug('$store.getters.structure gets changed:', [ newStructure, oldStructure ])
         if (newStructure !== oldStructure) {
           /**
-          *  Make sure the structure changed before we fetch list.
-          */
-          Promise.all([
-            this.refresh({}),
-            this.refreshItemsCount({})
-          ])  
+           * Make sure the structure changed before we fetch list.
+           */
+          console.log('fetch list')
+
+          // Promise.all([
+          //   this.refresh({}),
+          //   // this.refreshItemsCount({})
+          // ])
+          this.refresh({})
+
           this.filters = {}
           this.searchVal = ''
           this.key = Date.now().toString()
@@ -311,13 +342,13 @@
         debug('Mutation detected: search', this.searchVal)
         this.search()
       },
-      filterChecksCurrent () {
-        debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
-        Promise.all([
-          this.refresh({}),
-          this.refreshItemsCount({})
-        ])
-      },
+      // filterChecksCurrent () {
+      //   debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
+      //   Promise.all([
+      //     this.refresh({}),
+      //     this.refreshItemsCount({})
+      //   ])
+      // },
       isEditorDataMutated () {
         this.isEditorDataMutated
           ? window.addEventListener('beforeunload', this.leavingHandler)
@@ -325,24 +356,29 @@
       },
       filters: {
         handler (params) {
+          // 若是空物件，則返回
+          if (Object.keys(params).length === 0) { return }
+
+          console.log(params)
+          
           if (Object.keys(params).length === 0) {
             // todo
             if (this.isFiltered) {
-              console.log('normal');
+              console.log('normal')
               this.$store.commit('TOGGLE_FILTERED', false)
             }
           } else {
-            console.log('filter');
+            console.log('filter')
             this.$store.commit('TOGGLE_FILTERED', true)
           }
           if (params.title) {
-            // 先移除左右空格，剩下的（字與字之間的）空格再代換成逗號
+            // 先移除左右空格，再將字與字之間的空格代換成逗號
             params.title = this.handleStringSpace(params.title)
           }
           if (params.content) {
             params.content = this.handleStringSpace(params.content)
           }
-          this.$store.commit('SET_FILTER_PARAMS', params)
+          // this.$store.commit('SET_FILTER_PARAMS', params)
           this.search(params)
         },
         deep: true

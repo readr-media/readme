@@ -11,6 +11,8 @@ export function fetchList ({ params, endpoint, }) {
 }
 
 export function fetchFilteredList ({ params, endpoint }) {
+  debug('parmas', params)
+  debug('endpoint', endpoint)
   const url = constructUrlWithQuery(`${host}/api/${endpoint}/filter`, params)
   return fetchInStrict(url, {})
 }

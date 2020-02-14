@@ -116,7 +116,7 @@
     props: {
       item: {
         type: Object,
-        default: () => {}
+        default: () => ({})
       },
       type: {
         type: String,

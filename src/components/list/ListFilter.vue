@@ -87,6 +87,7 @@
       },
       bgcolor: {},
       // filters: {}
+      filtersVals: {}
     },
     watch: {
       currentSearchVal () {
@@ -97,8 +98,8 @@
           this.filtersStr = map(filter(this.filters, (f, k) => {
             find(this.$store.getters.filters, { name: k }).type !== 'Datetime'
           }), f => f).join(', ')
-          // this.$emit('update:filters', this.filters)
-          this.$emit('update', this.filters)
+          this.$emit('update:filtersVals', this.filters)
+          // this.$emit('update', this.filters)
         },
         deep: true
       },

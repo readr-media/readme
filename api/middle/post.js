@@ -12,13 +12,14 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 
 router.use('/list', (req, res) => {
   const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5,8]}`
-  debug('Got a /post call:')
+
+  debug('Got a /post/list call:')
   debug(url)
   superagent
   .get(url)
   .end((error, response) => {
     if (!error && response) {
-      debug('Fetch posts from api successfully.')
+      debug('Fetch /posts/list from api successfully.')
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)
@@ -26,20 +27,22 @@ router.use('/list', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(`Error occurred during fetch data from: ${url}`)
       console.error(error) 
     }
   })
 })
+
 router.use('/filter', (req, res) => {
   const url = `${apiHost}/posts/filter${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5]}`
+  
   debug('Got a /post/filter call:')
   debug(url)
   superagent
   .get(url)
   .end((error, response) => {
     if (!error && response) {
-      debug('Fetch posts/filter from api successfully.')
+      debug('Fetch /posts/filter from api successfully.')
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)
@@ -47,11 +50,12 @@ router.use('/filter', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(`Error occurred during fetch data from: ${url}`)
       console.error(error) 
     }
   })
 })
+
 router.post('/create', (req, res, next) => {
   debug('Got a post creating call.')
   debug(req.body)
@@ -78,6 +82,7 @@ router.post('/create', (req, res, next) => {
     next()
   })
 })
+
 router.put('/update', (req, res, next) => {  
   const url = `${apiHost}/post`
   debug('Got a post updating call.')
@@ -103,6 +108,7 @@ router.put('/update', (req, res, next) => {
     next()
   })
 })
+
 router.get('/count', (req, res) => {
   const url = `${apiHost}/posts/count`
   superagent
@@ -122,6 +128,7 @@ router.get('/count', (req, res) => {
     }
   })
 })
+
 router.delete('/', (req, res, next) => {
   debug('Got a post del call.')
   debug(req.body)
@@ -156,4 +163,5 @@ router.delete('/', (req, res, next) => {
     next()
   })
 })
+
 module.exports = router
