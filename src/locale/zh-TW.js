@@ -1,3 +1,5 @@
+import { UPLOADER_SIZE_LIMIT } from 'api/config.js'
+
 export default {
   'USER': '使用者',
   'LOGIN': {
@@ -263,7 +265,7 @@ export default {
     },
     'UPLOADER': {
       'TOOLTIP': '從電腦上傳檔案<br>或將檔案拖移至此上傳',
-      'SIZE_LIMIT': '(圖檔大小限制：3MB)',
+      'SIZE_LIMIT': `圖檔限制大小為 ${UPLOADER_SIZE_LIMIT}，請上傳符合此限制的圖檔`,
       'INCORRECT_FILE_TYPE': '僅接受影片、圖檔與音檔素材',
       'ERROR': '讀取檔案發生錯誤'
     },
