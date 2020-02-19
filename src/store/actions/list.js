@@ -7,6 +7,7 @@ const debug = require('debug')('CLIENT:store:actions:list')
 const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
   debug('params', params)
   debug('endpoint', endpoint)
+  
   return fetchList({ params, endpoint, }).then(({ status, body, }) => {
     if (status === 200 && type === 'LITING_PAGE') {
       const count = get(body, 'meta.total', 0)
@@ -18,6 +19,21 @@ const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
     return { status, items: get(body, 'items') }
   })
 }
+
+// const FETCH_LIST_BY_ID = ({ commit, }, { id, params, endpoint }) => {
+//   debug('params', params)
+//   debug('endpoint', endpoint)
+//   return fetchListById({ id, params, endpoint }).then(({ status, body }) => {
+//     if (status === 200) {
+//       // const count = get(body, 'meta.total', 0)
+//       // commit('SET_LIST', { items: get(body, 'items') })
+//       // if (count) {
+//       //   commit('SET_LIST_ITEMS_COUNT', { count })
+//       // }
+//     }
+//     // return { status, items: get(body, 'items') }
+//   })
+// }
 
 const FETCH_FILTERED_LIST = ({ commit }, { params, endpoint }) => {
   debug('params', params)
@@ -48,6 +64,7 @@ const FETCH_CHOICES = ({ commit, }, { id, params, endpoint, }) => {
 export {
   FETCH_CHOICES,
   FETCH_LIST,
+  // FETCH_LIST_BY_ID,
   FETCH_FILTERED_LIST,
   FETCH_AUTOCOMPLETE_LIST
 }
