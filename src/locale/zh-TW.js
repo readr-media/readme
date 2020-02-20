@@ -338,6 +338,7 @@ export default {
     'TYPE_REPORT': '報導',
     'TYPE_VIDEO': '影音',
     'TYPE_LIVE': '直播',
+    'TYPE_QA': '問答',
     'PROJECT_ID': '所屬專題',
     'OG_DESCRIPTION': 'OG 說明',
     'OG_TITLE': 'OG 標題',

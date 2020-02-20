@@ -46,8 +46,9 @@ const typeOpts = (store, { vueInstance }) => new Promise(resolve => {
 })
 
 const isSupposedToShowWithTypeReport = data => get(data, 'type') == POST_TYPE.REPORT
-const isSupposedToShowWithTypeReview = data => { return get(data, 'type') == POST_TYPE.REVIEW }
-const isSupposedToShowWithTypeNewsOrReview = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW }
+
+const isSupposedToShowReferenceLink = data => { return get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
+const isSupposedToShowTags = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '100', }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
@@ -67,7 +68,7 @@ export const model = [
   { name: 'content', type: 'ContentEditor', group: 'content', isEditable: true, isListable: false, order: { editor: 2 }, },
 
   // For post.type === review
-  { name: 'link', type: 'TextInput', group: 'content', isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowWithTypeReview, },
+  { name: 'link', type: 'TextInput', group: 'content', isEditable: true, isListable: false, isHidden: false, watcher: 'type', showWith: isSupposedToShowReferenceLink, },
 
   // For post.type === report
   // { name: 'description', type: 'TextareaInput', group: 'content', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, order: { editor: 1.5 }, watcher: 'type', showWith: isSupposedToShowWithTypeReport,},
@@ -76,7 +77,7 @@ export const model = [
 
 
   // For post.type === news || review
-  { name: 'tags', type: 'TextTagItem', group: 'content', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowWithTypeNewsOrReview, },
+  { name: 'tags', type: 'TextTagItem', group: 'content', isEditable: true, isListable: false, map: { name: 'text', value: 'id', isValArraySensitive: true, }, autocomplete: tagsAutoComplete, showWith: isSupposedToShowTags, },
   
   // For post.type === news
   { name: 'ogTitle', type: 'TextInput', group: 'share', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, lengthLimit: 256 },
