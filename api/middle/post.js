@@ -11,7 +11,7 @@ const superagent = require('superagent')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.use('/list', (req, res) => {
-  const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5]}`
+  const url = `${apiHost}/posts${req.url.slice(1)}&show_tag=true&show_author=true&type={"$in":[0,1,2,3,4,5,8]}`
   debug('Got a /post call:')
   debug(url)
   superagent
