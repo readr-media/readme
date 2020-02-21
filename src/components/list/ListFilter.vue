@@ -3,25 +3,12 @@
     :class="{ 'with-filter': isFilterSetupped, 'disabled': !$store.getters.isSearchable }"
     :style="{ backgroundColor: bgcolor, }"
   >
-    <!-- <input class="list-search__input" type="text" ref="searchInput"
-      v-model="currentSearchVal"
-      :placeholder="searchInputPlaceholder"
-      :style="{ backgroundColor: bgcolor, }"
-      @focusin="toggleFilterVisible(true)"
-      @focusout="toggleFilterVisible(false)"
-      @keyup="setCurrVal"
-      @change="checkIsChanged"
-    > -->
     <input class="list-search__input" type="text" ref="searchInput"
       v-model="currentSearchVal"
       :placeholder="searchInputPlaceholder"
       :style="{ backgroundColor: bgcolor }"
       @keyup="setCurrVal"
     >
-    <!-- <input class="list-search__input" type="text" disabled
-      :placeholder="searchInputPlaceholder"
-      :style="{ backgroundColor: bgcolor, }"
-    > -->
     <template v-if="isFilterSetupped">
       <div class="list-search__filter__wrapper" ref="filterWrapper"
         :class="{ active: isFilterToolbox }"
@@ -64,8 +51,6 @@
         return get(this.$route, 'params.item', 'post')
       },
       searchInputPlaceholder () {
-        // return this.filtersStr || `${this.$t('LIST.SEARCH')}⋯`
-        // return this.filtersStr || `${this.$t('LIST.SEARCH')}${this.model === 'member' ? '暱稱' : '標題'}關鍵字⋯`
         return this.isFilterToolbox ? '' : `${this.$t('LIST.SEARCH')}${this.model === 'member' ? '暱稱' : '標題'}關鍵字⋯`
       }
     },
@@ -73,34 +58,17 @@
       return {
         currentSearchVal: '',
         filters: {},
-        // filtersStr: '',
-        // isFilterHovered: false,
         isFilterToolbox: false
       }
     },
     methods: {
-      // checkIsChanged () {
-      //   this.$emit('update:value', this.currentSearchVal)
-      // },
-      // focusOnFilterWrapper (e) {
-      //   const isDesc = isDescendant(e.target, { parant: this.$refs[ 'filterWrapper' ] })
-      //   isDesc && !this.isFilterToolbox && this.$refs[ 'filterWrapper' ].focus()
-      // },
       setCurrVal () { 
         debounce(() => {
           this.$emit('update:value', this.currentSearchVal)
           this.$refs.filterTools.itemValKey = Date.now().toString()
         }, 600)()
       },
-      // toggleFilterVisible (flag) {
-      //   if (flag) {
-      //     this.filtersStr = ''
-      //   } else {
-      //     this.filtersStr = map(this.filters, (value) => value).join(', ')
-      //   }
-      // },
       turnOffFilterBox () {
-        // this.isFilterHovered = false
         this.isFilterToolbox = false
       },
       toggleFilterToolbox () {
@@ -127,20 +95,12 @@
         type: String,
       },
       bgcolor: {},
-      // filters: {}
       filtersVals: {}
     },
     watch: {
-      // currentSearchVal () {
-      //   this.$emit('update:value', this.currentSearchVal)
-      // },
       filters: {
         handler (filtersVals) {
-          // this.filtersStr = map(filter(filtersVals, (val, key) =>
-          //   find(this.$store.getters.filters, { name: key }).type !== 'Datetime'),
-          // (val) => val).join(', ')
           this.$emit('update:filtersVals', filtersVals)
-          // this.$emit('update', this.filters)
         },
         deep: true
       }
@@ -162,7 +122,6 @@
     background-position 15px 8px
     background-size 20px 20px
     background-repeat no-repeat
-    // outline none
     &.disabled
       display none
     &.with-filter
@@ -173,7 +132,6 @@
       height 1.5rem
       border none
       background-color #f7f7f7
-      // font-weight 100
       color #000
 
       font-size 0.9375rem
@@ -181,11 +139,8 @@
 
       &::-webkit-input-placeholder
         color #a0a0a0
-        // font-weight normal
         font-size 0.875rem
         vertical-align top
-      // &:disabled
-      //   cursor pointer
     &__filter
       &__wrapper
         position absolute
@@ -194,8 +149,6 @@
         height 100%
         width 100%
         z-index 9999
-        // outline none
-        // cursor default
         &:not(.active)
           .filter-button 
             animation fade-out 0.5s

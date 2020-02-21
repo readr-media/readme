@@ -50,14 +50,12 @@
         this.filters = {}
         console.log('update filters value')
         this.$emit('update:filtersVals', this.filledItems)
-        console.log('close filter tools')
         this.$emit('close')
         this.itemValKey = Date.now().toString()
       },
       confirm () {
         console.log('update filters value')
         this.$emit('update:filtersVals', this.filledItems)
-        console.log('close filter tools')
         this.$emit('close')
       },
       decamelize,

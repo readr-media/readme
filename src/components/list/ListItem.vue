@@ -79,7 +79,6 @@ export default {
       }
     },
     clickHandler (isEditEntry) {
-      // isEditEntry && this.$emit('edit', this.item)
       if (isEditEntry) {
         this.$emit('edit', this.item)
       }

@@ -20,33 +20,14 @@ const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
   })
 }
 
-// const FETCH_LIST_BY_ID = ({ commit, }, { id, params, endpoint }) => {
-//   debug('params', params)
-//   debug('endpoint', endpoint)
-//   return fetchListById({ id, params, endpoint }).then(({ status, body }) => {
-//     if (status === 200) {
-//       // const count = get(body, 'meta.total', 0)
-//       // commit('SET_LIST', { items: get(body, 'items') })
-//       // if (count) {
-//       //   commit('SET_LIST_ITEMS_COUNT', { count })
-//       // }
-//     }
-//     // return { status, items: get(body, 'items') }
-//   })
-// }
-
 const FETCH_FILTERED_LIST = ({ commit }, { params, endpoint }) => {
   debug('params', params)
   debug('endpoint', endpoint)
   
-  return fetchFilteredList({ params, endpoint }).then(({ status, body }) => {
-    // if (status === 200) {
+  return fetchFilteredList({ params, endpoint }).then(({ body }) => {
     const count = get(body, 'meta.total', 0)
     commit('SET_LIST', { items: get(body, 'items') })
-    // if (count) {
     commit('SET_LIST_ITEMS_COUNT', { count })
-    // }
-    // }
   })
 }
 
@@ -65,7 +46,6 @@ const FETCH_CHOICES = ({ commit, }, { id, params, endpoint, }) => {
 export {
   FETCH_CHOICES,
   FETCH_LIST,
-  // FETCH_LIST_BY_ID,
   FETCH_FILTERED_LIST,
   FETCH_AUTOCOMPLETE_LIST
 }

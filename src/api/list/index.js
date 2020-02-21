@@ -10,13 +10,6 @@ export function fetchList ({ params, endpoint, }) {
   return fetchInStrict(url, {})
 }
 
-// export function fetchListById ({ id, params, endpoint }) {
-//   debug('parmas', params)
-//   debug('endpoint', endpoint)
-//   const url = constructUrlWithQuery(`${host}/api/${endpoint}/list`, params)
-//   return fetchInStrict(url, {})
-// }
-
 export function fetchFilteredList ({ params, endpoint }) {
   debug('parmas', params)
   debug('endpoint', endpoint)

@@ -6,30 +6,8 @@ const FETCH_ITEM = ({ commit }, { id, params, endpoint }) => {
   return fetchItem({ id, params, endpoint }).then(({ body }) => {
     const item = get(body, 'items.0', {})
     return item
-    // if (status === 200) {
-    //   return 
-    //   const count = get(body, 'meta.total', 0)
-    //   commit('SET_LIST', { items: get(body, 'items') })
-    //   if (count) {
-    //     commit('SET_LIST_ITEMS_COUNT', { count })
-    //   }
-    // }
   })
 }
-// const EDIT_ITEM = ({ commit }, { id, params, endpoint }) => {
-//   return editItem({ id, params, endpoint }).then(({ status, body }) => {
-//     const item = get(body, 'items.0', {})
-//     return item
-//     // if (status === 200) {
-//     //   return 
-//     //   const count = get(body, 'meta.total', 0)
-//     //   commit('SET_LIST', { items: get(body, 'items') })
-//     //   if (count) {
-//     //     commit('SET_LIST_ITEMS_COUNT', { count })
-//     //   }
-//     // }
-//   })
-// }
 
 const UPDATE_ITEM = ({ commit, }, { params, endpoint, }) => {
   console.log('UPDATE_ITEM', endpoint)
@@ -86,7 +64,6 @@ const DEL_ITEMS = ({ commit, }, { params, endpoint, }) => {
 
 export {
   FETCH_ITEM,
-  // EDIT_ITEM,
   UPDATE_ITEM,
   POST_ITEM,
   // DEL_ITEM,

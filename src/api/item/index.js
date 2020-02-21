@@ -6,22 +6,10 @@ const host = getHost()
 export function fetchItem ({ id, params, endpoint }) {
   console.log('FETCH_ITEM', endpoint)
   debug('edit', endpoint)
-
-  // const url = `${host}/api/${endpoint}/edit/${id}`
-  // return put(url, params)
+  
   const url = constructUrlWithQuery(`${host}/api/${endpoint}/item/${id}`, params)
   return fetchInStrict(url, {})
 }
-
-// export function editItem ({ id, params, endpoint }) {
-//   console.log('EDIT_ITEM', endpoint)
-//   debug('edit', endpoint)
-
-//   // const url = `${host}/api/${endpoint}/edit/${id}`
-//   // return put(url, params)
-//   const url = constructUrlWithQuery(`${host}/api/${endpoint}/edit/${id}`, params)
-//   return fetchInStrict(url, {})
-// }
 
 export function updateItem ({ params, endpoint, }) {
   console.log('UPDATE_ITEM', endpoint)

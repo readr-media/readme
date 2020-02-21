@@ -21,7 +21,6 @@ router.get('/list', (req, res) => {
   .end((error, response) => {
     if (!error && response) {
       debug('Fetch /project/list from api successfully.')
-      // debug(response.body)
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)
@@ -70,7 +69,6 @@ router.use('/item/:id', (req, res) => {
   .end((error, response) => {
     if (!error && response) {
       debug('Fetch /project/list?ids= from api successfully.')
-      // debug(response.body)
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)

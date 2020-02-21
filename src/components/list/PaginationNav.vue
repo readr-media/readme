@@ -12,6 +12,7 @@
     </template>
   </div>
 </template>
+
 <script>
   const debug = require('debug')('CLIENT:PaginationNav')
   export default {
@@ -45,7 +46,7 @@
     },
     data () {
       return {
-        curr_page: this.currPage,
+        page: this.currPage,
         showLeftRest: false,
         showRightRest: false,
       }
@@ -53,14 +54,16 @@
     name: 'PaginationNav',
     methods: {
       clickHandler (i) {
-        this.curr_page = i
-        debug('this.currPage', i)
+        this.page = i
+        this.updateCurrPage()
       },
       clickPrev () {
-        this.curr_page = this.curr_page > 1 ? this.curr_page - 1 : this.curr_page
+        this.page = this.page > 1 ? this.page - 1 : this.page
+        this.updateCurrPage()
       },
       clickNext () {
-        this.curr_page = this.curr_page < this.totalPages ? this.curr_page + 1 : this.curr_page
+        this.page = this.page < this.totalPages ? this.page + 1 : this.page
+        this.updateCurrPage()
       },
       setRestPage (restCase) {
         if (this.totalPages > 5) {
@@ -80,6 +83,12 @@
           }
         }
       },
+      updateCurrPage () {
+        if (this.currPage !== this.page) {
+          debug('Mutation detected: page', this.page)
+          this.$emit('update:currPage', this.page)
+        }
+      }
     },
     mounted () {
       debug('PaginationNav mounted')
@@ -94,23 +103,25 @@
     },
     props: {
       currPage: {
+        type: Number,
         default: 1
       },
       totalPages: {
-        default: 0,
-      },
+        type: Number,
+        default: 0
+      }
     },
     watch: {
-      curr_page: function () {
-        debug('Mutation detected: curr_page', this.curr_page)        
-        this.$emit('update:currPage', this.curr_page)
+      currPage (page) {
+        this.page = page
       },
-      totalPages: function () {
+      totalPages () {
         debug('Mutation detected: totalPages', this.totalPages)
       },
     },
   }
 </script>
+
 <style lang="stylus" scoped>
   .pagination-nav
     font-size 0.75rem

@@ -15,8 +15,8 @@
             <slot name="spinner"></slot>
           </div>
           <div class="list-container__footer">
-            <RecordCount :total="itemsCount"></RecordCount>
-            <PaginationNav :currPage.sync="curr_page" :totalPages="totalPages"></PaginationNav>
+            <RecordCount :total="itemsCount" />
+            <PaginationNav :currPage="page" :totalPages="totalPages" @update:currPage="updtaeList" />
           </div>
         </div>
       </transition>
@@ -44,7 +44,6 @@ import { filter, get, isEmpty, map, } from 'lodash'
 
 const debug = require('debug')('CLIENT:ListContainer')
 // const del = (store, params, endpoint) => store.dispatch('DEL_ITEM', { params, endpoint, })
-// const editItem = (store, id, params, endpoint) => store.dispatch('EDIT_ITEM', { id, params, endpoint })
 const fetchItem = (store, id, params, endpoint) => store.dispatch('FETCH_ITEM', { id, params, endpoint })
 const delItems = (store, params, endpoint) => store.dispatch('DEL_ITEMS', { params, endpoint, })
 const switchAlert = (store, active, message, callback) => store.dispatch('ALERT_SWITCH', { active, message, callback, type: 'action' })
@@ -86,7 +85,7 @@ export default {
   },
   data () {
     return {
-      curr_page: this.currPage,
+      page: this.currPage,
       checkedItems: {},
       editorItem: {},
       header: {},
@@ -133,11 +132,6 @@ export default {
           this.isFetchingItem = false
           break
         default:
-          // editItem(this.$store, id, {}, this.flag).then((item) => {
-          //   console.log('fetch list item successfully')
-          //   this.editorItem = item
-          //   this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
-          // })
           fetchItem(this.$store, id, {}, this.flag).then((item) => {
             console.log('fetch item successfully')
             this.editorItem = item
@@ -146,11 +140,14 @@ export default {
           })
           break
       }
-      // this.editorItem = item
-      // this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
     },
     itemSaved () {
       this.$router.go(-1)
+    },
+    updtaeList (page) {
+      console.log(`change current page ${page} from pagination`)
+      this.page = page
+      this.refresh({ params: { ...this.filtersVals, page } })
     },
     get
   },
@@ -177,30 +174,17 @@ export default {
       type: Object,
       default: () => ({})
     },
-    // refreshItemsCount: {
-    //   type: Function,
-    //   default: () => {},
-    // },
     currPage: {
       type: Number,
       default: 1
     }
   },
   watch: {
-    curr_page (page) {
-      console.log(`change current page: ${page}`);
-      
-      // console.log(this.filtersVals)
-      
-      // console.log(val)
-      
-      // if (this.$store.state.isFiltered) {
-      //   this.refresh({
-      //     params: Object.assign(this.$store.state.filterParams, { page: this.curr_page })
-      //   })
-      // } else {
-      this.refresh({ params: { ...this.filtersVals, page } })
-      // }
+    currPage (page) {
+      if (page === 1) {
+        console.log(`change current page ${page} from search`)
+        this.page = page
+      }
     },
     '$store.getters.structure': function (newVals, oldVals) {
       if (newVals !== oldVals) {

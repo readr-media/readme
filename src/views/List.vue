@@ -37,12 +37,12 @@
           </div>
         </template>
       </div>
-      <!-- :refreshItemsCount="refreshItemsCount" -->
       <ListContainer class="list__container"
         :flag="model"
         :backToParent="backToParent"
         :refresh="refresh"
         :filtersVals="filters"
+        :currPage="page"
       >
         <div slot="spinner" style="text-align: center; height: 30px;" v-show="isSpinnerActive">
           <Spinner :show="true" />
@@ -69,7 +69,6 @@ const DEFAULT_SORT = '-created_at'
 
 const debug = require('debug')('CLIENT:List')
 const fetchModelData = (store) => store.dispatch('FETCH_MODEL_DATA')
-// const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
 const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
   params: Object.assign({
     maxResult: DEFAULT_MAXRESULT,
@@ -82,18 +81,6 @@ const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
   type: 'LITING_PAGE'
 })
 
-// const fetchListById = (store, params, endpoint) => store.dispatch('FETCH_LIST_BY_ID', {
-//   id,
-//   params: Object.assign({
-//     // maxResult: DEFAULT_MAXRESULT,
-//     memberId: get(store, 'state.profile.id'),
-//     // page: DEFAULT_PAGE,
-//     // sort: DEFAULT_SORT,
-//     fields: [ 'nickname', 'id' ],
-//   }, params),
-//   endpoint
-// })
-
 const fetchFilteredList = (store, params, endpoint) => store.dispatch('FETCH_FILTERED_LIST', {
   params: Object.assign({
     maxResult: DEFAULT_MAXRESULT,
@@ -102,8 +89,7 @@ const fetchFilteredList = (store, params, endpoint) => store.dispatch('FETCH_FIL
     sort: DEFAULT_SORT,
     fields: [ 'nickname', 'id' ]
   }, params),
-  endpoint,
-  // type: 'LITING_PAGE'
+  endpoint
 })
 
 const setupDataMutationState = (store, status, handler) => store.dispatch('UPDATE_EDITOR_MUTATION_STATE', { status, handler })
@@ -157,16 +143,11 @@ export default {
       } else {
         return this.$t(`NAVIGATION.${this.model.toUpperCase()}`)
       }
-    },
-    // isFiltered () {
-    //   return this.$store.state.isFiltered
-    // }
+    }
   },
   data () {
     return {
       filters: {},
-      // filterSearched: '',
-      // filterChecksCurrent: {},
       leavingReminder: {
         message: this.$t('ALERT.LEAVING_REMINDER'),
         textConfirm: this.$t('ALERT.SAVE'),
@@ -177,7 +158,7 @@ export default {
       isSpinnerActive: false,
       key: Date.now().toString(),
       page: DEFAULT_PAGE,
-      searchVal: '',
+      searchVal: ''
     }
   },
   methods: {
@@ -232,50 +213,21 @@ export default {
         }
       }
     },
-    // editItem () {
-    //   console.log('edit')
-    //   this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
-    // },
     refresh ({ params = {} }) {
       debug('Going to refresh')
       console.log('refresh')
 
       this.isSpinnerActive = true
-
-      // if (this.filterSearched) {
-      //   params.title = this.filterSearched
-      // }
-      // console.log(this.filterSearched);
       
-      // this.filterSearched && (params.keyword = this.filterSearched)
-      // console.log(params.page, this.page);
-      
-      // this.page = params.page || this.page
-      console.log(params.page)
-      
-      // if (isSearching) {
-      //   console.log('searching');
-      //   this.page = 1
-      //   params.page = 1
-      // } else {
       if (params.page) {
         this.page = params.page
       } else {
         params.page = DEFAULT_PAGE
         this.page = params.page
-        // this.$refs.listContainer.curr_page = 1
-        // params.page = this.page
       }
-      // console.log(params.page)
-      // }
       
       params.maxResult = this.modelData ? (this.modelData.LIST_MAXRESULT || DEFAULT_LIST_MAXRESULT) : DEFAULT_LIST_MAXRESULT
-      // todo
-      // params.id = this.isSubItem || undefined
 
-      // map(this.filterChecksCurrent, (filter, key) => {
-      //   if (filter) { params[ key ] = true }
-      // })
       debug('params.maxResult', params.maxResult)
       debug('this.model', this.modelRaw)
 
@@ -296,55 +248,13 @@ export default {
           })
           break
       }
-      
-      // if (this.isFiltered) {
-      // fetchFilteredList(this.$store, params, this.modelRaw).then(() => {
-      //   this.isSpinnerActive = false
-      // })
-      // } else {
-      //   console.log('refresh');
-        
-      //   return fetchList(this.$store, params, this.modelRaw).then(() => {
-      //     this.isSpinnerActive = false
-      //   })
-      // }
     },
-    // refreshItemsCount ({ params = {}, }) {
-    //   // this.filterSearched && (params.keyword = this.filterSearched)
-    //   // map(this.filterChecksCurrent, (filter, key) => {
-    //   //   if (filter) { params[ key ] = true }
-    //   // })
-    //   if (this.model !== 'promotion') {
-    //     // fetchItemsCount(this.$store, params, this.modelRaw)
-    //   }
-    // },
-    // search (params) {
-    //   // todo
-    //   this.filterSearched = this.searchVal
-    //   // this.isFilterApplied = true
-    //   // Promise.all([
-    //   //   this.refresh({ params })
-    //   //   // this.refresh({
-    //   //   //   params: {
-    //   //   //     keyword: this.filterSearched || '',
-    //   //   //   }
-    //   //   // }),
-    //   //   // this.refreshItemsCount({
-    //   //   //   params: {
-    //   //   //     keyword: this.filterSearched || '',
-    //   //   //   }
-    //   //   // })
-    //   // ])
-    //   // console.log(params);
-      
-    //   this.refresh({ params, isSearching: true })
-    // },
     handleStrSpace (str) {
       return str.replace(/(^\s*)|(\s*$)/g, '').replace(/\s+/, ',')
     }
   },
   beforeMount () {
-    console.log('fetch model data - beforeMount');
+    // console.log('fetch model data - beforeMount')
     fetchModelData(this.$store)
   },  
   beforeRouteUpdate (to, from, next) {
@@ -362,7 +272,7 @@ export default {
   watch: {
     '$route': function (newRoute, oldRoute) {
       if (newRoute.params.item !== oldRoute.params.item) {
-        console.log('fetch model data - route');
+        // console.log('fetch model data - route')
         /**
          * As soon as the route changes and the model get different, we fetch the proper model data at first.
          */
@@ -375,58 +285,29 @@ export default {
         /**
          * Make sure the structure changed before we fetch list.
          */
-        console.log('structure change');
+        console.log('structure change')
         
-        // Promise.all([
-        //   this.refresh({}),
-        //   // this.refreshItemsCount({})
-        // ])
         this.refresh({})
-
-        // this.filters = {}
-        // this.searchVal = ''
         this.key = Date.now().toString()
       }
     },
     searchVal (val) {
-      debug('Mutation detected: search', this.searchVal)
+      debug('Mutation detected: search', val)
       
       const params = {}
-      params[ this.modelRaw === 'member' ? 'nickname' : 'title' ] = val
-      this.refresh({ params })
+      if (val) {
+        params[ this.modelRaw === 'member' ? 'nickname' : 'title' ] = val
+      }
+      this.filters = params
     },
-    // filterChecksCurrent () {
-    //   debug('Mutation detected: filterChecksCurrent', this.filterChecksCurrent)
-    //   Promise.all([
-    //     this.refresh({}),
-    //     this.refreshItemsCount({})
-    //   ])
-    // },
     isEditorDataMutated () {
       this.isEditorDataMutated
         ? window.addEventListener('beforeunload', this.leavingHandler)
         : window.removeEventListener('beforeunload', this.leavingHandler)
     },
     filters (params) {
-      // console.log(params);
-      
-      console.log('filters value change');
-      
-      // 若是空物件，則返回
-      // if (Object.keys(params).length === 0) { return }
+      console.log('filters value change')
 
-      // console.log(params)
-      
-      // if (Object.keys(params).length === 0) {
-      //   // todo
-      //   if (this.isFiltered) {
-      //     console.log('normal')
-      //     this.$store.commit('TOGGLE_FILTERED', false)
-      //   }
-      // } else {
-      // console.log('filter')
-      // this.$store.commit('TOGGLE_FILTERED', true)
-      // }
       if (params.title) {
         // 先移除左右空格，再將字與字之間的空格代換成逗號
         params.title = this.handleStrSpace(params.title)
@@ -434,42 +315,9 @@ export default {
       if (params.content) {
         params.content = this.handleStrSpace(params.content)
       }
-      // this.$store.commit('SET_FILTER_PARAMS', params)
-      // this.search(params)
       this.refresh({ params })
     }
-    // filters: {
-    //   handler (params) {
-    //     console.log(params)
-        
-    //     // 若是空物件，則返回
-    //     if (Object.keys(params).length === 0) { return }
-
-    //     console.log(params)
-        
-    //     if (Object.keys(params).length === 0) {
-    //       // todo
-    //       if (this.isFiltered) {
-    //         console.log('normal')
-    //         this.$store.commit('TOGGLE_FILTERED', false)
-    //       }
-    //     } else {
-    //       console.log('filter')
-    //       this.$store.commit('TOGGLE_FILTERED', true)
-    //     }
-    //     if (params.title) {
-    //       // 先移除左右空格，再將字與字之間的空格代換成逗號
-    //       params.title = this.handleStrSpace(params.title)
-    //     }
-    //     if (params.content) {
-    //       params.content = this.handleStrSpace(params.content)
-    //     }
-    //     // this.$store.commit('SET_FILTER_PARAMS', params)
-    //     this.search(params)
-    //   },
-    //   deep: true
-    // },
-  },
+  }
 }
 </script>
 
@@ -505,7 +353,6 @@ export default {
       padding 0 10px
     &__search
       width 400px
-      // cursor pointer
     &__toolbox
       .btn
         cursor pointer
