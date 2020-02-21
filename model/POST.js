@@ -47,6 +47,7 @@ const typeOpts = (store, { vueInstance }) => new Promise(resolve => {
 
 const isSupposedToShowWithTypeReport = data => get(data, 'type') == POST_TYPE.REPORT
 
+const isSupposedToShowHeroImage = data => { return get(data, 'type') != POST_TYPE.QA }
 const isSupposedToShowReferenceLink = data => { return get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
 const isSupposedToShowTags = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
 
@@ -72,7 +73,7 @@ export const model = [
 
   // For post.type === report
   // { name: 'description', type: 'TextareaInput', group: 'content', isEditable: true, isListable: false, isHidden: false, autoHeightActive: true, order: { editor: 1.5 }, watcher: 'type', showWith: isSupposedToShowWithTypeReport,},
-  { name: 'heroImage', type: 'AssetPicker', group: 'content', listWidth: { min: '180', max: '180' }, isEditable: true, isListable: false, watcher: 'type', acceptedFileTypes: [ 'image/*' ], },
+  { name: 'heroImage', type: 'AssetPicker', group: 'content', listWidth: { min: '180', max: '180' }, isEditable: true, isListable: false, watcher: 'type', acceptedFileTypes: [ 'image/*' ], showWith: isSupposedToShowHeroImage },
   { name: 'slug', type: 'TextInput', group: 'content', isEditable: true, isListable: false, watcher: 'type', showWith: isSupposedToShowWithTypeReport, },
 
 
