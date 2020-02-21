@@ -96,8 +96,8 @@
       vertical-align top
       background-color #ffffff
       outline none
-      font-weight 100
+      // font-weight 100
       &::-webkit-input-placeholder
         color #a0a0a0
-        font-weight 100
+        // font-weight 100
 </style>

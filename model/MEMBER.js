@@ -34,13 +34,13 @@ export const model = [
   { name: 'birthday', type: 'Datetime', group: 'advanced', isEditable: true, isListable: false, isDatetimeSentitive: true, default: '1970-01-01T00:00:00Z', datetimeType: 'date', },
 
 ]
-export const isSearchable = false
+export const isSearchable = true
 export const filters = [
   { name: 'nickname', type: 'TextInput' },
-  { name: 'mail', type: 'TextInput' },
+  // { name: 'mail', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
-  { name: 'createdAt', type: 'Datetime' },
-  { name: 'updatedAt', type: 'Datetime' },
+  // { name: 'createdAt', type: 'Datetime' },
+  // { name: 'updatedAt', type: 'Datetime' },
 ]
 export const groups = [ 'info', 'basic', 'advanced' ]
 export const LIST_MAXRESULT = 15

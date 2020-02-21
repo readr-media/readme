@@ -45,7 +45,7 @@ export function createStore () {
         type: '',
         value: '',
       },
-      isFiltered: false,
+      // isFiltered: false,
       // filterParams: {}
     },
     actions,

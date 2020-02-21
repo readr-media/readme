@@ -92,6 +92,7 @@ export default {
       header: {},
       key: '',
       isAllowedToSave: true,
+      isFetchingItem: false
     }
   },
   methods: {
@@ -118,6 +119,10 @@ export default {
     //   })
     // },
     editItem (item, id) {
+      if (this.isFetchingItem) { return }
+
+      this.isFetchingItem = true
+
       console.log('edit')
       
       switch (this.flag) {
@@ -125,6 +130,7 @@ export default {
         case 'promotion':
           this.editorItem = item
           this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
+          this.isFetchingItem = false
           break
         default:
           // editItem(this.$store, id, {}, this.flag).then((item) => {
@@ -133,9 +139,10 @@ export default {
           //   this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
           // })
           fetchItem(this.$store, id, {}, this.flag).then((item) => {
-            console.log('fetchitem successfully')
+            console.log('fetch item successfully')
             this.editorItem = item
             this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
+            this.isFetchingItem = false
           })
           break
       }
@@ -166,31 +173,39 @@ export default {
       type: Function,
       default: () => {},
     },
+    filtersVals: {
+      type: Object,
+      default: () => ({})
+    },
     // refreshItemsCount: {
     //   type: Function,
     //   default: () => {},
     // },
     currPage: {
       type: Number,
-      default: 1,
-    },
+      default: 1
+    }
   },
   watch: {
-    curr_page () {
+    curr_page (page) {
+      console.log(`change current page: ${page}`);
+      
+      // console.log(this.filtersVals)
+      
+      // console.log(val)
+      
       // if (this.$store.state.isFiltered) {
       //   this.refresh({
       //     params: Object.assign(this.$store.state.filterParams, { page: this.curr_page })
       //   })
       // } else {
-      this.refresh({
-        params: { page: this.curr_page }
-      })
+      this.refresh({ params: { ...this.filtersVals, page } })
       // }
     },
     '$store.getters.structure': function (newVals, oldVals) {
       if (newVals !== oldVals) {
         this.key = this.modelName
-        map(this.$store.getters.structure, i => { 
+        map(this.$store.getters.structure, (i) => { 
           this.header[ i.name ] = this.$t(`${this.modelName}.${decamelize(i.name).toUpperCase()}`)
         })
       }

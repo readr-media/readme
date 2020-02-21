@@ -36,6 +36,7 @@ export function _buildQuery (params = {}) {
     'member_id',
     'memberId',
     'memo_publish_status',
+    'nickname',
     'emotion',
     'fields',
     'pay_type',

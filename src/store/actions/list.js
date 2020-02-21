@@ -38,14 +38,15 @@ const FETCH_LIST = ({ commit, }, { params, endpoint, type }) => {
 const FETCH_FILTERED_LIST = ({ commit }, { params, endpoint }) => {
   debug('params', params)
   debug('endpoint', endpoint)
+  
   return fetchFilteredList({ params, endpoint }).then(({ status, body }) => {
-    if (status === 200) {
-      const count = get(body, 'meta.total', 0)
-      commit('SET_LIST', { items: get(body, 'items') })
-      if (count) {
-        commit('SET_LIST_ITEMS_COUNT', { count })
-      }
-    }
+    // if (status === 200) {
+    const count = get(body, 'meta.total', 0)
+    commit('SET_LIST', { items: get(body, 'items') })
+    // if (count) {
+    commit('SET_LIST_ITEMS_COUNT', { count })
+    // }
+    // }
   })
 }
 

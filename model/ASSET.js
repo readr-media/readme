@@ -45,7 +45,7 @@ export const groups = [ 'info', 'basic' ]
 export const assetsEndpoint = '/api/asset/list'
 export const assetsCountEndpoint = '/api/asset/count'
 export const LIST_MAXRESULT = 15
-export const isSearchable = false
+export const isSearchable = true
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
