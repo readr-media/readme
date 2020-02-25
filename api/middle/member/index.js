@@ -19,7 +19,7 @@ router.use('/list', (req, res) => {
   debug(req.body)
 
   const payload = Object.assign({}, req.query)
-  const url = get(req, 'query.keyword') ? `${apiHost}/members/nickname`: `${apiHost}/members`
+  const url = get(req, 'query.keyword') ? `${apiHost}/members/nickname` : `${apiHost}/members`
   get(req, 'query.keyword') && (payload.fields = JSON.stringify([ 'id', 'nickname', 'mail', 'role', 'custom_editor', ]))
 
   debug('payload', get(req, 'body.keyword'))
@@ -30,8 +30,7 @@ router.use('/list', (req, res) => {
   .query(payload)
   .end((error, response) => {
     if (!error && response) {
-      debug('Fetch member list from api successfully.')
-      // debug(response.body)
+      debug('Fetch /members from api successfully.')
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)
@@ -39,7 +38,52 @@ router.use('/list', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(`Error occurred during fetch data from: ${url}`)
+      console.error(error) 
+    }
+  })
+})
+
+router.get('/filter', (req, res) => {
+  const url = `${apiHost}/members${req.url}`
+  debug(`Got a /member/filter call: ${url}`)
+  
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch /member/filter from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from: ${url}`)
+      console.error(error) 
+    }
+  })
+})
+
+router.get('/item/:id', (req, res) => {
+  const id = req.params.id
+  const url = `${apiHost}/member/${id}`
+  debug(`Got a /member/item/:id call: ${url}`)
+  
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch /member/:id from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from: ${url}`)
       console.error(error) 
     }
   })

@@ -45,5 +45,5 @@ export default Object.assign({
   },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
-  },
+  }
 }, mutationsMember, mutationsList, mutationsItem)

@@ -11,7 +11,7 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 
 router.get('/list', (req, res) => {
   const url = `${apiHost}/project${req.url}`
-
+  
   debug('Got a /project/list call:')
   debug(req.url)
   debug(req.body)
@@ -20,8 +20,7 @@ router.get('/list', (req, res) => {
   .get(url)
   .end((error, response) => {
     if (!error && response) {
-      debug('Fetch project list from api successfully.')
-      // debug(response.body)
+      debug('Fetch /project/list from api successfully.')
       res.send(camelizeKeys(response.body))
     } else {
       const errWrapped = handlerError(error, response)
@@ -29,7 +28,55 @@ router.get('/list', (req, res) => {
         status: errWrapped.status,
         text: errWrapped.text
       })
-      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(`Error occurred during fetch data from: ${url}`)
+      console.error(error) 
+    }
+  })
+})
+
+router.get('/filter', (req, res) => {
+  const url = `${apiHost}/project${req.url}`
+  
+  debug('Got a /project/filter call:')
+  debug(url)
+  
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch /project/filter from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from: ${url}`)
+      console.error(error)
+    }
+  })
+})
+
+router.use('/item/:id', (req, res) => {
+  const id = req.params.id
+  const url = `${apiHost}/project/list?ids=[${id}]`
+
+  debug(`Got a /project/item/:id call: ${url}`)
+
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch /project/list?ids= from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from: ${url}`)
       console.error(error) 
     }
   })

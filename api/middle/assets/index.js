@@ -32,23 +32,69 @@ const checkPermission = (req, res, next) => {
 }
 
 router.use('/list', checkPermission, (req, res) => {
-  debug('Got a req for assets list.', req.url)
+  debug('Got a req for /assets/list.', req.url)
 
   const url = `${apiHost}/asset${req.url.slice(1)}`
   axios.get(url, {
     timeout: config.API_TIMEOUT,
-  }).then(response => {
-    debug('Fetch asset list from api successfully.')
+  }).then((response) => {
+    debug('Fetch /asset from api successfully.')
     debug(response.data)
     res.json(camelizeKeys(response.data))
   })
-  .catch(error => {
+  .catch((error) => {
     const errWrapped = handlerError(error)
     res.status(errWrapped.status).send({
       status: errWrapped.status,
       text: errWrapped.text
     })
-    console.error(`Error occurred during fetching data from : ${url}`)
+    console.error(`Error occurred during fetching data from: ${url}`)
+    console.error(error) 
+  })
+})
+
+router.get('/filter', checkPermission, (req, res) => {
+  debug('Got a req for /assets/filter.', req.url)
+
+  const url = `${apiHost}/asset${req.url}`
+  axios.get(url, {
+    timeout: config.API_TIMEOUT,
+  }).then((response) => {
+    debug('Fetch /asset/filter from api successfully.')
+    debug(response.data)
+    res.json(camelizeKeys(response.data))
+  })
+  .catch((error) => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during fetching data from: ${url}`)
+    console.error(error) 
+  })
+})
+
+router.use('/item/:id', (req, res) => {
+  const id = req.params.id
+  const url = `${apiHost}/asset?ids=[${id}]`
+  
+  debug(`Got a /asset/item/:id call: ${url}`)
+
+  axios.get(url, {
+    timeout: config.API_TIMEOUT,
+  }).then((response) => {
+    debug('Fetch /asset?ids= from api successfully.')
+    debug(response.data)
+    res.json(camelizeKeys(response.data))
+  })
+  .catch((error) => {
+    const errWrapped = handlerError(error)
+    res.status(errWrapped.status).send({
+      status: errWrapped.status,
+      text: errWrapped.text
+    })
+    console.error(`Error occurred during fetching data from: ${url}`)
     console.error(error) 
   })
 })

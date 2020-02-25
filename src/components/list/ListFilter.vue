@@ -1,38 +1,40 @@
 <template>
-  <div class="list-search" 
+  <div class="list-search"
     :class="{ 'with-filter': isFilterSetupped, 'disabled': !$store.getters.isSearchable }"
-    :style="{ backgroundColor: bgcolor, }">
+    :style="{ backgroundColor: bgcolor, }"
+  >
     <input class="list-search__input" type="text" ref="searchInput"
       v-model="currentSearchVal"
-      :placeholder="filtersStr || $t('LIST.SEARCH')"
-      :style="{ backgroundColor: bgcolor, }"
-      @focusin="toggleFilterVisible(true)"
-      @focusout="toggleFilterVisible(false)"
+      :placeholder="searchInputPlaceholder"
+      :style="{ backgroundColor: bgcolor }"
       @keyup="setCurrVal"
-      @change="checkIsChanged">
+    >
     <template v-if="isFilterSetupped">
-      <div class="list-search__filter__wrapper" tabindex="0" ref="filterWrapper"
-        :class="{ active: isFilterFocused || isFilterHovered }"
-        @focusin="isFilterFocused = true"
-        @focusout="isFilterFocused = false">
-        <div class="list-search__filter__toolbox filter-toolbox"
-          @mouseover="isFilterHovered = true"
-          @mouseout="isFilterHovered = false">
-          <ListFilterTools :filtersVals.sync="filters" @close="turnOffFilterBox"></ListFilterTools>
+      <div class="list-search__filter__wrapper" ref="filterWrapper"
+        :class="{ active: isFilterToolbox }"
+        @click.stop
+      >
+        <div class="list-search__filter__toolbox filter-toolbox">
+          <ListFilterTools :filtersVals.sync="filters" @close="turnOffFilterBox" ref="filterTools" />
         </div>
         <div class="list-search__filter__button filter-button" ref="filterButton"
           :class="{ working: isFilterWorking }"
-          @click="isFilterFocused = true">
-          <div class="list-search__filter__hint hint"><span v-text="$t('LIST.SEARCH_HINT')"></span></div>
+          @click.stop="toggleFilterToolbox"
+        >
+          <div class="list-search__filter__hint hint">
+            <span v-text="$t('LIST.SEARCH_HINT')" />
+          </div>
         </div>
       </div>
     </template>
   </div>
 </template>
+
 <script>
   import ListFilterTools from './ListFilterTools.vue'
-  import { filter, find, get, map } from 'lodash'
+  import { filter, find, get, map, debounce } from 'lodash'
   import { isDescendant } from 'src/util/comm'
+
   export default {
     name: 'ListFilter',
     components: {
@@ -45,33 +47,39 @@
       isFilterWorking () {
         return map(this.filters, f => f).length > 0
       },
+      model () {
+        return get(this.$route, 'params.item', 'post')
+      },
+      searchInputPlaceholder () {
+        return this.isFilterToolbox ? '' : `${this.$t('LIST.SEARCH')}${this.model === 'member' ? '暱稱' : '標題'}關鍵字⋯`
+      }
     },
     data () {
       return {
         currentSearchVal: '',
         filters: {},
-        filtersStr: '',
-        isFilterHovered: false,
-        isFilterFocused: false,
+        isFilterToolbox: false
       }
     },
     methods: {
-      checkIsChanged () {},
-      focusOnFilterWrapper (e) {
-        const isDesc = isDescendant(e.target, { parant: this.$refs[ 'filterWrapper' ] })
-        isDesc && !this.isFilterFocused && this.$refs[ 'filterWrapper' ].focus()
-      },
-      setCurrVal () {},
-      toggleFilterVisible (flag) {
-        if (flag) {
-          this.filtersStr = ''
-        } else {
-          this.filtersStr = map(this.filters, f => f).join(', ')
-        }
+      setCurrVal () { 
+        debounce(() => {
+          this.$emit('update:value', this.currentSearchVal)
+          this.$refs.filterTools.itemValKey = Date.now().toString()
+        }, 600)()
       },
       turnOffFilterBox () {
-        this.isFilterHovered = false
-        this.isFilterFocused = false
+        this.isFilterToolbox = false
+      },
+      toggleFilterToolbox () {
+        if (this.currentSearchVal) {
+          this.currentSearchVal = ''
+          this.$emit('update:value', this.currentSearchVal)
+        }
+        this.isFilterToolbox = !this.isFilterToolbox
+      },
+      handleClickOutsideSearch () {
+        this.isFilterToolbox = false
       }
     },
     mounted () {
@@ -80,27 +88,23 @@
         this.$refs.filterButton.onselectstart = function () { return false } 
       }
       this.currentSearchVal = this.value
+      window.addEventListener('click', this.handleClickOutsideSearch)
     },
     props: {
       value: {
         type: String,
       },
       bgcolor: {},
+      filtersVals: {}
     },
     watch: {
-      currentSearchVal () {
-        this.$emit('update:value', this.currentSearchVal)
-      },
       filters: {
-        handler: function () {
-          this.filtersStr = map(filter(this.filters, (f, k) => {
-            find(this.$store.getters.filters, { name: k }).type !== 'Datetime'
-          }), f => f).join(', ')
-          this.$emit('update:filters', this.filters)
+        handler (filtersVals) {
+          this.$emit('update:filtersVals', filtersVals)
         },
         deep: true
-      },
-    },
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>
@@ -128,7 +132,6 @@
       height 1.5rem
       border none
       background-color #f7f7f7
-      font-weight 100
       color #000
 
       font-size 0.9375rem
@@ -136,7 +139,6 @@
 
       &::-webkit-input-placeholder
         color #a0a0a0
-        font-weight normal
         font-size 0.875rem
         vertical-align top
     &__filter
@@ -147,7 +149,6 @@
         height 100%
         width 100%
         z-index 9999
-        outline none
         &:not(.active)
           .filter-button 
             animation fade-out 0.5s
