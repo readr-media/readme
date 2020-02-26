@@ -108,11 +108,11 @@ export default {
     'UPDATED_BY': '最後更新',
     'TAGS': '關鍵字',
     'FILTER_PLACEHOLDER': {
-      'ID': '請輸入 ID',
-      'TITLE': '請輸入標題關鍵字',
+      'ID': '請輸入 ID⋯',
+      'TITLE': '請輸入標題關鍵字⋯',
       'TAGS': '#',
-      'SLUG': '請輸入 SLUG',
-      'DESCRIPTION': '請輸入關鍵字'
+      'SLUG': '請輸入 SLUG⋯',
+      'DESCRIPTION': '請輸入說明關鍵字⋯'
     }    
   },
   'REPORT': {
@@ -174,11 +174,11 @@ export default {
     'PHONE': '電話',
     'NAME': '姓名',
     'FILTER_PLACEHOLDER': {
-      'MAIL': '請輸入信箱關鍵字',
-      'NICKNAME': '請輸入暱稱關鍵字',
-      'ID': '請輸入 ID',
-      'UPDATED_AT': '更新時間',
-      'CREATED_AT': '建立時間'
+      'MAIL': '請輸入信箱關鍵字⋯',
+      'NICKNAME': '請輸入暱稱關鍵字⋯',
+      'ID': '請輸入 ID⋯',
+      'UPDATED_AT': '更新時間⋯',
+      'CREATED_AT': '建立時間⋯'
     }
   },
   'MEMO': {
@@ -312,10 +312,10 @@ export default {
       'WEEKLY': '一週可投一次',
     },
     'FILTER_PLACEHOLDER': {
-      'TITLE': '請輸入標題關鍵字',
-      'DESCRIPTION': '請輸入說明關鍵字',
+      'TITLE': '請輸入標題關鍵字⋯',
+      'DESCRIPTION': '請輸入說明關鍵字⋯',
       'TAGS': '#',
-      'ID': '請輸入 ID',
+      'ID': '請輸入 ID⋯',
     }
   },
   'POST': {
@@ -361,12 +361,12 @@ export default {
     'SLUG': 'SLUG',
     'POST_ORDER': '排序',
     'FILTER_PLACEHOLDER': {
-      'TITLE': '請輸入標題關鍵字',
-      'CONTENT': '請輸入內容關鍵字',
-      'AUTHOR': '請輸入作者',
+      'TITLE': '請輸入標題關鍵字⋯',
+      'CONTENT': '請輸入內容關鍵字⋯',
+      'AUTHOR': '請輸入作者⋯',
       'TAGS': '#',
-      'ID': '請輸入 ID',
-      'SLUG': '請輸入 SLUG',
+      'ID': '請輸入 ID⋯',
+      'SLUG': '請輸入 SLUG⋯',
     }        
   },
   'ASSET': {
@@ -391,10 +391,10 @@ export default {
     'FILE_EXTENSION': '副檔名',
     'FILE_TYPE': '檔案類型',
     'FILTER_PLACEHOLDER': {
-      'TITLE': '請輸入標題關鍵字',
-      'AUTHOR': '請輸入作者',
+      'TITLE': '請輸入標題關鍵字⋯',
+      'AUTHOR': '請輸入作者⋯',
       'TAGS': '#',
-      'ID': '請輸入 ID',
+      'ID': '請輸入 ID⋯',
     },
     'USING_UNSUPPOERTED_FILE_FORMAT': '哎呀！你使用了陌生的檔案格式，目前沒有支援，請改用以下格式。',
     'USING_UNSUPPOERTED_FILE_FORMAT_HINT': '目前支援類型：{format}'

@@ -10,6 +10,13 @@ export function fetchList ({ params, endpoint, }) {
   return fetchInStrict(url, {})
 }
 
+export function fetchFilteredList ({ params, endpoint }) {
+  debug('parmas', params)
+  debug('endpoint', endpoint)
+  const url = constructUrlWithQuery(`${host}/api/${endpoint}/filter`, params)
+  return fetchInStrict(url, {})
+}
+
 export function fetchChoices ({ id, params, endpoint, }) {
   debug('parmas', params)
   debug('endpoint', endpoint)

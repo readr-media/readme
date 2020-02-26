@@ -36,32 +36,38 @@ export function _buildQuery (params = {}) {
     'member_id',
     'memberId',
     'memo_publish_status',
+    'nickname',
     'emotion',
     'fields',
     'pay_type',
+    'title',
+    'content'
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {
     if (snakeCaseParams.hasOwnProperty(ele)) {
-      if (ele === 'where') {
-        const where = mapValues(snakeCaseParams[ele], (value) => {
-          value = Array.isArray(value) ? value : [ value, ]
-          return { '$in': value, }
-        })
-        Object.keys(where).forEach((key) => {
-          query[key] = JSON.stringify(where[key])
-        })
-      } else if (ele === 'ids'
-        || ele === 'asset_type'
-        || ele === 'fields' 
-        || ele === 'project_id' 
-        || ele === 'object_ids' 
-        || ele === 'slugs' 
-        || ele === 'project_slugs' 
-        || ele === 'report_slugs') {
-        query[ele] = JSON.stringify(snakeCaseParams[ele])
-      } else {
-        query[ele] = snakeCaseParams[ele]
+      switch (ele) {
+        case 'where':
+          const where = mapValues(snakeCaseParams[ele], (value) => {
+            value = Array.isArray(value) ? value : [ value, ]
+            return { '$in': value, }
+          })
+          Object.keys(where).forEach((key) => {
+            query[key] = JSON.stringify(where[key])
+          })
+          break
+        case 'ids':
+        case 'asset_type':
+        case 'fields':
+        case 'project_id':
+        case 'object_ids':
+        case 'slugs':
+        case 'project_slugs':
+        case 'report_slugs':
+          query[ele] = JSON.stringify(snakeCaseParams[ele])
+          break
+        default:
+          query[ele] = snakeCaseParams[ele]
       }
     }
   })

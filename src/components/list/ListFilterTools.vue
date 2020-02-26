@@ -1,9 +1,9 @@
 <template>
   <div class="filter-tools">
     <template v-for="item in filterItems">
-      <div class="filter--item">
+      <div class="filter--item" :key="item.name">
         <div class="filter--item__title"><span v-text="$t(`${modelName}.${decamelize(get(item, 'name', '')).toUpperCase()}`)"></span></div>
-        <div class="filter--item__value" :key="key">
+        <div class="filter--item__value" :key="itemValKey">
           <ListFilterItem :type="item.type" :name="item.name" :value.sync="filters[ item.name ]"></ListFilterItem>
         </div>
       </div>
@@ -41,20 +41,21 @@
     data () {
       return {
         filters: {},
-        key: Date.now().toString(),
+        itemValKey: Date.now().toString(),
         modelName: ''
       }
     },
     methods: {
       clear () {
         this.filters = {}
+        console.log('update filters value')
         this.$emit('update:filtersVals', this.filledItems)
         this.$emit('close')
-        this.key = Date.now().toString()
+        this.itemValKey = Date.now().toString()
       },
       confirm () {
+        console.log('update filters value')
         this.$emit('update:filtersVals', this.filledItems)
-        console.log('go close!')
         this.$emit('close')
       },
       decamelize,

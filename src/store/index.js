@@ -44,7 +44,7 @@ export function createStore () {
         active: false,
         type: '',
         value: '',
-      },
+      }
     },
     actions,
     mutations,

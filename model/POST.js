@@ -91,14 +91,14 @@ export const groups = [ 'info', 'basic', 'content', 'share' ]
 export const isPreviewable = true
 export const previewHost = 'https://www.readr.tw/post'
 export const LIST_MAXRESULT = 15
-export const isSearchable = false
+export const isSearchable = true
 export const filters = [
   { name: 'title', type: 'TextInput' },
   { name: 'content', type: 'TextInput' },
-  { name: 'author', type: 'TextInput' },
-  { name: 'tags', type: 'TextInput' },
+  // { name: 'author', type: 'TextInput' },
+  // { name: 'tags', type: 'TextInput' },
   { name: 'id', type: 'TextInput' },
-  { name: 'publishStatus', type: 'Datetime' },
-  { name: 'createdAt', type: 'Datetime' },
-  { name: 'updatedAt', type: 'Datetime' },
+  // { name: 'publishStatus', type: 'Datetime' },
+  // { name: 'createdAt', type: 'Datetime' },
+  // { name: 'updatedAt', type: 'Datetime' },
 ]
