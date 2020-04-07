@@ -230,7 +230,9 @@ export default {
 
     >>> .ql-editor
       > p
-        margin 10px 0
+        line-height 1.86
+      > p + p
+        margin-top 17px
     >>> .ql-toolbar
       display flex
       .ql-picker-label
