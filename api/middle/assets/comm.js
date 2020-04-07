@@ -1,5 +1,5 @@
 const { get, map, last, trim } = require('lodash')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('../gcs.js')
+const { initBucket } = require('../gcs.js')
 const { processImage } = require('../sharp.js')
 const config = require('../../config')
 const debug = require('debug')('README:api:assets:comm')
@@ -10,6 +10,7 @@ const ASSETS_TYPE = config.ASSETS_TYPE
 const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
 const ASSETS_SERVER_HOST = config.ASSETS_SERVER_HOST
 const ASSETS_SERVER_PROTOCOL = config.ASSETS_SERVER_PROTOCOL
+const ASSETS_CACHE_CONTROL = 'public, max-age=86400'
 
 const constructFileInfo = file => {
   if (!get(file, 'filename')) { return {} }
@@ -27,7 +28,7 @@ const constructFileInfo = file => {
     : `${ASSETS_GCS_PATH.VIDEO}`
     : `${ASSETS_GCS_PATH.IMAGE}`
 
-  const fileBasicDestination = `${ASSETS_SERVER_PROTOCOL}://${ASSETS_SERVER_HOST}${destination}/${temFileName}/${temFileName}`
+  const fileBasicDestination = `${ASSETS_SERVER_PROTOCOL}://${ASSETS_SERVER_HOST}/${destination}/${temFileName}/${temFileName}`
   const fileDestinations = { basic: fileBasicDestination }
   if (asset_type === ASSETS_TYPE.IMAGE) {
     map(IMAGE_SIZE, f => {
@@ -47,52 +48,52 @@ const constructFileInfo = file => {
   }
 }
 
-const removeTmpFile = file => {
-  fs.unlink(file.path, err => {
+const removeTmpFile = filePath => {
+  fs.unlink(filePath, err => {
     if (err) {
-      console.error(`Error: delete ${file.path} in fail.`, err)
+      console.error(`Error: delete ${filePath} in fail.`, err)
     }
-    console.info(`successfully deleted ${file.path}`)
   })  
 }
+
 const bucket = initBucket(config.GCP_FILE_BUCKET)
+
 const transferFileToStorage = async file => {
   debug('Going to transfer file to storage.', file)
   if (!get(file, 'filename')) { return Promise.resolve() }
 
   const fileType = get(file, 'asset_type')
-  const uploadBasicFile = () => uploadFileToBucket(bucket, file.path, {
-    destination: `${file.destination}/${file.filename}/${file.filename}.${file.file_extension}`,
-    metadata: { contentType: file.mimetype }
-  }).then(bucketFile => {
-    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
-    removeTmpFile(file)
-    return makeFilePublic(bucketFile)
+
+  const uploadOptions = (file, filename) => ({
+    destination: `${file.destination}/${file.filename}/${filename || file.filename}.${file.file_extension}`,
+    metadata: { contentType: file.mimetype, cacheControl: ASSETS_CACHE_CONTROL },
+    public: true
   })
+  
+  const uploadAssetToBucket = (file, originPath, destName) => {
+    const path = originPath || file.path
+    return bucket.upload(path, uploadOptions(file, destName))
+      .then(data => {
+        console.info(`file ${destName || file.originalname}(${path}) completed uploading to bucket.`)
+        removeTmpFile(path)
+        return Promise.resolve(data)
+      })
+      .catch(err => console.error(`Error occurred upload file to bucket, origin name: ${file.originalname} path: ${path}`, err))
+  }
+
   switch (fileType) {
     case ASSETS_TYPE.IMAGE:
       return processImage(file)
         .then(images => {
           Promise.all(images.map(path => {
             const fileName = trim(path, 'tmp/')
-            return uploadFileToBucket(bucket, path, {
-              destination: `${file.destination}/${file.filename}/${fileName}.${file.file_extension}`,
-              metadata: { contentType: file.mimetype }
-            }).then(bucketFile => {
-              console.info(`file ${fileName}(${path}) completed uploading to bucket `)
-              removeTmpFile({ path })
-              return makeFilePublic(bucketFile)
-            })
+            return uploadAssetToBucket(file, path, fileName)
           }))
         })
-        .then(() => uploadBasicFile())
-        .catch(err => {
-          console.error(`Error occurred process file: ${file.originalname}`)
-          console.error(err)
-        })
+        .then(() => uploadAssetToBucket(file))
     case ASSETS_TYPE.VIDEO:
     case ASSETS_TYPE.AUDIO:
-      return uploadBasicFile()
+      return uploadAssetToBucket(file)
   }
 }
 
