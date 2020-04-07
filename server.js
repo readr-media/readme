@@ -78,7 +78,6 @@ app.use(favicon('./public/favicon-50x50.png'))
 app.use('/dist', serve(path.join(__dirname, './dist'), true))
 app.use('/public', serve(path.join(__dirname, './public'), true))
 app.use('/manifest.json', serve(path.join(__dirname, './manifest.json'), true))
-app.use('/service-worker.js', serve(path.join(__dirname, './dist/service-worker.js')))
 
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom
