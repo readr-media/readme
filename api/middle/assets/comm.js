@@ -90,6 +90,11 @@ const transferFileToStorage = async file => {
             return uploadAssetToBucket(file, path, fileName)
           }))
         })
+        .catch(err => {
+          console.log('[ERROR] processImage')
+          console.log(err)
+          console.log('=====================')
+        })
         .then(() => uploadAssetToBucket(file))
     case ASSETS_TYPE.VIDEO:
     case ASSETS_TYPE.AUDIO:
