@@ -106,8 +106,5 @@
   ],
   "eslintIgnore": [
     "api/config.js"
-  ],
-  "resolutions": {
-    "minipass": "^3.1.1"
-  }
+  ]
 }
