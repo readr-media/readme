@@ -11,7 +11,7 @@ spec:
     protocol: TCP
     targetPort: 80
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -20,6 +20,10 @@ metadata:
   name: {{.app}}
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: {{.app}}
+      tier: {{.tier}}
   template:
     metadata:
       labels:
