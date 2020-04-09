@@ -42,7 +42,7 @@ pipeline:
     pull: true
     commands:
     - apk update
-    - apk add vips-dev fftw-dev build-base python --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/community/ --repository https://dl-3.alpinelinux.org/alpine/edge/main
+    - apk add vips vips-dev fftw build-base python musl --update-cache --repository https://alpine.global.ssl.fastly.net/alpine/edge/community/ --repository https://alpine.global.ssl.fastly.net/alpine/edge/main/
     - yarn install
     - yarn run build
     when:

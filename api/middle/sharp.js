@@ -12,6 +12,17 @@ const resizeOpts = [
   { target: 'desktop@1x', width: 2000 }
 ]
 
+const jpegOptions = {
+  quality: IMAGE_UPLOAD_QUALITY_JPEG,
+  progressive: true,
+  force: false
+}
+
+const pngOptions = {
+  compressionLevel: IMAGE_UPLOAD_QUALITY_PNG,
+  force: false
+}
+
 const processImage = file => {
   const outputPaths = []
   return new Promise((resolve, reject) => {
@@ -22,11 +33,9 @@ const processImage = file => {
     image.metadata().then(() => {
       Promise.all(resizeOpts.map(opt => {
         return image
-          .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
-          .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
-          .resize(opt.width)
-          .min()
-          .withoutEnlargement()
+          .jpeg(jpegOptions)
+          .png(pngOptions)
+          .resize({ width: opt.width, withoutEnlargement: true })
           .toFile(`tmp/${fileName}-${opt.target}`)
           .then(() => {
             outputPaths.push(`tmp/${fileName}-${opt.target}`)
