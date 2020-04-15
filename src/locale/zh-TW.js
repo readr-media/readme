@@ -417,6 +417,12 @@ export default {
     'UPDATED_AT': '更新時間',
     'UPDATED_BY': '最後更新人',
   },
+  'TAGS': {
+    'ID': '編號',
+    'NEW': '新增關鍵字',
+    'TEXT': '關鍵字',
+    'UPDATED_AT': '更新時間',
+  },
   'NAVIGATION': {
     'MANAGEMENT': '管理',
     'PLUGIN': '應用程式',
@@ -432,7 +438,7 @@ export default {
     'POST': '貼文管理',
     'POLL': '投票管理',
     'PROMOTION': '廣告管理',
-    'TAG': '關鍵字',
+    'TAGS': '關鍵字管理',
     'EPAY': '付費',
     'ACCOUNT_ROLE': '會員角色',
     'ACCOUNT_PERMISSION': '使用者角色',

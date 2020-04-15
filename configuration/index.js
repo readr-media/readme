@@ -15,6 +15,7 @@ const items = [
   { nav: 'management', name: 'asset', type: 'list', },
   { nav: 'management', name: 'promotion', type: 'list', },
   { nav: 'management', name: 'ad', type: 'wrapper', },
+  { nav: 'management', name: 'tags', type: 'list', },
   { nav: 'management', name: 'tag', type: 'wrapper', },
   { nav: 'management', name: 'member', type: 'list', },
   { 
