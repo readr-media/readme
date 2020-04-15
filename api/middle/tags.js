@@ -33,4 +33,24 @@ router.use('/list', (req, res) => {
   })
 })
 
+router.get('/count', (req, res) => {
+  const url = `${apiHost}/tags/count`
+  superagent
+  .get(url)
+  .end((error, response) => {
+    if (!error && response) {
+      debug('Fetch tags count from api successfully.')
+      res.send(camelizeKeys(response.body))
+    } else {
+      const errWrapped = handlerError(error, response)
+      res.status(errWrapped.status).send({
+        status: errWrapped.status,
+        text: errWrapped.text
+      })
+      console.error(`Error occurred during fetch data from : ${url}`)
+      console.error(error) 
+    }
+  })
+})
+
 module.exports = router
