@@ -418,6 +418,7 @@ export default {
     'UPDATED_BY': '最後更新人',
   },
   'TAGS': {
+    'EDIT': '編輯關鍵字',
     'ID': '編號',
     'NEW': '新增關鍵字',
     'TEXT': '關鍵字',

@@ -127,6 +127,7 @@ export default {
       switch (this.flag) {
         case 'poll':
         case 'promotion':
+        case 'tags':
           this.editorItem = item
           this.$router.push(`${get(this.$route, 'fullPath')}/edit`)
           this.isFetchingItem = false
