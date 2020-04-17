@@ -69,6 +69,7 @@ const DEFAULT_SORT = '-created_at'
 
 const debug = require('debug')('CLIENT:List')
 const fetchModelData = (store) => store.dispatch('FETCH_MODEL_DATA')
+const fetchItemsCount = (store, params, endpoint) => store.dispatch('GET_ITEMS_COUNT', { params, endpoint, })
 const fetchList = (store, params, endpoint) => store.dispatch('FETCH_LIST', {
   params: Object.assign({
     maxResult: DEFAULT_MAXRESULT,
@@ -234,6 +235,7 @@ export default {
       switch (this.modelRaw) {
         case 'poll':
         case 'promotion':
+        case 'tags':
           console.log('fetch list')
           fetchList(this.$store, params, this.modelRaw).then(() => {
             this.isSpinnerActive = false
@@ -247,6 +249,10 @@ export default {
             console.log('fetch filtered list successfully')
           })
           break
+      }
+
+      if (this.modelRaw === 'tags') {
+        fetchItemsCount(this.$store, params, this.modelRaw)
       }
     },
     handleStrSpace (str) {

@@ -1,4 +1,4 @@
-import { fetchItem, updateItem, postItem, delItems } from 'src/api/item'
+import { fetchItem, updateItem, postItem, delItems, getItemCount } from 'src/api/item'
 import { get, } from 'lodash'
 const debug = require('debug')('CLIENT:store:actions:item')
 
@@ -49,18 +49,18 @@ const DEL_ITEMS = ({ commit, }, { params, endpoint, }) => {
   })
 }
 
-// const GET_ITEMS_COUNT = ({ commit, }, { params, endpoint, }) => {
-//   return getItemCount({ params, endpoint, }).then(({ status, body, }) => {
-//     debug('{ params, endpoint }', { params, endpoint })
-//     if (status === 200) {
-//       commit('SET_LIST_ITEMS_COUNT', { count: get(body, 'meta.total') })
-//     }    
-//     return { status, }
-//   }).catch(err => {
-//     debug('Error ocurred!', err)
-//     return Promise.reject(err)
-//   })
-// }
+const GET_ITEMS_COUNT = ({ commit, }, { params, endpoint, }) => {
+  return getItemCount({ params, endpoint, }).then(({ status, body, }) => {
+    debug('{ params, endpoint }', { params, endpoint })
+    if (status === 200) {
+      commit('SET_LIST_ITEMS_COUNT', { count: get(body, 'meta.total') })
+    }    
+    return { status, }
+  }).catch(err => {
+    debug('Error ocurred!', err)
+    return Promise.reject(err)
+  })
+}
 
 export {
   FETCH_ITEM,
@@ -68,5 +68,5 @@ export {
   POST_ITEM,
   // DEL_ITEM,
   DEL_ITEMS,
-  // GET_ITEMS_COUNT,
+  GET_ITEMS_COUNT,
 }
