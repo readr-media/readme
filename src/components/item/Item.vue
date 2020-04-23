@@ -26,6 +26,7 @@
     </template>
     <QuillEditor v-else-if="itemObj.type === 'ContentEditor'" :content.sync="value" />
     <TextAuthorItem v-else-if="itemObj.type === 'TextAuthorItem'"
+      :authorType="itemObj.map.optionalProperty.author_type"
       :placeholder="$t(`${modelName}.${decamelize(itemObj.name).toUpperCase()}`)"
       :currAuthorValues.sync="value"
       :currInput.sync="currTagInput"
@@ -159,7 +160,13 @@
     watch: {
       itemVal (newVal, oldVal) {},
       value (newVal, oldVal) {
-        this.$emit('update:itemVal', this.value)
+        if (this.itemObj.name === 'authors') {
+          const currentAuthorType = get(this.itemObj, 'map.optionalProperty.author_type')
+          const authorsOtherType = this.refVals.authors.filter(author => author.author_type !== currentAuthorType)
+          this.$emit('update:itemVal', [ ...this.value, ... authorsOtherType ])
+        } else {
+          this.$emit('update:itemVal', this.value)
+        }
         if (this.isOriginDataSetup && oldVal != newVal) {
           console.log(this.itemObj.name, `${oldVal} -> ${newVal}`)
           setupDataMutationState(this.$store, true)

@@ -7,9 +7,9 @@
             <div class="panel__group" v-if="!(type === 'create' && group.name === 'info')">
               <div class="panel__group--title"><span v-text="$t(`EDITOR.GROUPS.${group.name.toUpperCase()}`)"></span></div>
               <template v-for="obj in group.objs">
-                <div class="panel__content--item" :key="`panel__content--item-${obj.name}`">
+                <div class="panel__content--item" :key="`panel__content--item-${obj.i18nKey||obj.name}`">
                   <div class="title" :class="{ short: isShort($t(`${modelName}.${decamelize(obj.name).toUpperCase()}`)) }">
-                    <span v-text="$t(`${modelName}.${decamelize(obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
+                    <span v-text="$t(`${modelName}.${decamelize(obj.i18nKey||obj.name).toUpperCase()}`)" v-if="!obj.hideTitle"></span>
                   </div>
                   <div class="value">
                     <Item
