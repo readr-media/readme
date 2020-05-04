@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-  import { find, get } from 'lodash'
+  import { find, get, union } from 'lodash'
   import { isDescendant } from 'src/util/comm'
 
   const debug = require('debug')('CLIENT:TextAuthorItem')
@@ -34,15 +34,13 @@
     name: 'TextAuthorItem',
     data () {
       return {
+        authors: this.currAuthorValues.filter(author => author.authorType === this.authorType),
         currInput: '',
         currAutocompleteIndex: 0,
         keys: [ 13, 188, 9 ],
       }
     },
     computed: {
-      authors () {
-        return this.currAuthorValues
-      },
       isAuthorsExceedLimit () {
         return this.authors ? this.authors.length >= this.authorLimitNum : false
       }
@@ -121,6 +119,7 @@
     },
     mounted () {},
     props: {
+      authorType: Number,
       placeholder: String,
       autocomplete: Array,
       readOnly: Boolean,
@@ -136,13 +135,13 @@
       isWarned: {},
     },
     watch: {
-      autocomplete: function () {
+      autocomplete () {
         debug('autocomplete change detected.', this.autocomplete)
         this.currAutocompleteIndex = 0
       },
       authors () {
         debug('authors change detected.')
-        this.$emit('update:currAuthorValues', this.authors)
+        this.$emit('update:currAuthorValues', union(this.authors, this.currAuthorValues))
       },
       isAuthorsExceedLimit () {
         if (this.isAuthorsExceedLimit) {
