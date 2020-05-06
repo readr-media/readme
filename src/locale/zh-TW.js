@@ -217,9 +217,7 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
-    'PREVIEW': '預覽',
-    'UNAUTHORIZED_HOST': '你使用了不被信任的網站資源，目前僅接受來自以下網站的資源，且須通過 https 協定。',
-    'UNAUTHORIZED_HOST_HINT': '目前支援的網站：{hosts}',    
+    'PREVIEW': '預覽',   
     'GROUPS': {
       'ADVANCED': '進階設定',
       'BASIC': '基本設定',
