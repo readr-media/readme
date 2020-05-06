@@ -20,7 +20,7 @@
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
-          <span v-text="constructval(obj.map, [ ...filter(get(item, obj.name), { authorType: 0 }) ])" v-else-if="obj.type === 'TextAuthorItem'"></span>
+          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextAuthorItem'"></span>
           <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </template>
@@ -29,7 +29,7 @@
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'RadioItem'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'BooleanSwitcher'"></span>
           <span v-text="mapValue(obj.name, obj.options, get(item, obj.name))" v-else-if="obj.type === 'Dropdownlist'"></span>
-          <span v-text="constructval(obj.map, [ ...filter(get(item, obj.name), { authorType: 0 }) ])" v-else-if="obj.type === 'TextAuthorItem'"></span>
+          <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextAuthorItem'"></span>
           <span v-text="constructval(obj.map, [ ...get(item, obj.name) ])" v-else-if="obj.type === 'TextTagItem'"></span>
           <span v-text="normalizeDatetime(get(item, obj.name), get(obj, 'format'))" v-else-if="obj.type === 'Datetime'"></span>
         </router-link>
@@ -98,7 +98,6 @@ export default {
       debug('DEL!!')
       this.$emit('del')
     },
-    filter,
     find,
     get,
     isSpicialItems (type) {

@@ -49,7 +49,6 @@
       return {
         isProcessing: false,
         val: '',
-        whitelist: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com', 'plotdb.io', 'e.infogram.com', 'www.google.com', 'twitframe.com' ]
       }
     },
     methods: {
@@ -59,96 +58,9 @@
       confirm () {
         debug('this.isProcessing', this.isProcessing)
         if (this.isProcessing) { return }
-        if (this.type === 'readme-embed') {
-          const value = this.validateEmbed()
-          return value
-            ? setUpValue(this.$store, { active: true, type: '', value })
-            : switchAlert(this.$store, true, {
-              message: this.$t('EDITOR.UNAUTHORIZED_HOST'),
-              hint: this.$t('EDITOR.UNAUTHORIZED_HOST_HINT', { hosts: this.whitelist.join('、') })
-            }, () => {})     
-            // : alert(`Only source from "${this.whitelist.join(', ')}" with https are valid.`)
-        }
         setUpValue(this.$store, { active: true, type: '', value: this.val })
         this.isProcessing = true
       },
-      validateEmbed () {
-        /**
-         * Filter unallowed content here.
-         */
-        const exp_valid_src = new RegExp(`^https:\/\/(${this.whitelist.join('|')})`)
-        let isEmbedValid = true
-        
-        const sanitizeHtmlOptions = {
-          allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
-            iframe: [ 'frameborder', 'scrolling', 'allowfullscreen', 'src', 'width', 'height', 'allow', 'style' ],
-            /**
-             * Notice: <script> can only be set with attribute 'src'
-             */
-            script: [ 'src' ],
-            div: [ 'style' ],
-            a: [ 'class', 'href', 'target', 'style' ],
-            img: [ 'alt', 'src', 'style' ],
-          }),
-          allowedIframeHostnames: this.whitelist,
-          allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'script', 'div' ],
-          customContentBreakTagName: 'hr',
-          transformTags: {
-            'iframe': function (tagName, attribs) {
-              return {
-                tagName,
-                attribs: Object.assign(attribs, {
-                  allowfullscreen: 'allowfullscreen',
-                }),
-              }
-            },
-            'script': function (tagName, attribs) {
-              /**
-               * Notice:
-               * - There's nothing could be embraced in script, so text would be setup to empty.
-               * - Source should be maintained in whitelist.
-               * - Source should be go with https protocol.
-               */
-              const src = get(attribs, 'src', '')
-              const isSrcValid = exp_valid_src.test(src)
-
-              return {
-                tagName,
-                text: '',
-                attribs: Object.assign(attribs, {
-                  src: isSrcValid ? src : '' ,
-                }),
-              }
-            },
-            'a': function (tagName, attribs) {
-              /**
-               * Notice:
-               * - Source should be maintained in whitelist.
-               * - Source should be go with https protocol.
-               */
-              const href = get(attribs, 'href', '')
-              const isSrcValid = exp_valid_src.test(href)
-
-              return {
-                tagName,
-                attribs: Object.assign(attribs, {
-                  href: isSrcValid ? href : '' ,
-                }),
-              }
-            }
-          },
-          exclusiveFilter: function (frame) {
-            if (((frame.tag === 'script' || frame.tag === 'iframe') && !get(frame.attribs, 'src', '').trim())
-              || (frame.tag === 'a' && !get(frame.attribs, 'href', '').trim())) {
-              isEmbedValid = false
-              return true
-            }
-            return false
-          }
-        }
-        const val = sanitizeHtml(this.val, sanitizeHtmlOptions)        
-        return isEmbedValid && val
-      }
     },
     mounted () {
       this.val = this.value

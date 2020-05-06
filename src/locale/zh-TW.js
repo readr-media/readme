@@ -217,9 +217,7 @@ export default {
   'EDITOR': {
     'SAVE': '存檔',
     'CANCEL': '取消',  
-    'PREVIEW': '預覽',
-    'UNAUTHORIZED_HOST': '你使用了不被信任的網站資源，目前僅接受來自以下網站的資源，且須通過 https 協定。',
-    'UNAUTHORIZED_HOST_HINT': '目前支援的網站：{hosts}',    
+    'PREVIEW': '預覽',   
     'GROUPS': {
       'ADVANCED': '進階設定',
       'BASIC': '基本設定',
@@ -358,14 +356,6 @@ export default {
     'ACTIVE_DEACTIVE': '無效',
     'AUTHOR': '作者',
     'AUTHORS': '作者',
-    'AUTHORS_REPORTER': '文字',
-    'AUTHORS_EDITOR': '編輯',
-    'AUTHORS_DESIGNER': '設計',
-    'AUTHORS_ENGINEER': '工程',
-    'AUTHORS_PHOTOGRAPHER': '攝影',
-    'AUTHORS_FILM': '影音',
-    'AUTHORS_CLEANER': '資料整理',
-    'AUTHORS_ANALYST': '數據研究',
     'SLUG': 'SLUG',
     'POST_ORDER': '排序',
     'FILTER_PLACEHOLDER': {
