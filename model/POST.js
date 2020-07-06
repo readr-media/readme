@@ -49,7 +49,7 @@ const isSupposedToShowWithTypeReport = data => get(data, 'type') == POST_TYPE.RE
 
 const isSupposedToShowHeroImage = data => { return get(data, 'type') != POST_TYPE.QA }
 const isSupposedToShowReferenceLink = data => { return get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
-const isSupposedToShowTags = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
+const isSupposedToShowTags = data => { return get(data, 'type') == POST_TYPE.NEWS || get(data, 'type') == POST_TYPE.REPORT || get(data, 'type') == POST_TYPE.REVIEW || get(data, 'type') == POST_TYPE.QA }
 
 export const model = [
   { name: 'id', type: 'TextInput', group: 'info', listWidth: { min: '100', }, isEditable: false, isListable: true, isEditEntry: true, order: { list: 0 }, },
