@@ -58,7 +58,7 @@
     "tap.js": "^2.2.0",
     "truncate-html": "^1.0.1",
     "uuid": "^3.3.2",
-    "validator": "^10.3.0",
+    "validator": "^13.7.0",
     "vue": "^2.5.3",
     "vue-cookie": "^1.1.4",
     "vue-datetime": "^1.0.0-beta.3",
