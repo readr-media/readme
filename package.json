@@ -47,7 +47,7 @@
     "numeral": "^2.0.6",
     "postcss-loader": "^2.1.5",
     "prevent-scroll": "^2.0.0",
-    "qs": "^6.5.1",
+    "qs": "^6.5.3",
     "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.4",
